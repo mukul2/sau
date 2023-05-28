@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "782813816644",
+    "project_id": "brain-sugar",
+    "storage_bucket": "brain-sugar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782813816644:android:703d4adb8e2e055f1b1911",
+        "android_client_info": {
+          "package_name": "com.directory.sau"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDe3a3F55CuEemejGG1aX_-f9QoPuDLNpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
