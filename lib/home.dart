@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sau/utils.dart';
+
+import 'article_body.dart';
+import 'articles.dart';
+import 'breadcrumb.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,30 +17,131 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String currentparent = "";
+  List<String> allCatr = [""];
+  List<String> allCatrID = [""];
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(body:StreamBuilder<QuerySnapshot>(
-  stream:FirebaseFirestore.instance.collection("categories").where("parent",isEqualTo:currentparent) .snapshots(),
+  stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("parent",isEqualTo:allCatrID.last) .snapshots(),
   builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
      if (snapshot.hasData) {
+       return   Column(
+         children: [
+           Row(children: [
 
-      return GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 16),
-          children:  snapshot.data!.docs.map((e) => InkWell( onTap: (){
-            setState(() {
-              currentparent = e.id;
-            });
-          },
-            child: Container(margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,child: Column(mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(e.get("name"))
-              ],
-            ),),
-          )).toList()
+            (allCatr.length>1)? IconButton(onPressed: (){
+               setState(() {
+
+
+               });
+               allCatrID.removeLast();
+               allCatr.removeLast();
+
+             }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+             BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
+               setState(() {
+                 for(int i = 0 ; i < allCatrID.length ; i++){
+                   if(allCatrID[i]==d){
+                     allCatr.removeAt(i);
+                     allCatrID.removeAt(i);
+                     break;
+                   }else{
+                     allCatr.removeAt(i);
+                     allCatrID.removeAt(i);
+                   }
+                 }
+               });
+             },),
+           ],),
+
+           GridView(shrinkWrap: true,
+                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 16),
+               children:  snapshot.data!.docs.map((e) => InkWell( onTap: (){
+
+
+                   allCatrID.add(e.id);
+                   allCatr.add(e.get("name"));
+
+                 setState(() {
+
+                 });
+               },
+                 child: Container(width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                   child: Center(child: Text(e.get("name"))),),
+               )).toList()
+           ),
+           StreamBuilder<QuerySnapshot>(
+               stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("parent", isEqualTo:allCatrID.last ).snapshots(),
+               builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                 if (snapshot.hasData) {
+                   return ListView.separated(shrinkWrap: true,
+                     itemCount: snapshot.data!.docs.length,
+
+                     itemBuilder: (context, index) {
+                     return InkWell( onTap: (){
+                       Navigator.push(
+                         context,
+                         CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                     },
+                       child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text(snapshot.data!.docs[index].get("c1")),
+                         Text(DateFormat('yyyy-MM-dd hh:mm').format(new DateTime.fromMillisecondsSinceEpoch(snapshot.data!.docs[index].get("created_at")))),
+
+
+                         if(false)snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                               stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                               builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                                 if (snapshot.hasData) {
+                                   return Text(snapshot.data!.get("name"));
+
+                                 }
+                                 else {
+                                   return Scaffold(body: CircularProgressIndicator());}
+                               }):Text("--")
+                         ],
+                       ),
+                     );
+                       return ListTile(trailing: IconButton(onPressed: (){
+                         snapshot.data!.docs[index].reference.delete();
+
+                       },icon: Icon(Icons.delete),),subtitle: snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                           stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                           builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                             if (snapshot.hasData) {
+                               return Text(snapshot.data!.get("name"));
+
+                             }
+                             else {
+                               return Scaffold(body: CircularProgressIndicator());}
+                           }):Text("--") ,
+                         title: Text(snapshot.data!.docs[index].get("c1")),
+                       );
+                     }, separatorBuilder: (BuildContext context, int index) { return Container(width: double.infinity,height: 0.5,color: Colors.grey,); },
+                   );
+                 }
+                 else {
+                   return Scaffold(body: CircularProgressIndicator());}
+               }),
+         ],
+       );
+      return Wrap(
+        children: [
+          ListView(shrinkWrap: true,
+            //  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 16),
+              children:  snapshot.data!.docs.map((e) => InkWell( onTap: (){
+                setState(() {
+                  currentparent = e.id;
+                });
+              },
+                child: Container(height: 50,width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                  child: Text(e.get("name")),),
+              )).toList()
+          ),
+        if(false)  Articles(parent:currentparent ,),
+        ],
       );
   return ListView.separated(shrinkWrap: true,
   itemCount: snapshot.data!.docs.length,

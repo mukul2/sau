@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sau/utils.dart';
 
 class AddCategory extends StatefulWidget {
   const AddCategory({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class _AddCategoryState extends State<AddCategory> {
   Widget build(BuildContext context) {
     TextEditingController category =  TextEditingController();
     String parentategoryId = "";
-    return Column(children: [
+    return Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
 
       Padding(
         padding: const EdgeInsets.all(8.0),
@@ -32,7 +33,7 @@ class _AddCategoryState extends State<AddCategory> {
             return AlertDialog(
               title: const Text('Select parent category'),
               content: StreamBuilder<QuerySnapshot>(
-                  stream:FirebaseFirestore.instance.collection("categories").snapshots(),
+                  stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").orderBy("created_at").snapshots(),
                   builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                     if (snapshot.hasData) {
                       // return  Text(snapshot.data!.docs.length.toString());
@@ -84,7 +85,7 @@ class _AddCategoryState extends State<AddCategory> {
         ),),),
       ),
       InkWell(onTap: (){
-        FirebaseFirestore.instance.collection("categories").add({"parent":parentategoryId,"name":category.text});
+        FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").add({"created_at":DateTime.now().microsecondsSinceEpoch,"parent":parentategoryId,"name":category.text});
         parentategoryId = "";
         category.text = "";
         setState(() {
