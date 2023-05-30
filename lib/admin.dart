@@ -28,8 +28,11 @@ class _AdminState extends State<Admin> {
       children: [
         Expanded(child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
+          child: ListView(shrinkWrap: true,
+          //  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             AddCategory(),
+            Container(height: 5,width: double.infinity,color: Colors.grey,margin: EdgeInsets.all(5),),
             AddContent(),
 
           ],),
@@ -47,7 +50,7 @@ class _AdminState extends State<Admin> {
                           itemCount: snapshot.data!.docs.length,
 
                           itemBuilder: (context, index) {
-                            return ListTile(trailing: IconButton(onPressed: (){
+                            return ListTile(leading: Image.network(snapshot.data!.docs[index].get("img")), trailing: IconButton(onPressed: (){
                               snapshot.data!.docs[index].reference.delete();
 
                             },icon: Icon(Icons.delete),),subtitle: snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(

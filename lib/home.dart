@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,23 +57,6 @@ class _HomeState extends State<Home> {
                });
              },),
            ],),
-
-           GridView(shrinkWrap: true,
-                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, mainAxisSpacing: 16),
-               children:  snapshot.data!.docs.map((e) => InkWell( onTap: (){
-
-
-                   allCatrID.add(e.id);
-                   allCatr.add(e.get("name"));
-
-                 setState(() {
-
-                 });
-               },
-                 child: Container(width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                   child: Center(child: Text(e.get("name"))),),
-               )).toList()
-           ),
            StreamBuilder<QuerySnapshot>(
                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("parent", isEqualTo:allCatrID.last ).snapshots(),
                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
@@ -80,30 +65,40 @@ class _HomeState extends State<Home> {
                      itemCount: snapshot.data!.docs.length,
 
                      itemBuilder: (context, index) {
-                     return InkWell( onTap: (){
-                       Navigator.push(
-                         context,
-                         CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
-                     },
-                       child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           Text(snapshot.data!.docs[index].get("c1")),
-                         Text(DateFormat('yyyy-MM-dd hh:mm').format(new DateTime.fromMillisecondsSinceEpoch(snapshot.data!.docs[index].get("created_at")))),
+                       return InkWell( onTap: (){
+                         Navigator.push(
+                           context,
+                           CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                       },
+                         child: Padding(
+                           padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Expanded(
+                                 child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                                   children: [
+                                     Text(snapshot.data!.docs[index].get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
+                                     Text(snapshot.data!.docs[index].get("c2"),maxLines: 2,style: TextStyle(color: Colors.grey),),
 
 
-                         if(false)snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
-                               stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
-                               builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-                                 if (snapshot.hasData) {
-                                   return Text(snapshot.data!.get("name"));
+                                     if(false)snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                                         stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                                         builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                                           if (snapshot.hasData) {
+                                             return Text(snapshot.data!.get("name"));
 
-                                 }
-                                 else {
-                                   return Scaffold(body: CircularProgressIndicator());}
-                               }):Text("--")
-                         ],
-                       ),
-                     );
+                                           }
+                                           else {
+                                             return Scaffold(body: CircularProgressIndicator());}
+                                         }):Text("--")
+                                   ],
+                                 ),
+                               ),
+                               ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.01), child: Image.network(snapshot.data!.docs[index].get("photo1"),height: MediaQuery.of(context).size.height * 0.06,width:MediaQuery.of(context).size.height * 0.06 ,fit: BoxFit.cover,),)
+                             ],
+                           ),
+                         ),
+                       );
                        return ListTile(trailing: IconButton(onPressed: (){
                          snapshot.data!.docs[index].reference.delete();
 
@@ -125,6 +120,33 @@ class _HomeState extends State<Home> {
                  else {
                    return Scaffold(body: CircularProgressIndicator());}
                }),
+
+           GridView(shrinkWrap: true,
+                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 3, mainAxisSpacing: 16),
+               children:  snapshot.data!.docs.map((e) => Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: InkWell( onTap: (){
+
+
+                     allCatrID.add(e.id);
+                     allCatr.add(e.get("name"));
+
+                   setState(() {
+
+                   });
+                 },
+                   child: ClipRRect(borderRadius: BorderRadius.circular(4),
+                     //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                     child: Stack(
+                       children: [
+                         Align(alignment: Alignment.bottomCenter,child: Image.network(e.get("img"),fit: BoxFit.cover,width:  MediaQuery.of(context).size.width * 0.33,height: MediaQuery.of(context).size.width * 0.33,)),
+                         Align(alignment: Alignment.bottomCenter, child: Container(height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"))))))),
+                       ],
+                     ),),
+                 ),
+               )).toList()
+           ),
+
          ],
        );
       return Wrap(
