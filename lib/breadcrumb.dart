@@ -14,8 +14,8 @@ class BreadCrumb extends StatefulWidget {
 class _BreadCrumbState extends State<BreadCrumb> {
   @override
   Widget build(BuildContext context) {
-    return  Container(height: 50,width: MediaQuery.of(context).size.width,
-      child: ListView.builder(shrinkWrap: true,scrollDirection: Axis.horizontal,
+    return  Container(height: 40,
+      child: ListView.builder(padding: EdgeInsets.zero,shrinkWrap: true,scrollDirection: Axis.horizontal,
         itemCount: widget.arrays.length,
 
         itemBuilder: (context, index) {
@@ -23,7 +23,10 @@ class _BreadCrumbState extends State<BreadCrumb> {
 
 
             //widget.onClick(widget.arraysid[index]);
-          },child: Text(widget.arrays[index]==""?"Home":widget.arrays[index],)),Container(margin: EdgeInsets.only(left: 15,right: 15),height: 20,width: 1,color: Colors.grey,),],);
+          },child: Padding(
+            padding:  EdgeInsets.only(left: 15),
+            child: Text(widget.arrays[index]==""?"Home":widget.arrays[index],),
+          )), if(index<widget.arrays.length-1)Container(child: Icon(Icons.navigate_next_rounded),margin: EdgeInsets.only(left: 15,right: 15),height: 20,width: 1,),],);
         },
       ),
     );

@@ -19,7 +19,7 @@ class _ArticleState extends State<Article> {
       statusBarColor: Colors.transparent,
       statusBarIconBrightness:Brightness.light, // For Android (dark icons)
       statusBarBrightness:Brightness.dark,
-    ),child: Scaffold(body: Column(mainAxisAlignment: MainAxisAlignment.start,
+    ),child: Scaffold(body: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
       children: [
 
         Container(height: MediaQuery.of(context).size.height * 0.35,
@@ -44,11 +44,17 @@ class _ArticleState extends State<Article> {
             ],
           ),
         ),
-        Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
-        Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
-        Text(widget.id.get("c3")),
-        Text(widget.id.get("c4")),
-        Text(widget.id.get("c5")),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
+         if(widget.id.get("c1").toString().length>0)   Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
+            if(widget.id.get("c2").toString().length>0)    Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
+            if(widget.id.get("c3").toString().length>0)    Text(widget.id.get("c3")),
+            if(widget.id.get("c4").toString().length>0)    Text(widget.id.get("c4")),
+            if(widget.id.get("c5").toString().length>0)    Text(widget.id.get("c5")),
+          ],),
+        ),
+
       ],
     ),),);
     return Scaffold(body: Column(
