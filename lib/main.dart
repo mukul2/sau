@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:sau/DrawerProvider.dart';
 import 'package:sau/firebase_options.dart';
 
 import 'admin.dart';
@@ -18,6 +20,40 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    return   MultiProvider(
+      providers: [
+        ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
+
+      ],
+      child: MaterialApp(
+        theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
+          // width: 0.0 produces a thin "hairline" border
+          borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 1.0),
+        ),
+            enabledBorder:  OutlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 1.0),
+            ),
+            disabledBorder:   OutlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 1.0),
+            ),
+            focusedBorder:    OutlineInputBorder(
+              // width: 0.0 produces a thin "hairline" border
+              borderSide:  BorderSide(color: Colors.blue, width: 1.0),
+            ),floatingLabelBehavior: FloatingLabelBehavior.always)),
+        title: 'Sau direcory',
+        // Start the app with the "/" named route. In this case, the app starts
+        // on the FirstScreen widget.
+        initialRoute: '/',
+        routes: {
+          // When navigating to the "/" route, build the FirstScreen widget.
+          '/': (context) => const Home(),
+          // When navigating to the "/second" route, build the SecondScreen widget.
+          '/admin': (context) => const Admin(),
+        },
+      ),);
     return   MaterialApp(theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
       // width: 0.0 produces a thin "hairline" border
       borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 1.0),

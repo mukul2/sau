@@ -19,7 +19,7 @@ class _ArticlesState extends State<Articles> {
         stream:st,
         builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
           if (snapshot.hasData) {
-            return ListView.separated(shrinkWrap: true,
+            return snapshot.data!.docs.length>0? ListView.separated(shrinkWrap: true,
               itemCount: snapshot.data!.docs.length,
 
               itemBuilder: (context, index) {
@@ -39,7 +39,7 @@ class _ArticlesState extends State<Articles> {
                   title: Text(snapshot.data!.docs[index].get("c1")),
                 );
               }, separatorBuilder: (BuildContext context, int index) { return Container(width: double.infinity,height: 0.5,color: Colors.grey,); },
-            );
+            ):Center(child: Text("No articles"),);
           }
           else {
             return Scaffold(body: CircularProgressIndicator());}

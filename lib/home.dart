@@ -57,6 +57,7 @@ class _HomeState extends State<Home> {
                });
              },),
            ],),
+           Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),margin: EdgeInsets.symmetric(vertical: 3),),
            StreamBuilder<QuerySnapshot>(
                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("parent", isEqualTo:allCatrID.last ).snapshots(),
                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
