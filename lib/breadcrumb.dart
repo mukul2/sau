@@ -19,7 +19,7 @@ class _BreadCrumbState extends State<BreadCrumb> {
         itemCount: widget.arrays.length,
 
         itemBuilder: (context, index) {
-          return Row(children: [InkWell( onTap: (){
+          return Row(crossAxisAlignment: CrossAxisAlignment.center,children: [InkWell( onTap: (){
 
 
             //widget.onClick(widget.arraysid[index]);

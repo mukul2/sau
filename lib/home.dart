@@ -63,7 +63,7 @@ class _HomeState extends State<Home> {
       child: Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(height: 59,
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(onPressed: (){
                   _key.currentState!.openDrawer();
@@ -78,7 +78,7 @@ class _HomeState extends State<Home> {
           Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
         ],
       ),
-    ),),body:Stack(
+    ),),backgroundColor: Colors.white,body:Stack(
       children: [
         StreamBuilder<QuerySnapshot>(
   stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("parent",isEqualTo:allCatrID.last) .snapshots(),
@@ -86,51 +86,78 @@ class _HomeState extends State<Home> {
          if (snapshot.hasData) {
            return   Column(
              children: [
-           if( (allCatr.length>1))    Row(
-                 children: [
-                 (allCatr.length>1)?   InkWell( onTap: (){
-                   allCatrID.removeLast();
-                   allCatr.removeLast();
-                   setState(() {
+           if( (allCatr.length>1))    Container(color: Colors.grey.withOpacity(0.1),
+             child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                   children: [
+                   (allCatr.length>1)?   InkWell( onTap: (){
+                     allCatrID.removeLast();
+                     allCatr.removeLast();
+                     setState(() {
 
-                   });
-                 },
-                   child: Padding(
-                     padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.1),
-                     child: Row(
-                       children: [
-                         Icon(Icons.navigate_before,color: Colors.blue),
-                         Text("Back",style: TextStyle(color: Colors.blue),)
-                       ],
+                     });
+                   },
+                     child: Padding(
+                       padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.1),
+                       child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                         children: [
+                           Icon(Icons.navigate_before,color: Colors.blue),
+                           Text("Back",style: TextStyle(color: Colors.blue),)
+                         ],
+                       ),
                      ),
-                   ),
-                 ):Container(height: 0,width: 0,),
+                   ):Container(height: 0,width: 0,),
 
-             if(false)   (allCatr.length>1)? IconButton(onPressed: (){
-                   setState(() {
+               if(false)   (allCatr.length>1)? IconButton(onPressed: (){
+                     setState(() {
 
 
-                   });
-                   allCatrID.removeLast();
-                   allCatr.removeLast();
+                     });
+                     allCatrID.removeLast();
+                     allCatr.removeLast();
 
-                 }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
-                 BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
-                   setState(() {
-                     for(int i = 0 ; i < allCatrID.length ; i++){
-                       if(allCatrID[i]==d){
-                         allCatr.removeAt(i);
-                         allCatrID.removeAt(i);
-                         break;
-                       }else{
-                         allCatr.removeAt(i);
-                         allCatrID.removeAt(i);
+                   }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+                   BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
+                     setState(() {
+                       for(int i = 0 ; i < allCatrID.length ; i++){
+                         if(allCatrID[i]==d){
+                           allCatr.removeAt(i);
+                           allCatrID.removeAt(i);
+                           break;
+                         }else{
+                           allCatr.removeAt(i);
+                           allCatrID.removeAt(i);
+                         }
                        }
-                     }
-                   });
-                 },),
-               ],),
+                     });
+                   },),
+                 ],),
+           ),
                if( (allCatr.length>1))     Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
+               GridView(shrinkWrap: true,
+                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 3, mainAxisSpacing: 16),
+                   children:  snapshot.data!.docs.map((e) => Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: InkWell( onTap: (){
+
+
+                       allCatrID.add(e.id);
+                       allCatr.add(e.get("name"));
+
+                       setState(() {
+
+                       });
+                     },
+                       child: ClipRRect(borderRadius: BorderRadius.circular(4),
+                         //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                         child: Stack(
+                           children: [
+                             Align(alignment: Alignment.bottomCenter,child: Image.network(e.get("img"),fit: BoxFit.cover,width:  MediaQuery.of(context).size.width * 0.33,height: MediaQuery.of(context).size.width * 0.33,)),
+                             Align(alignment: Alignment.bottomCenter, child: Container(height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"))))))),
+                           ],
+                         ),),
+                     ),
+                   )).toList()
+               ),
                StreamBuilder<QuerySnapshot>(
                    stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("parent", isEqualTo:allCatrID.last ).snapshots(),
                    builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
@@ -195,31 +222,7 @@ class _HomeState extends State<Home> {
                        return Scaffold(body: CircularProgressIndicator());}
                    }),
 
-               GridView(shrinkWrap: true,
-                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 3, mainAxisSpacing: 16),
-                   children:  snapshot.data!.docs.map((e) => Padding(
-                     padding: const EdgeInsets.all(8.0),
-                     child: InkWell( onTap: (){
 
-
-                         allCatrID.add(e.id);
-                         allCatr.add(e.get("name"));
-
-                       setState(() {
-
-                       });
-                     },
-                       child: ClipRRect(borderRadius: BorderRadius.circular(4),
-                         //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                         child: Stack(
-                           children: [
-                             Align(alignment: Alignment.bottomCenter,child: Image.network(e.get("img"),fit: BoxFit.cover,width:  MediaQuery.of(context).size.width * 0.33,height: MediaQuery.of(context).size.width * 0.33,)),
-                             Align(alignment: Alignment.bottomCenter, child: Container(height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"))))))),
-                           ],
-                         ),),
-                     ),
-                   )).toList()
-               ),
 
              ],
            );
