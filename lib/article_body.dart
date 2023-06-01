@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,7 @@ class _ArticleState extends State<Article> {
                       Container(height: (MediaQuery.of(context).viewPadding.top)*2.5,),
                       Container(height: MediaQuery.of(context).size.height * 0.35,
                         child: Stack(children: [
-                       widget.id.get("photo1").toString().length==0? Container(height: 0,width: 0,) : Image.network(widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.35,fit: BoxFit.cover,),
+                       widget.id.get("photo1").toString().length==0? Container(height: 0,width: 0,) : CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.35,fit: BoxFit.fitHeight,),
                          widget.id.get("photo2").toString().length==0? Container(height: 0,width: 0,) :  Align(alignment: Alignment.center ,child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),child: Image.network(widget.id.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,))),
 
                         ],),
@@ -100,8 +101,8 @@ class _ArticleState extends State<Article> {
                 if(widget.id.get("c1").toString().length>0)   Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
 
 
-                if(widget.id.get("c2").toString().length>0)    Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
-                if(widget.id.get("c3").toString().length>0)    Text(widget.id.get("c3")),
+                if(widget.id.get("c2").toString().length>0)    Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.04),),
+                if(widget.id.get("c3").toString().length>0)    Text(widget.id.get("c3"),style: TextStyle(fontStyle: FontStyle.italic,fontSize:MediaQuery.of(context).size.width * 0.03),),
                 if(widget.id.get("c4").toString().length>0)    Text(widget.id.get("c4")),
                 if(widget.id.get("c5").toString().length>0)    Text(widget.id.get("c5")),
 
