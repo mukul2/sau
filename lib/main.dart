@@ -8,6 +8,7 @@ import 'admin.dart';
 import 'home.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -24,7 +25,6 @@ class MyApp extends StatelessWidget {
     return   MultiProvider(
       providers: [
         ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
-
       ],
       child: MaterialApp(
         theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
