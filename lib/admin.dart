@@ -94,7 +94,41 @@ class _AdminState extends State<Admin> {
                     else {
                       return Scaffold(body: CircularProgressIndicator());}
                   });
-            }else return Articles(parent: "",);
+            }else return StreamBuilder<QuerySnapshot>(
+                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").orderBy("created_at").snapshots(),
+                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                  if (snapshot.hasData) {
+                    return snapshot.data!.docs.length>0? ListView.separated(shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+
+                      itemBuilder: (context, index) {
+                        return ListTile(trailing: IconButton(onPressed: (){
+                          snapshot.data!.docs[index].reference.delete();
+
+                        },icon: Icon(Icons.delete),),
+                          subtitle: snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                            stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                            builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshotN,) {
+                              if (snapshotN.hasData) {
+                                try{
+                                  return Text(snapshotN.data!.get("name"));
+                                }catch(e){
+                                  return Text(snapshot.data!.docs[index].get("parent"));
+                                }
+
+
+                              }
+                              else {
+                                return Scaffold(body: CircularProgressIndicator());}
+                            }):Text("--") ,
+                          title: Text(snapshot.data!.docs[index].get("c1")),
+                        );
+                      }, separatorBuilder: (BuildContext context, int index) { return Container(width: double.infinity,height: 0.5,color: Colors.grey,); },
+                    ):Center(child: Text("No articles"),);
+                  }
+                  else {
+                    return Scaffold(body: CircularProgressIndicator());}
+                });
           },
         ),
       ),
