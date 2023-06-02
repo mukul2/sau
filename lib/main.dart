@@ -5,6 +5,7 @@ import 'package:sau/DrawerProvider.dart';
 import 'package:sau/Signup.dart';
 import 'package:sau/firebase_options.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sau/tokenPage.dart';
 
 import 'admin.dart';
 import 'home.dart';
@@ -51,10 +52,11 @@ class MyApp extends StatelessWidget {
         title: 'Sau direcory',
         // Start the app with the "/" named route. In this case, the app starts
         // on the FirstScreen widget.
-        initialRoute: '/',
+        initialRoute: '/sharecode',
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
           '/': (context) => const Home(),
+          '/sharecode': (context) => const TokenPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/admin': (context) => const Admin(),
           '/signup': (context) => const SignUP(),

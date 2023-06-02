@@ -35,6 +35,21 @@ class TempProvider extends ChangeNotifier {
   set userInfo(DocumentSnapshot? value) {
     _userInfo = value;
   }
+  String? _currentShareCode ;
+
+  String? get currentShareCode => _currentShareCode;
+
+  set currentShareCode(String? value) {
+    _currentShareCode = value;
+  }
+
+  String? _currentShareCodeCustomer;
+
+  String? get currentShareCodeCustomer => _currentShareCodeCustomer;
+
+  set currentShareCodeCustomer(String? value) {
+    _currentShareCodeCustomer = value;
+  }
 
 
 

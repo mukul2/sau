@@ -6,8 +6,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:sau/utils.dart';
 
+import 'DrawerProvider.dart';
 import 'article_body.dart';
 import 'articles.dart';
 import 'breadcrumb.dart';
@@ -99,7 +101,7 @@ class _HomeState extends State<Home> {
           children: [
             Container(height: AppBar().preferredSize.height+MediaQuery.of(context).viewPadding.top,),
             StreamBuilder<QuerySnapshot>(
-                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("parent",isEqualTo:allCatrID.last) .snapshots(),
+                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .snapshots(),
                 builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                   if (snapshot.hasData) {
                     return   Column(
@@ -204,7 +206,7 @@ class _HomeState extends State<Home> {
                     return Scaffold(body: CircularProgressIndicator());}
                 }),
             StreamBuilder<QuerySnapshot>(
-                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("parent", isEqualTo:allCatrID.last ).snapshots(),
+                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent", isEqualTo:allCatrID.last ).snapshots(),
                 builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                   if (snapshot.hasData) {
                     return ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),padding: EdgeInsets.zero,
