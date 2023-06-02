@@ -40,7 +40,8 @@ class _HomeState extends State<Home> {
         isDrawerOpen = d;
       });
 
-    },key: _key, drawer: Card( margin: EdgeInsets.zero,
+    },
+     key: _key, drawer: Card( margin: EdgeInsets.zero,
       child: Container(color: Colors.white,width:MediaQuery.of(context).size.width * 0.7 ,
         child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
 
