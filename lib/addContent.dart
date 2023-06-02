@@ -4,9 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sau/utils.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
+
+import 'DrawerProvider.dart';
 class AddContent extends StatefulWidget {
   const AddContent({Key? key}) : super(key: key);
 
@@ -127,15 +130,16 @@ class _AddCategoryState extends State<AddContent> {
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: const Text('Select folder'),
+                    //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
                     content: StreamBuilder<QuerySnapshot>(
-                        stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").snapshots(),
+                        stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
                         builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                           if (snapshot.hasData) {
                             // return  Text(snapshot.data!.docs.length.toString());
 
                             return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
                               parentategoryId =e.id;
-                              Navigator.of(context);
+                              Navigator.of(context).pop();
 
                             },child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(borderRadius: BorderRadius.circular(2),border: Border.all()),
                               child: Padding(
@@ -207,7 +211,7 @@ class _AddCategoryState extends State<AddContent> {
 
 
 
-              FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add({"photo1":li1,"photo2":li2,"created_at":DateTime.now().microsecondsSinceEpoch,"parent":parentategoryId,"c1":category.text,"c2":category2.text,"c3":category3.text,"c4":category4.text,"c5":category5.text,
+              FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add({"orgParent":Provider.of<TempProvider>(context, listen: false).companyInfo!.id,"photo1":li1,"photo2":li2,"created_at":DateTime.now().microsecondsSinceEpoch,"parent":parentategoryId,"c1":category.text,"c2":category2.text,"c3":category3.text,"c4":category4.text,"c5":category5.text,
                 });
               parentategoryId = "";
               category.text = "";

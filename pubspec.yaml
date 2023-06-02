@@ -44,6 +44,8 @@ dependencies:
   firebase_storage: ^11.2.2
   provider: ^6.0.5
   cached_network_image: ^3.2.3
+  google_fonts:
+  firebase_auth: ^4.6.2
 
 dev_dependencies:
   flutter_test:
@@ -86,7 +88,7 @@ flutter:
   fonts:
       - family: Nexa
         fonts:
-          - asset: assets/nexab.ttf
+          - asset: assets/neh.ttf
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

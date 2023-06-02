@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/DrawerProvider.dart';
+import 'package:sau/Signup.dart';
 import 'package:sau/firebase_options.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'admin.dart';
 import 'home.dart';
@@ -25,23 +27,26 @@ class MyApp extends StatelessWidget {
     return   MultiProvider(
       providers: [
         ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
+        ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
       ],
       child: MaterialApp(
-        theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
+        theme: ThemeData(
+            fontFamily: 'Nexa',
+            inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
           // width: 0.0 produces a thin "hairline" border
-          borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 1.0),
+          borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(2),
         ),
             enabledBorder:  OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 1.0),
+              borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(2),
             ),
             disabledBorder:   OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 1.0),
+              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 0.5),borderRadius: BorderRadius.circular(2),
             ),
             focusedBorder:    OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.blue, width: 1.0),
+              borderSide:  BorderSide(color: Colors.blue, width: 1),borderRadius: BorderRadius.circular(2),
             ),floatingLabelBehavior: FloatingLabelBehavior.always)),
         title: 'Sau direcory',
         // Start the app with the "/" named route. In this case, the app starts
@@ -52,6 +57,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const Home(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/admin': (context) => const Admin(),
+          '/signup': (context) => const SignUP(),
         },
       ),);
     return   MaterialApp(theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
