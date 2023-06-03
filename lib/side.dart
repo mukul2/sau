@@ -168,9 +168,9 @@ class _ScreensExample extends StatelessWidget {
       builder: (context, child) {
         final pageTitle = _getTitleByIndex(controller.selectedIndex);
         switch (controller.selectedIndex) {
-          case 0:
-            return true?AllCategory(): CategoryHome();
           case 1:
+            return true?AllCategory(): CategoryHome();
+          case 2:
             return true?AllDi(): CategoryHome();
           default:
             return pageTitle;
