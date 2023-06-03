@@ -20,6 +20,13 @@ class DrawerProviderProvider extends ChangeNotifier {
 
 
 class TempProvider extends ChangeNotifier {
+  String? _shareCode;
+
+  String? get shareCode => _shareCode;
+
+  set shareCode(String? value) {
+    _shareCode = value;
+  }
   QueryDocumentSnapshot? _companyInfo;
 
   QueryDocumentSnapshot? get companyInfo => _companyInfo;

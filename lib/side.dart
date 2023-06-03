@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sau/CategoryHome.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import 'All_category.dart';
+import 'DrawerProvider.dart';
 
 void main() {
   runApp(SidebarXExampleApp());
@@ -113,7 +115,16 @@ class ExampleSidebarX extends StatelessWidget {
         );
       },
       items: [
+
+
+
         SidebarXItem(
+          icon: Icons.qr_code,
+          label: Provider.of<TempProvider>(context, listen: false).companyInfo!.get("shareCode"),
+          // onTap: () {
+          //   debugPrint('Home');
+          // },
+        ), SidebarXItem(
           icon: Icons.home,
           label: 'Category',
           // onTap: () {
