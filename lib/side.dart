@@ -119,12 +119,6 @@ class ExampleSidebarX extends StatelessWidget {
 
 
         SidebarXItem(
-          icon: Icons.qr_code,
-          label: Provider.of<TempProvider>(context, listen: false).companyInfo!.get("shareCode"),
-          // onTap: () {
-          //   debugPrint('Home');
-          // },
-        ), SidebarXItem(
           icon: Icons.home,
           label: 'Category',
           // onTap: () {
@@ -145,6 +139,13 @@ class ExampleSidebarX extends StatelessWidget {
           onTap: () {
             FirebaseAuth.instance.signOut();
           },
+        ),
+        SidebarXItem(
+          icon: Icons.qr_code,
+          label: Provider.of<TempProvider>(context, listen: false).companyInfo!.get("shareCode"),
+          // onTap: () {
+          //   debugPrint('Home');
+          // },
         ),
 
       ],
@@ -168,9 +169,9 @@ class _ScreensExample extends StatelessWidget {
       builder: (context, child) {
         final pageTitle = _getTitleByIndex(controller.selectedIndex);
         switch (controller.selectedIndex) {
-          case 1:
+          case 0:
             return true?AllCategory(): CategoryHome();
-          case 2:
+          case 1:
             return true?AllDi(): CategoryHome();
           default:
             return pageTitle;
