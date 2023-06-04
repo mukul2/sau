@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/drawer.dart';
 import 'package:sau/side.dart';
+import 'package:sau/superAdmin.dart';
 import 'package:sau/utils.dart';
 
 import 'All_category.dart';
@@ -14,7 +15,7 @@ import 'DrawerProvider.dart';
 import 'addCategory.dart';
 import 'addContent.dart';
 import 'articles.dart';
-
+enum adminType {admin,superAdmin}
 class Admin extends StatefulWidget {
   const Admin({Key? key}) : super(key: key);
 
@@ -24,6 +25,7 @@ class Admin extends StatefulWidget {
 
 class _AdminState extends State<Admin> {
   bool loggedIn = false;
+  adminType at = adminType.admin;
   @override
   void initState() {
     // TODO: implement initState
@@ -40,6 +42,18 @@ class _AdminState extends State<Admin> {
       } else {
         setState(() {
           loggedIn = true;
+
+        });
+        FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+          try{
+            if(value.get("type")=="admin"){
+              at = adminType.superAdmin;
+
+            }
+          }catch(e){
+
+          }
         });
         print('User is signed in!');
       }
@@ -48,25 +62,40 @@ class _AdminState extends State<Admin> {
   }
   TextEditingController email  = TextEditingController(text: "");
   TextEditingController password  = TextEditingController(text: "");
-  Future<int> work() async {
+
+  Future<adminType> work() async {
+
     var d = await FirebaseFirestore.instance.collection("company").where("adminUid",isEqualTo: FirebaseAuth.instance.currentUser!.uid).get();
-    Provider.of<TempProvider>(context, listen: false).companyInfo =  d.docs.first;
-    var d2 =await  FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get();
-    Provider.of<TempProvider>(context, listen: false).userInfo = d2;
-    print("return now");
-    return 1;
+    //d
+    // try{
+    //   if(d.docs.first.get("type")=="admin"){
+    //     at =  adminType.superAdmin ;
+    //     return at;
+    //   }
+    // }catch(e){
+    //
+    // }
+   try{
+     Provider.of<TempProvider>(context, listen: false).companyInfo =  d.docs.first;
+     var d2 =await  FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get();
+     Provider.of<TempProvider>(context, listen: false).userInfo = d2;
+     print("return now");
+   }catch(e){}
+    return at;
   }
   @override
   Widget build(BuildContext context) {
 
-   return loggedIn?FutureBuilder<void>(
+   return loggedIn? at == adminType.admin? FutureBuilder<adminType>(
     future: work(),
     // If the user is already signed-in, use it as initial data
     builder: (context, snapshot) {
-    if(snapshot.hasData)
+    if(snapshot.hasData && snapshot.data! ==adminType.admin )
     return SidebarXExampleApp();
+    else  if(snapshot.hasData && snapshot.data! ==adminType.superAdmin )
+      return  xplore_admin();
     else return Center(child: CupertinoActivityIndicator(),);
-    }):Scaffold(body: Center(child: Card(
+    }):xplore_admin():Scaffold(body: Center(child: Card(
      child: Container(width: 450,
        child: Padding(
          padding: const EdgeInsets.all(20.0),

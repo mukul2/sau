@@ -14,7 +14,7 @@ class TokenPage extends StatefulWidget {
 
 class _TokenPageState extends State<TokenPage> {
   bool progress = false;
-  TextEditingController controller = TextEditingController();
+  TextEditingController controller = TextEditingController(text: "ZWNSP");
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(

@@ -20,6 +20,14 @@ class DrawerProviderProvider extends ChangeNotifier {
 
 
 class TempProvider extends ChangeNotifier {
+  Map<String,dynamic>_allData ={};
+
+  Map<String,dynamic> get allData => _allData;
+
+  set allData(Map<String,dynamic> value) {
+    _allData = value;
+  }
+
   String? _shareCode;
 
   String? get shareCode => _shareCode;

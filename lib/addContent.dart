@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 import 'DrawerProvider.dart';
+
 class AddContent extends StatefulWidget {
   const AddContent({Key? key}) : super(key: key);
 
@@ -23,7 +24,8 @@ class _AddCategoryState extends State<AddContent> {
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
   List<TextEditingController> allControlller = [];
-  Map<String,dynamic>allData ={};
+  List<Widget>allField = [];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -35,6 +37,23 @@ class _AddCategoryState extends State<AddContent> {
     category5 =  TextEditingController(text:"");
     parentategoryId = "";
     parentategoryname = "";
+
+    FirebaseFirestore.instance.collection("sau_datatype").get().then((value) {
+
+      for(int i = 0 ; i < value.docs.length ; i++){
+        allField.add(Padding(
+          padding:  EdgeInsets.all(8.0),
+          child: TextFormField(
+            //controller: c,
+            onChanged: (String s){
+            Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = s;
+          },decoration: InputDecoration(label: Text( value.docs[i].get("value"))),),
+        ));
+      }
+      setState(() {
+
+      });
+    });
   }
   @override
   Widget build(BuildContext context) {
@@ -44,10 +63,14 @@ class _AddCategoryState extends State<AddContent> {
     // TextEditingController category4 =  TextEditingController();
     // TextEditingController category5 =  TextEditingController();
     // String parentategoryId = "";
+
+     Column(
+      //shrinkWrap: true,
+      children: allField,);
     return Stack(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding:  EdgeInsets.all(20.0),
           child: SingleChildScrollView(
             child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
               Row(
@@ -60,7 +83,11 @@ class _AddCategoryState extends State<AddContent> {
 
 
 
-              FutureBuilder<QuerySnapshot>(
+
+              Column(
+                //shrinkWrap: true,
+                children: allField,),
+             if(false) FutureBuilder<QuerySnapshot>(
                   future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
 
@@ -75,7 +102,7 @@ class _AddCategoryState extends State<AddContent> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(controller: c,onChanged: (String s){
-                              allData[ snapshotC.data!.docs[index].get("key")] = s;
+                              Provider.of<TempProvider>(context, listen: false).allData[ snapshotC.data!.docs[index].get("key")] = s;
                             },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
                           );
                         }catch(e){
@@ -143,7 +170,7 @@ class _AddCategoryState extends State<AddContent> {
                                   return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
                                     parentategoryId =e.id;
                                     parentategoryname =e.get("name");
-                                    setState(() {
+                                   setState(() {
 
                                     });
                                     Navigator.of(context).pop();
@@ -354,14 +381,14 @@ class _AddCategoryState extends State<AddContent> {
 
 
 
-                allData["orgParent"] = Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
-                allData["photo1"] = li1;
-                allData["photo2"] = li2;
-                allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
-                allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
-                allData["parent"] = parentategoryId;
+                Provider.of<TempProvider>(context, listen: false).allData["orgParent"] = Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
+                Provider.of<TempProvider>(context, listen: false).allData["photo1"] = li1;
+                Provider.of<TempProvider>(context, listen: false).allData["photo2"] = li2;
+                Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                Provider.of<TempProvider>(context, listen: false). allData["parent"] = parentategoryId;
 
-                FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add(allData);
+                FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add(Provider.of<TempProvider>(context, listen: false).allData);
                 parentategoryId = "";
                 category.text = "";
                 setState(() {
@@ -728,7 +755,7 @@ class _EditContentState extends State<EditContent> {
                 String li1 = "";
                 String li2 = "";
                 if(photo1==null){
-
+                  li1 = link1;
                 }else{
                   String fileName ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
                   firebase_storage.Reference ref = storage.ref(fileName);
@@ -736,7 +763,7 @@ class _EditContentState extends State<EditContent> {
                   li1 = await  ref.getDownloadURL();
                 }
                 if(photo2==null){
-
+                  li2 = link2;
                 }else{
                   String fileName2 ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
                   firebase_storage.Reference ref2 = storage.ref(fileName2);

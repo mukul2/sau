@@ -6,6 +6,7 @@ import 'package:sau/Signup.dart';
 import 'package:sau/firebase_options.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sau/side.dart';
+import 'package:sau/superAdmin.dart';
 import 'package:sau/tokenPage.dart';
 
 import 'admin.dart';
@@ -36,19 +37,19 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Nexa',
             inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
           // width: 0.0 produces a thin "hairline" border
-          borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(2),
+          borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(4),
         ),
             enabledBorder:  OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(2),
+              borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(4),
             ),
             disabledBorder:   OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 0.5),borderRadius: BorderRadius.circular(2),
+              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 0.5),borderRadius: BorderRadius.circular(4),
             ),
             focusedBorder:    OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.blue, width: 1),borderRadius: BorderRadius.circular(2),
+              borderSide:  BorderSide(color: Colors.blue, width: 1),borderRadius: BorderRadius.circular(4),
             ),floatingLabelBehavior: FloatingLabelBehavior.always)),
         title: 'Sau direcory',
         // Start the app with the "/" named route. In this case, the app starts
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
           '/sharecode': (context) => const TokenPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/admin': (context) =>  Admin(),
+          '/manage': (context) =>  xplore_admin(),
           '/signup': (context) => const SignUP(),
         },
       ),);
