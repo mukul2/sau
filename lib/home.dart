@@ -233,9 +233,44 @@ class _HomeState extends State<Home> {
                                     height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,),),
                                 ),
 
-                                Expanded(
-                                  child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                                FutureBuilder<QuerySnapshot>(
+                                    future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
+
+                                      if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
+                                        return  ListView.builder(shrinkWrap: true,
+                                          itemCount: snapshotC.data!.docs.length,
+                                          itemBuilder: (BuildContext context, int index) {
+
+                                            try{
+                                              return  Text( snapshotC.data!.docs[index].get("value").toString());
+
+                                              // return Padding(
+                                              //   padding: const EdgeInsets.all(8.0),
+                                              //   child: TextFormField(controller: c,onChanged: (String s){
+                                              //     allData[ snapshotC.data!.docs[index].get("key")] = s;
+                                              //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                                              // );
+                                            }catch(e){
+                                              return Text("--");
+                                            }
+
+                                          },
+                                          //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                                        );
+
+                                        //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
+                                      }else{
+                                        return Text("--");
+
+                                      }
+                                    }),
+
+                               if(false) Expanded(
+                                  child:  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+
+
                                       Text(snapshot.data!.docs[index].get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
                                       Text(snapshot.data!.docs[index].get("c2"),maxLines: 2,style: TextStyle(color: Colors.grey),),
 

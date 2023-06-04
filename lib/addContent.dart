@@ -22,6 +22,8 @@ class _AddCategoryState extends State<AddContent> {
   Uint8List? photo2 ;
   final ImagePicker _picker = ImagePicker();
   bool isLoading = false;
+  List<TextEditingController> allControlller = [];
+  Map<String,dynamic>allData ={};
   @override
   void initState() {
     // TODO: implement initState
@@ -58,9 +60,43 @@ class _AddCategoryState extends State<AddContent> {
 
 
 
+              FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
+
+                    if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
+                      return  ListView.builder(shrinkWrap: true,
+                        itemCount: snapshotC.data!.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
+
+                        try{
+                          TextEditingController c = TextEditingController();
+                          allControlller.add(c);
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(controller: c,onChanged: (String s){
+                              allData[ snapshotC.data!.docs[index].get("key")] = s;
+                            },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                          );
+                        }catch(e){
+                          return Text("--");
+                        }
+
+                        },
+                      //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                      );
+
+                    //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
+                    }else{
+                      return Text("--");
+
+                    }
+                  }),
 
 
 
+
+/*
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(controller: category,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
@@ -81,6 +117,7 @@ class _AddCategoryState extends State<AddContent> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(controller: category5,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
               ),
+              */
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.blue,width: 0.5),borderRadius: BorderRadius.circular(4)),child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,10 +354,14 @@ class _AddCategoryState extends State<AddContent> {
 
 
 
+                allData["orgParent"] = Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
+                allData["photo1"] = li1;
+                allData["photo2"] = li2;
+                allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                allData["parent"] = parentategoryId;
 
-
-                FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add({"orgParent":Provider.of<TempProvider>(context, listen: false).companyInfo!.id,"photo1":li1,"photo2":li2,"created_at":DateTime.now().microsecondsSinceEpoch,"parent":parentategoryId,"c1":category.text,"c2":category2.text,"c3":category3.text,"c4":category4.text,"c5":category5.text,
-                  });
+                FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add(allData);
                 parentategoryId = "";
                 category.text = "";
                 setState(() {

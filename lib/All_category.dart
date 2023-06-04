@@ -815,96 +815,98 @@ class _AllDiyState extends State<AllDi> {
       });
 
       for(int i = 0 ; i < event.docs.length ; i++){
-        listWidgets.add(TextButton(onPressed: (){
-          drawerKey.currentState!.showBottomSheet((context) => Container(
-              color: Colors.white,
-              height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
+        listWidgets.add(Container(height: 45,
+          child: TextButton(onPressed: (){
+            drawerKey.currentState!.showBottomSheet((context) => Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(onPressed: (){
-                                Navigator.pop(context);
-                              }, icon: Icon(Icons.arrow_back_rounded)),
-                            ],
-                          ),
-                          EditContent(ref:event.docs[i].reference ,data: event.docs[i].data() as Map<String,dynamic>,),
-
-
-
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, icon: Icon(Icons.arrow_back_rounded)),
+                              ],
+                            ),
+                            EditContent(ref:event.docs[i].reference ,data: event.docs[i].data() as Map<String,dynamic>,),
 
 
 
-                        ],
+
+
+
+                          ],
+                        ),
                       ),
-                    ),
 
+                    ],
+                  ),
+                ))));
+
+
+            if(false)  showBottomSheet(
+                context:context,
+                builder: (context) => Container(
+                    color: Colors.white,
+                    height: 500,child: Column(
+                  children: [
                   ],
-                ),
-              ))));
+                )));
 
+          }, child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Row(
+              children: [
+                Expanded(child: Center(child: Text(event.docs[i].get("name")==null?"--":event.docs[i].get("name")))),
+             if(false)   Expanded(child: Center(child: Text(event.docs[i].get("c2")))),
+                if(false)    Expanded(child: Center(child: Text(event.docs[i].get("c3")))),
+                Expanded(child: Center(child: event.docs[i].get("parent").toString().length>0?FutureBuilder<DocumentSnapshot>(
+                    future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(event.docs[i].get("parent")).get(),
+                    builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data!.get("name"));
 
-          if(false)  showBottomSheet(
-              context:context,
-              builder: (context) => Container(
-                  color: Colors.white,
-                  height: 500,child: Column(
-                children: [
-                ],
-              )));
-
-        }, child: Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Row(
-            children: [
-              Expanded(child: Center(child: Text(event.docs[i].get("c1")))),
-              Expanded(child: Center(child: Text(event.docs[i].get("c2")))),
-              Expanded(child: Center(child: Text(event.docs[i].get("c3")))),
-              Expanded(child: Center(child: event.docs[i].get("parent").toString().length>0?FutureBuilder<DocumentSnapshot>(
-                  future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(event.docs[i].get("parent")).get(),
-                  builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data!.get("name"));
-
-                    }
-                    else {
-                      return Scaffold(body: CircularProgressIndicator());}
-                  }): Text("--"))),
+                      }
+                      else {
+                        return Scaffold(body: CircularProgressIndicator());}
+                    }): Text("--"))),
 
 
 
-              //
-              //
-              // Container(margin: EdgeInsets.symmetric(horizontal: 10),width: 50,child:event.docs[i].get("img").toString().length>0?
-              // Image.network(event.docs[i].get("img"),height: 40,width: 40,)  :  Text( "--")),
-              // Expanded(
-              //   child: Padding(
-              //     padding:  EdgeInsets.symmetric(horizontal: 10),
-              //     child: Text(event.docs[i].get("name")),
-              //   ),
-              // ),
-              // Expanded(
-              //   child: event.docs[i].get("parent").toString().length>0?FutureBuilder<DocumentSnapshot>(
-              //       future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(event.docs[i].get("parent")).get(),
-              //       builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-              //         if (snapshot.hasData) {
-              //           return Text(snapshot.data!.get("name"));
-              //
-              //         }
-              //         else {
-              //           return Text("--");}
-              //       }): Text("--"),
-              // ),
-            ],
-          ),
-        )));
+                //
+                //
+                // Container(margin: EdgeInsets.symmetric(horizontal: 10),width: 50,child:event.docs[i].get("img").toString().length>0?
+                // Image.network(event.docs[i].get("img"),height: 40,width: 40,)  :  Text( "--")),
+                // Expanded(
+                //   child: Padding(
+                //     padding:  EdgeInsets.symmetric(horizontal: 10),
+                //     child: Text(event.docs[i].get("name")),
+                //   ),
+                // ),
+                // Expanded(
+                //   child: event.docs[i].get("parent").toString().length>0?FutureBuilder<DocumentSnapshot>(
+                //       future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(event.docs[i].get("parent")).get(),
+                //       builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                //         if (snapshot.hasData) {
+                //           return Text(snapshot.data!.get("name"));
+                //
+                //         }
+                //         else {
+                //           return Text("--");}
+                //       }): Text("--"),
+                // ),
+              ],
+            ),
+          )),
+        ));
 
       }
       setState(() {
@@ -978,7 +980,7 @@ class _AllDiyState extends State<AllDi> {
 //             Container(height: 0.5,color: Colors.grey,width: double.infinity,),
 //           ],
 //         ),),
-          backgroundColor: Colors.white,key: drawerKey,body: true?ListView(shrinkWrap: true,children: listWidgets,): StreamBuilder<QuerySnapshot>(
+          backgroundColor: Colors.white,key: drawerKey,body: true?ListView(physics: AlwaysScrollableScrollPhysics(),shrinkWrap: true,children: listWidgets,) : StreamBuilder<QuerySnapshot>(
             stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
             builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
               if (snapshot.hasData) {
