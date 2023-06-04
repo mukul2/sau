@@ -48,27 +48,31 @@ class _AllCategoryState extends State<AllCategory> {
               ),
             ],
           )),
-          Row(
-            children: [
-              Container(margin: EdgeInsets.symmetric(horizontal: 10),width: 50),
-              Expanded(
-                child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 10),
-                  child: Text("Name"),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Container(margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),width: 50),
+                Expanded(
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("Name"),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 10),
-                  child: Text("Parent category"),
+                Expanded(
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("Parent category"),
+                  ),
                 ),
-              ),
 
-            ],
+              ],
+            ),
           ),
           Container(height: 0.5,color: Colors.grey,width: double.infinity,),
         ],
       ));
+      listWidgets.add(Container(height: 0.5,width: double.infinity,color: Colors.grey,));
       setState(() {
 
       });
@@ -798,18 +802,22 @@ class _AllDiyState extends State<AllDi> {
               ),
             ],
           )),
-          Row(
-            children: [
-              Expanded(child: Center(child: Text("--"))),
-              Expanded(child: Center(child: Text("--"))),
-              Expanded(child: Center(child: Text("--"))),
-              Expanded(child: Center(child: Text("Parent category."))),
+          Container(height: 50,
+            child: Row(
+              children: [
+                Expanded(child: Center(child: Text("--"))),
+                Expanded(child: Center(child: Text("--"))),
+                Expanded(child: Center(child: Text("--"))),
+                Expanded(child: Center(child: Text("Parent category."))),
 
-            ],
+              ],
+            ),
           ),
           Container(height: 0.5,color: Colors.grey,width: double.infinity,),
         ],
       ));
+      listWidgets.add(Container(height: 0.5,width: double.infinity,color: Colors.grey,));
+
       setState(() {
 
       });

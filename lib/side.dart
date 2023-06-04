@@ -25,7 +25,13 @@ class SidebarXExampleApp extends StatelessWidget {
     return Builder(
       builder: (context) {
         final isSmallScreen = MediaQuery.of(context).size.width < 600;
-        return Scaffold(
+        return Scaffold(appBar: isSmallScreen?PreferredSize(child: Container(child: Row(
+          children: [
+            IconButton(onPressed: (){
+              _key.currentState?.openDrawer();
+            }, icon: Icon(Icons.menu)),
+          ],
+        ),), preferredSize: AppBar().preferredSize):null,
           key: _key,
 
           drawer: ExampleSidebarX(controller: _controller),
