@@ -101,8 +101,8 @@ class _ManageFieldsState extends State<ManageFields> {
                     }
 
                   },child: Container(height: 50,width: 50,margin: EdgeInsets.all(5), child:wi1(allData[index])  ,)) ,
-                    key: Key('$index'),subtitle:Text('Item ${allData[index].get("order")}') ,
-                    title: Text('Item ${allData[index].get("value")}'),
+                    key: Key('$index'),subtitle:Text(' ${allData[index].get("order")}') ,
+                    title: Text(' ${allData[index].get("value")}'),
                   ),
               ],
               onReorder: (int oldIndex, int newIndex) {

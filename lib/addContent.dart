@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,7 +39,7 @@ class _AddCategoryState extends State<AddContent> {
     parentategoryId = "";
     parentategoryname = "";
 
-    FirebaseFirestore.instance.collection("sau_datatype").get().then((value) {
+    FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").get().then((value) {
 
       for(int i = 0 ; i < value.docs.length ; i++){
         allField.add(Padding(
@@ -47,7 +48,10 @@ class _AddCategoryState extends State<AddContent> {
             //controller: c,
             onChanged: (String s){
             Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = s;
-          },decoration: InputDecoration(label: Text( value.docs[i].get("value"))),),
+          },decoration: InputDecoration(suffixIcon:Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Image.memory(base64Decode(  value.docs[i].get("img")),width: 20,),
+          ),label: Text( value.docs[i].get("value"))),),
         ));
       }
       setState(() {
@@ -485,7 +489,7 @@ class _EditContentState extends State<EditContent> {
 
 
               FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                  future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").get() , // a previously-obtained Future<String> or null
                   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
 
                     if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
@@ -498,14 +502,20 @@ class _EditContentState extends State<EditContent> {
                             // allControlller.add(c);
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: TextFormField(initialValue: widget.data[snapshotC.data!.docs[index].get("key")],
-                               // controller: c,
-                                onChanged: (String s){
-                                widget.data[ snapshotC.data!.docs[index].get("key")] = s;
-                              },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: TextFormField(initialValue: widget.data[snapshotC.data!.docs[index].get("key")],
+                                 // controller: c,
+                                  onChanged: (String s){
+                                  widget.data[ snapshotC.data!.docs[index].get("key")] = s;
+                                },decoration: InputDecoration(suffixIcon:Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Image.memory(base64Decode( snapshotC.data!.docs[index].get("img")),width: 20,),
+                                ) ,label: Text( snapshotC.data!.docs[index].get("value")),),),
+                              ),
                             );
                           }catch(e){
-                            return Text("--");
+                            return Text(e.toString());
                           }
 
                         },
