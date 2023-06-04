@@ -67,43 +67,46 @@ class _AdminState extends State<Admin> {
     return SidebarXExampleApp();
     else return Center(child: CupertinoActivityIndicator(),);
     }):Scaffold(body: Center(child: Card(
-     child: Container(width: 400,
-       child: Wrap(
-         children: [
-           // Padding(
-           //   padding: const EdgeInsets.all(8.0),
-           //   child: Text("Login form",style: TextStyle(fontSize: 20),),
-           // ),
-           Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: TextFormField(controller: email,decoration: InputDecoration(label: Text("Email")),),
-           ),
-           Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: TextFormField(controller: password,decoration: InputDecoration(label: Text("Password")),),
-           ),
-           InkWell( onTap: (){
-             try{
-               FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text);
-             }catch(e){
-
-             }
-           },
-             child: Padding(
-               padding: const EdgeInsets.only(top: 8,right: 4,left: 4),
-               child: Card(color: Colors.blue,child: Center(child: Padding(
-                 padding: const EdgeInsets.all(8.0),
-                 child: Text("Login",style: TextStyle(color: Colors.white),),
-               ),),),
+     child: Container(width: 450,
+       child: Padding(
+         padding: const EdgeInsets.all(20.0),
+         child: Wrap(
+           children: [
+             // Padding(
+             //   padding: const EdgeInsets.all(8.0),
+             //   child: Text("Login form",style: TextStyle(fontSize: 20),),
+             // ),
+             Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: TextFormField(controller: email,decoration: InputDecoration(label: Text("Email")),),
              ),
-           ),
-           Padding(
-             padding: const EdgeInsets.all(8.0),
-             child: TextButton(onPressed: (){
-               Navigator.pushNamed(context, "/signup");
-             }, child: Center(child: Text("Signup & Create directory"),)),
-           )
-         ],
+             Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: TextFormField(controller: password,decoration: InputDecoration(label: Text("Password")),),
+             ),
+             InkWell( onTap: (){
+               try{
+                 FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text);
+               }catch(e){
+
+               }
+             },
+               child: Padding(
+                 padding: const EdgeInsets.only(top: 8,right: 4,left: 4),
+                 child: Card(color: Colors.blue,child: Center(child: Padding(
+                   padding: const EdgeInsets.all(8.0),
+                   child: Text("Login",style: TextStyle(color: Colors.white),),
+                 ),),),
+               ),
+             ),
+             Padding(
+               padding: const EdgeInsets.all(8.0),
+               child: TextButton(onPressed: (){
+                 Navigator.pushNamed(context, "/signup");
+               }, child: Center(child: Text("Signup & Create directory"),)),
+             )
+           ],
+         ),
        ),
      ),
    ),),);

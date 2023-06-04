@@ -97,7 +97,49 @@ class _ArticleState extends State<Article> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
+              child: true? FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
+
+                    if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
+                      return  Container(decoration: BoxDecoration(border: Border.all()),
+                        child: ListView.separated(shrinkWrap: true,
+                          itemCount: snapshotC.data!.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
+                          Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
+
+                            try{
+                              return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(snapshotC.data!.docs[index].get("value")),
+                                    Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
+                                  ],
+                                ),
+                              );
+
+                              // return Padding(
+                              //   padding: const EdgeInsets.all(8.0),
+                              //   child: TextFormField(controller: c,onChanged: (String s){
+                              //     allData[ snapshotC.data!.docs[index].get("key")] = s;
+                              //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                              // );
+                            }catch(e){
+                              return Text("--");
+                            }
+
+                          }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
+                          //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                        ),
+                      );
+
+                      //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
+                    }else{
+                      return Text("--");
+
+                    }
+                  }): Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
                 if(widget.id.get("c1").toString().length>0)   Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
 
 

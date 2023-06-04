@@ -155,7 +155,8 @@ class _HomeState extends State<Home> {
                         ),
                         if( (allCatr.length>1))     Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
                         GridView(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
                             children:  snapshot.data!.docs.map((e) => Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: InkWell( onTap: (){
@@ -233,7 +234,7 @@ class _HomeState extends State<Home> {
                                     height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,),),
                                 ),
 
-                                FutureBuilder<QuerySnapshot>(
+                                if(false)   FutureBuilder<QuerySnapshot>(
                                     future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
                                     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
 
@@ -266,12 +267,12 @@ class _HomeState extends State<Home> {
                                       }
                                     }),
 
-                               if(false) Expanded(
-                                  child:  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                                Expanded(
+                                  child:  true?Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),): Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
 
 
-                                      Text(snapshot.data!.docs[index].get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
+                                      Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
                                       Text(snapshot.data!.docs[index].get("c2"),maxLines: 2,style: TextStyle(color: Colors.grey),),
 
 

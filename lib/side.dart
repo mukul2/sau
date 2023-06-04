@@ -7,6 +7,7 @@ import 'package:sidebarx/sidebarx.dart';
 
 import 'All_category.dart';
 import 'DrawerProvider.dart';
+import 'company_info.dart';
 
 void main() {
   runApp(SidebarXExampleApp());
@@ -173,6 +174,8 @@ class _ScreensExample extends StatelessWidget {
             return true?AllCategory(): CategoryHome();
           case 1:
             return true?AllDi(): CategoryHome();
+          case 2:
+            return CompanyInfo();
           default:
             return pageTitle;
         }

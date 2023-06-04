@@ -393,7 +393,7 @@ class _AddCategoryState extends State<AddContent> {
 
 class EditContent extends StatefulWidget {
   DocumentReference ref;
-  Map data;
+  Map<String,dynamic> data;
   EditContent({required this.ref,required this.data});
 
   @override
@@ -422,11 +422,11 @@ class _EditContentState extends State<EditContent> {
     super.initState();
     setState(() {
        parentategoryname = "";
-       category =  TextEditingController(text: widget.data["c1"]);
-       category2 =  TextEditingController(text: widget.data["c2"]);
-       category3 =  TextEditingController(text: widget.data["c3"]);
-       category4 =  TextEditingController(text: widget.data["c4"]);
-       category5 =  TextEditingController(text: widget.data["c5"]);
+       // category =  TextEditingController(text: widget.data["c1"]);
+       // category2 =  TextEditingController(text: widget.data["c2"]);
+       // category3 =  TextEditingController(text: widget.data["c3"]);
+       // category4 =  TextEditingController(text: widget.data["c4"]);
+       // category5 =  TextEditingController(text: widget.data["c5"]);
        parentategoryId = widget.data["parent"];
        link1 = widget.data["photo1"];
        link2 = widget.data["photo2"];
@@ -457,9 +457,42 @@ class _EditContentState extends State<EditContent> {
               // ),
 
 
+              FutureBuilder<QuerySnapshot>(
+                  future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
 
+                    if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
+                      return  ListView.builder(shrinkWrap: true,
+                        itemCount: snapshotC.data!.docs.length,
+                        itemBuilder: (BuildContext context, int index) {
 
+                          try{
+                            // TextEditingController c = TextEditingController();
+                            // allControlller.add(c);
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextFormField(initialValue: widget.data[snapshotC.data!.docs[index].get("key")],
+                               // controller: c,
+                                onChanged: (String s){
+                                widget.data[ snapshotC.data!.docs[index].get("key")] = s;
+                              },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                            );
+                          }catch(e){
+                            return Text("--");
+                          }
 
+                        },
+                        //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                      );
+
+                      //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
+                    }else{
+                      return Text("--");
+
+                    }
+                  }),
+
+/*
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -481,6 +514,8 @@ class _EditContentState extends State<EditContent> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(controller: category5,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
               ),
+
+              */
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.blue,width: 0.5),borderRadius: BorderRadius.circular(4)),child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -710,11 +745,18 @@ class _EditContentState extends State<EditContent> {
                 }
 
 
+                widget.data["orgParent"]=Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
+                widget.data["photo1"]=li1;
+                widget.data["photo2"]=li2;
+                widget.data["created_at"]= DateTime.now().microsecondsSinceEpoch;
+                widget.data["parent"]=parentategoryId;
+
+               // widget.data["created_at"]=
+               // widget.data["created_at"]=
 
 
 
-                widget.ref.update({"orgParent":Provider.of<TempProvider>(context, listen: false).companyInfo!.id,"photo1":li1,"photo2":li2,"created_at":DateTime.now().microsecondsSinceEpoch,"parent":parentategoryId,"c1":category.text,"c2":category2.text,"c3":category3.text,"c4":category4.text,"c5":category5.text,
-                });
+                widget.ref.update(widget.data);
                 parentategoryId = "";
                 category.text = "";
                 setState(() {
