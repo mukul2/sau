@@ -9,9 +9,9 @@ TextEditingController c3 = TextEditingController();
 TextEditingController c4 = TextEditingController();
 TextEditingController c5 = TextEditingController();
 TextEditingController c6 = TextEditingController();
-TextEditingController c7 = TextEditingController();
+//TextEditingController c7 = TextEditingController();
 TextEditingController c8 = TextEditingController();
-TextEditingController c9 = TextEditingController();
+//TextEditingController c9 = TextEditingController();
 class SignUP extends StatefulWidget {
   const SignUP({Key? key}) : super(key: key);
 
@@ -103,15 +103,15 @@ class _SignUPState extends State<SignUP> {
                 return null;
               },decoration: InputDecoration(label: Text("Admin email")),),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(controller: c7,validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },decoration: InputDecoration(label: Text("Confirm Admin email")),),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: TextFormField(controller: c7,validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter some text';
+            //     }
+            //     return null;
+            //   },decoration: InputDecoration(label: Text("Confirm Admin email")),),
+            // ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(controller: c8,validator: (value) {
@@ -121,15 +121,15 @@ class _SignUPState extends State<SignUP> {
                 return null;
               },decoration: InputDecoration(label: Text("Admin password")),),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(controller: c9,validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },decoration: InputDecoration(label: Text("Confirm Admin password")),),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: TextFormField(controller: c9,validator: (value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter some text';
+            //     }
+            //     return null;
+            //   },decoration: InputDecoration(label: Text("Confirm Admin password")),),
+            // ),
             InkWell(onTap: (){
               print("---1");
               print(c6.text.trim());
