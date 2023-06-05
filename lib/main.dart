@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/sharecode',
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
-          '/': (context) => const Home(),
+          '/': (context) => Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null?TokenPage(): Home(),
           '/sharecode': (context) => const TokenPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/admin': (context) =>  Admin(),

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sidebarx/sidebarx.dart';
 
+import 'admin_all_company.dart';
 import 'admin_fields.dart';
 
 
@@ -129,7 +130,7 @@ class ExampleSidebarX extends StatelessWidget {
         ),
         const SidebarXItem(
           icon: Icons.search,
-          label: '--',
+          label: 'Organization',
         ),
         const SidebarXItem(
           icon: Icons.people,
@@ -173,6 +174,8 @@ class _ScreensExample extends StatelessWidget {
         switch (controller.selectedIndex) {
           case 0:
             return ManageFields();
+            case 1:
+            return AdminAllCompany();
 
           default:
             return pageTitle;

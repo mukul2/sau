@@ -31,12 +31,12 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 1)).then((value) {
-      if(Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null) {
-        Navigator.pushReplacementNamed(context, '/sharecode');
-      }
-
-    });
+    // Future.delayed(Duration(seconds: 1)).then((value) {
+    //   if(Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null) {
+    //     Navigator.pushReplacementNamed(context, '/sharecode');
+    //   }
+    //
+    // });
 
   }
   @override

@@ -145,7 +145,7 @@ class _SignUPState extends State<SignUP> {
                   FirebaseAuth.instance.createUserWithEmailAndPassword(email: c6.text.trim(), password: c8.text.toString()).then((value) {
                    String r =  getRandomString(5);
                    work(String shareCode){
-                     FirebaseFirestore.instance.collection("company").add({"shareCode":shareCode,"companyName":c1.text,"companyEmail":c2.text,"companyTelephone":c3.text,"companyAddress":c4.text,"adminUid":value.user!.uid}).then((value2) {
+                     FirebaseFirestore.instance.collection("company").add({"created_at":DateTime.now().millisecondsSinceEpoch,"shareCode":shareCode,"companyName":c1.text,"companyEmail":c2.text,"companyTelephone":c3.text,"companyAddress":c4.text,"adminUid":value.user!.uid}).then((value2) {
 
                        FirebaseFirestore.instance.collection("directoryApp_users").doc(value.user!.uid).set({"name":c5.text,"email":c6.text,"company":value2.id,"uid":value.user!.uid});
                        Navigator.pushReplacementNamed(context, "/admin");

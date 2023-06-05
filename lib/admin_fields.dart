@@ -17,16 +17,17 @@ class ManageFields extends StatefulWidget {
 
 class _ManageFieldsState extends State<ManageFields> {
   final ImagePicker _picker = ImagePicker();
+  final GlobalKey<ScaffoldState> drawerKey = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: PreferredSize(child:  Card(shape: RoundedRectangleBorder(
+    return Scaffold(key: drawerKey,appBar: PreferredSize(child:  Card(shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.zero,
     ),color: Colors.white,margin: EdgeInsets.zero,child: Container(width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Create /Edit field name and icons",style: TextStyle(fontSize: 25),),
+            Text("Create /Edit /Reposition field name and icons",style: TextStyle(fontSize: 25),),
             Text("Fields will be available for every entity",style: TextStyle(fontSize: 15,),),
           ],
         ),
@@ -102,7 +103,48 @@ class _ManageFieldsState extends State<ManageFields> {
 
                   },child: Container(height: 50,width: 50,margin: EdgeInsets.all(5), child:wi1(allData[index])  ,)) ,
                     key: Key('$index'),subtitle:Text(' ${allData[index].get("order")}') ,
-                    title: Text(' ${allData[index].get("value")}'),
+                    title: InkWell( onTap: (){
+                      TextEditingController c = TextEditingController(text:allData[index].get("value") );
+
+                      drawerKey.currentState!.showBottomSheet((context) => Scaffold(body: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            InkWell( onTap: (){
+                              Navigator.pop(context);
+                            },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.close),
+                                    Text("Close"),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextField(controller: c,decoration: InputDecoration(),),
+                            ),
+                            InkWell(onTap: (){
+                              allData[index].reference.update({"value":c.text});
+                              Navigator.pop(context);
+                            },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(color: Colors.blue,child: Center(child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Text("Save",style: TextStyle(color: Colors.white),),
+                                ),),),
+                              ),
+                            ),
+
+                          ],
+                        ),
+                      ),));
+
+                    },child: Text(' ${allData[index].get("value")}')),
                   ),
               ],
               onReorder: (int oldIndex, int newIndex) {
