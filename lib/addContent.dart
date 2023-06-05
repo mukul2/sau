@@ -42,6 +42,7 @@ class _AddCategoryState extends State<AddContent> {
     FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").get().then((value) {
 
       for(int i = 0 ; i < value.docs.length ; i++){
+        Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = "";
         allField.add(Padding(
           padding:  EdgeInsets.all(8.0),
           child: TextFormField(
@@ -500,6 +501,7 @@ class _EditContentState extends State<EditContent> {
                           try{
                             // TextEditingController c = TextEditingController();
                             // allControlller.add(c);
+                            //widget.data[ snapshotC.data!.docs[index].get("key")] = "";
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Padding(
@@ -812,7 +814,7 @@ class _EditContentState extends State<EditContent> {
             ],),
           ),
         ),
-        if(isLoading) Container(color: Colors.black.withOpacity(0.8),child: Center(child: CircularProgressIndicator(),),)
+        if(isLoading) Container(color: Colors.black.withOpacity(0.8),height: MediaQuery.of(context).size.width,child: Center(child: CircularProgressIndicator(),),)
 
       ],
     );

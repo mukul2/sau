@@ -28,6 +28,18 @@ class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool isDrawerOpen = false;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      if(Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null) {
+        Navigator.pushReplacementNamed(context, '/sharecode');
+      }
+
+    });
+
+  }
+  @override
   Widget build(BuildContext context) {
 
    return AnnotatedRegion<SystemUiOverlayStyle>(

@@ -101,17 +101,21 @@ class _ArticleState extends State<Article> {
         )),
         child: Padding(
           padding:  EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
+          child: InkWell(onTap: (){
+            Navigator.pop(context);
+          },
+            child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
 
-              IconButton(onPressed: (){
-                Navigator.pop(context);
-              }, icon: Icon(Icons.navigate_before,color: Colors.white)),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Back",style: TextStyle(color: Colors.white),),
-              ),
-            ],
+                IconButton(onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.navigate_before,color: Colors.white)),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Back",style: TextStyle(color: Colors.white),),
+                ),
+              ],
+            ),
           ),
         ),
       ),),
@@ -155,9 +159,9 @@ class _ArticleState extends State<Article> {
                     widget.id.get("photo1").toString().length==0? Container(height: 0,width: 0,) : CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.25,fit: BoxFit.cover,),
 
                     ClipRect(child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),child: Container())),
-                    widget.id.get("photo2").toString().length==0? Container(height: 0,width: 0,) :  Align(alignment: Alignment.center ,child: Column(mainAxisAlignment: MainAxisAlignment.end,crossAxisAlignment: CrossAxisAlignment.center,
+                    Align(alignment: Alignment.center ,child: Column(mainAxisAlignment: MainAxisAlignment.end,crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),child: Image.network(widget.id.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,)),
+                        widget.id.get("photo2").toString().length==0? Container(height: 0,width: 0,) :   ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),child: Image.network(widget.id.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,)),
 
                         Text( widget.id.get("name",),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: MediaQuery.of(context).size.width * 0.055),),
 
@@ -423,7 +427,7 @@ class _ArticleState extends State<Article> {
                                 itemCount: snapshotC.data!.docs.length-8,
                                 itemBuilder: (BuildContext context, int index) {
                                   Map<String,dynamic> m = snapshotC.data!.docs[index+8].data() as Map<String,dynamic>;
-                                  return Padding(
+                                  return m["key"]==null?Container(height: 0,width: 0,): Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
