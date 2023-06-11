@@ -510,6 +510,7 @@ class _EditContentState extends State<EditContent> {
                                  // controller: c,
                                   onChanged: (String s){
                                   widget.data[ snapshotC.data!.docs[index].get("key")] = s;
+                                  widget.ref.update({snapshotC.data!.docs[index].get("key"):s});
                                 },decoration: InputDecoration(suffixIcon:Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: Image.memory(base64Decode( snapshotC.data!.docs[index].get("img")),width: 20,),
@@ -517,6 +518,55 @@ class _EditContentState extends State<EditContent> {
                               ),
                             );
                           }catch(e){
+
+                            try{
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: TextFormField(initialValue:"",
+                                    // controller: c,
+                                    onChanged: (String s){
+                                    print("Edited ");
+                                      widget.data[ snapshotC.data!.docs[index].get("key")] = s;
+                                      widget.ref.update({snapshotC.data!.docs[index].get("key"):s});
+                                    },decoration: InputDecoration(
+                                      suffixIcon:Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: Image.memory(base64Decode( snapshotC.data!.docs[index].get("img")),width: 20,),
+                                      ) ,label: Text( snapshotC.data!.docs[index].get("value")),),),
+                                ),
+                              );
+                            }catch(e){
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: TextFormField(initialValue:"",
+                                    // controller: c,
+                                    onChanged: (String s) async {
+                                      print("Edited ... ");
+                                      print(snapshotC.data!.docs[index].get("key"));
+                                      widget.data[ snapshotC.data!.docs[index].get("key")] = s;
+
+                                      try{
+                                        await widget.ref.update({snapshotC.data!.docs[index].get("key"):s});
+                                        print("Edit success");
+                                      }catch(e){
+                                        print("Edit failed");
+                                        print(e);
+                                      }
+
+
+                                    },decoration: InputDecoration(
+                                      suffixIcon:Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+
+                                      ) ,label: Text( snapshotC.data!.docs[index].get("value")),),),
+                                ),
+                              );
+                            }
+
                             return Text(e.toString());
                           }
 

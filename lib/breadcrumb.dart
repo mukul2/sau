@@ -19,14 +19,16 @@ class _BreadCrumbState extends State<BreadCrumb> {
         itemCount: widget.arrays.length,
 
         itemBuilder: (context, index) {
-          return Row(crossAxisAlignment: CrossAxisAlignment.center,children: [InkWell( onTap: (){
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [InkWell( onTap: (){
 
 
             //widget.onClick(widget.arraysid[index]);
           },child: Padding(
-            padding:  EdgeInsets.only(left: 15),
+            padding:  EdgeInsets.only(left:10,right: 0),
             child: Text(widget.arrays[index]==""?"Home":widget.arrays[index],),
-          )), if(index<widget.arrays.length-1)Container(child: Icon(Icons.navigate_next_rounded),margin: EdgeInsets.only(left: 15,right: 15),height: 20,width: 1,),],);
+          )), if(index<widget.arrays.length-1)Container(child: Icon(Icons.navigate_next_rounded),margin: EdgeInsets.only(left: 05,right: 15),height: 20,width: 1,),],);
         },
       ),
     );

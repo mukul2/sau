@@ -29,10 +29,48 @@ class _ManageFieldsState extends State<ManageFields> {
           children: [
             Text("Create /Edit /Reposition field name and icons",style: TextStyle(fontSize: 25),),
             Text("Fields will be available for every entity",style: TextStyle(fontSize: 15,),),
+            TextButton(onPressed: (){
+              TextEditingController c = TextEditingController();
+              TextEditingController c2 = TextEditingController();
+
+              showDialog<void>(
+              context: context,
+          
+              builder: (BuildContext context) {return AlertDialog(title: Text("Create new field"),content: Wrap(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(controller: c,decoration: InputDecoration(label: Text("Name of the field",style: TextStyle(fontSize: 20),)),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(controller: c2,decoration: InputDecoration(label: Text("key of the field",style: TextStyle(fontSize: 20),)),),
+                  ),
+                  Center(
+                    child: InkWell( onTap: (){
+                      if(c.text.isNotEmpty){
+                        FirebaseFirestore.instance.collection("sau_datatype").add({"key":c2.text,"value":c.text,"order":0,});
+                        Navigator.pop(context);
+                      }
+
+                    },
+                      child: Card(color: Colors.blue,child: Container(width: 500,child: Center(child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text("Save",style: TextStyle(color: Colors.white),),
+                      ),),),),
+                    ),
+                  ),
+          
+                ],
+              ),);});
+
+
+
+            }, child: Text("Create new field")),
           ],
         ),
       ),
-    ),),preferredSize: Size(0,100),),body: StreamBuilder<QuerySnapshot>(
+    ),),preferredSize: Size(0,120),),body: StreamBuilder<QuerySnapshot>(
       //.orderBy("order")
         stream:FirebaseFirestore.instance.collection("sau_datatype") .orderBy("order").snapshots(),
         builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {

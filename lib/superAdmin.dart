@@ -5,6 +5,7 @@ import 'package:sidebarx/sidebarx.dart';
 
 import 'admin_all_company.dart';
 import 'admin_fields.dart';
+import 'admin_profile_blocks.dart';
 
 
 
@@ -133,6 +134,10 @@ class ExampleSidebarX extends StatelessWidget {
           label: 'Organization',
         ),
         const SidebarXItem(
+          icon: Icons.search,
+          label: 'Profile blocks',
+        ),
+        const SidebarXItem(
           icon: Icons.people,
           label: '--',
         ),
@@ -176,6 +181,9 @@ class _ScreensExample extends StatelessWidget {
             return ManageFields();
             case 1:
             return AdminAllCompany();
+          case 2 :
+            return AdminProfileBlocks();
+
 
           default:
             return pageTitle;

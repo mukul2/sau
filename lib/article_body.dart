@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +7,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:open_mail_app/open_mail_app.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Article extends StatefulWidget {
   QueryDocumentSnapshot id;
@@ -154,7 +158,7 @@ class _ArticleState extends State<Article> {
             Padding(
               padding: const EdgeInsets.only(top: 8,left: 8,right: 8,bottom: 8),
               child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                child: Container(height: MediaQuery.of(context).size.height * 0.25,
+                child: Container(height: MediaQuery.of(context).size.height * 0.3,
                   child: Stack(children: [
                     widget.id.get("photo1").toString().length==0? Container(height: 0,width: 0,) : CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.25,fit: BoxFit.cover,),
 
@@ -167,33 +171,103 @@ class _ArticleState extends State<Article> {
 
                        Row(mainAxisAlignment: MainAxisAlignment.center,
                          children: [
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                               padding:  EdgeInsets.all(8.0),
-                               child: Icon(Icons.call,color: Colors.white,),
-                             ))),
+                           InkWell(onTap: () async {
+
+                             EmailContent email = EmailContent(
+                               to: [
+                                 widget.id.get("email")
+                               ],
+                               subject: 'Hello!',
+                               body: 'How are you doing?',
+                               cc: [],
+                               bcc: [],
+                             );
+
+                             OpenMailAppResult result =
+                             await OpenMailApp.composeNewEmailInMailApp(
+                                 nativePickerTitle: 'Select email app to compose',
+                                 emailContent: email);
+                             if (!result.didOpen && !result.canOpen) {
+                              //showNoMailAppsDialog(context);
+                             } else if (!result.didOpen && result.canOpen) {
+                               showDialog(
+                                 context: context,
+                                 builder: (_) => MailAppPickerDialog(
+                                   mailApps: result.options,
+                                   emailContent: email,
+                                 ),
+                               );
+                             }
+
+
+
+
+
+                           },
+                             child: Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                 padding:  EdgeInsets.all(8.0),
+                                 child:Icon(Icons.email,color: Colors.white,),
+                               ))),
+                             ),
                            ),
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                               padding:  EdgeInsets.all(8.0),
-                               child: Icon(Icons.message,color: Colors.white,),
-                             ))),
+                           InkWell( onTap: (){
+                             launch("https://"+widget.id.get("fb"));
+                           },
+                             child: Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                 padding:  EdgeInsets.all(8.0),
+                                 child: Icon(Icons.facebook,color: Colors.white,),
+                               ))),
+                             ),
                            ),
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                               padding:  EdgeInsets.all(8.0),
-                               child: Icon(Icons.email,color: Colors.white,),
-                             ))),
+                           InkWell(onTap: (){
+                             launch("https://"+widget.id.get("linkedin"));
+                           },
+                             child: Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                 padding:  EdgeInsets.all(8.0),
+                                 child: FaIcon(FontAwesomeIcons.linkedin,color: Colors.white,),
+                               ))),
+                             ),
                            ),
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                               padding:  EdgeInsets.all(8.0),
-                               child: Icon(Icons.map,color: Colors.white,),
-                             ))),
+                           InkWell(onTap: () async {
+                             var contact = widget.id.get("whatsapp");
+                             var androidUrl = "whatsapp://send?phone=$contact&text=Hi, I need some help";
+                             var iosUrl = "https://wa.me/$contact?text=${Uri.parse('Hi, I need some help')}";
+
+                             try{
+                               if(Platform.isIOS){
+                                 await launchUrl(Uri.parse(iosUrl));
+                               }
+                               else{
+                                 await launchUrl(Uri.parse(androidUrl));
+                               }
+                             } on Exception{
+                              // EasyLoading.showError('WhatsApp is not installed.');
+                             }
+                           },
+                             child: Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                 padding:  EdgeInsets.all(8.0),
+                                 child: FaIcon(FontAwesomeIcons.whatsapp,color: Colors.white,),
+                               ))),
+                             ),
+                           ),
+                           InkWell(onTap: (){
+                             launch("https://"+widget.id.get("website"));
+                           },
+                             child: Padding(
+                               padding: const EdgeInsets.all(8.0),
+                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                 padding:  EdgeInsets.all(8.0),
+                                 child: FaIcon(FontAwesomeIcons.firefoxBrowser,color: Colors.white,),
+                               ))),
+                             ),
                            ),
 
                          ],
@@ -252,7 +326,74 @@ class _ArticleState extends State<Article> {
                 ),
               ),
             ),
-            Padding(
+            FutureBuilder<QuerySnapshot>(
+                future: FirebaseFirestore.instance.collection("directoryapp_blocks").orderBy("order").get() , // a previously-obtained Future<String> or null
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+                  if (snapshot.hasData) {
+                    return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:  ClipRRect( borderRadius: BorderRadius.circular(8),
+                            child: Container(
+                              //height: MediaQuery.of(context).size.height * 0.25,
+                              color: Colors.white,
+                              child:Column(
+                                children: [
+                                  Container(color: Colors.blue,child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(child: Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.white),)),
+                                  )),
+                                  ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                                    itemCount:snapshot.data!.docs[index].get("items").length,
+                                    itemBuilder: (BuildContext context, int index2) {
+                                      try{
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child:  FutureBuilder<DocumentSnapshot>(
+                                              future: FirebaseFirestore.instance.collection("sau_datatype").doc(snapshot.data!.docs[index].get("items")[index2]).get() , // a previously-obtained Future<String> or null
+                                              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotD) {
+                                                if(snapshot.hasData){
+                                                  return  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(snapshotD.data!.get("value")),
+                                                      Text(widget.id.get(snapshotD.data!.get("key"))),
+                                                    ],
+                                                  );
+                                                }else{
+                                                  return Center(child: CupertinoActivityIndicator(),);
+                                                }
+                                              }),
+                                        );
+                                      }catch(e){
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(e.toString()),
+                                              Text("--"),
+                                            ],
+                                          ),
+                                        );
+                                      }
+
+                                    }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }else{
+                    return Text("--");
+                  }
+                }),
+
+          if(false)  Padding(
               padding: const EdgeInsets.all(8.0),
               child:  ClipRRect( borderRadius: BorderRadius.circular(8),
                 child: Container(
@@ -273,15 +414,28 @@ class _ArticleState extends State<Article> {
                               itemCount: snapshotC.data!.docs.length-1,
                               itemBuilder: (BuildContext context, int index) {
                               Map<String,dynamic> m = snapshotC.data!.docs[index+1].data() as Map<String,dynamic>;
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    wi1G(snapshotC.data!.docs[index+1]),
-                                    Text(widget.id.get(m["key"])),
-                                  ],
-                                ),
-                              );
+                              try{
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      wi1G(snapshotC.data!.docs[index+1]),
+                                      Text(widget.id.get(m["key"])),
+                                    ],
+                                  ),
+                                );
+                              }catch(e){
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      wi1G(snapshotC.data!.docs[index+1]),
+                                      Text("--"),
+                                    ],
+                                  ),
+                                );
+                              }
+
                               }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },);
                               return Column(mainAxisAlignment: MainAxisAlignment.center,
                                 children:snapshotC.data!.docs.map((e) => wi1(e)).toList() ,
@@ -329,7 +483,7 @@ class _ArticleState extends State<Article> {
                 ),
               ),
             ),
-            Padding(
+            if(false)    Padding(
               padding: const EdgeInsets.all(8.0),
               child:  ClipRRect( borderRadius: BorderRadius.circular(8),
                 child: Container(
@@ -406,7 +560,7 @@ class _ArticleState extends State<Article> {
                 ),
               ),
             ),
-            Padding(
+            if(false)     Padding(
               padding: const EdgeInsets.all(8.0),
               child:  ClipRRect( borderRadius: BorderRadius.circular(8),
                 child: Container(
