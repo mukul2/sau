@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -116,73 +117,79 @@ class _HomeState extends State<Home> {
             ),
           ),));
         }
+     allWidgets.add(Container(height: 0.1,width: double.infinity,));
         setState(() {
 
         });
       }
 
     });
+
     FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent", isEqualTo:allCatrID.last ).get().then((value) {
 
       if(value.docs.isNotEmpty){
         for(int i = 0 ; i < value.docs.length ; i++){
           Map<String,dynamic> d =  value.docs[i].data() as Map<String,dynamic>;
-          allWidgets.add(InkWell( onTap: (){
-            Navigator.push(
-              context,
-              CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
-          },
-            child: Padding(
-              padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
-                    child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Column(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: value.docs[i].get("photo1"),height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,
-                          placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+          allWidgets.add(Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.1),),
+              borderRadius: BorderRadius.circular(2)) ,width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+            child: InkWell( onTap: (){
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+            },
+              child: Padding(
+                padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                      child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Column(
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: value.docs[i].get("photo1"),height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,
+                            placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
 
-                        ),
-                       d["workdesignation"]==null?Container(height: 0,width: 0,): Text(d["workdesignation"]??"",style: TextStyle(color: Colors.black,fontSize:fontSize1*1.5 ),),
-                      ],
-                    )),
-                  ),
+                          ),
+                         d["workdesignation"]==null?Container(height: 0,width: 0,): AutoSizeText(d["workdesignation"]??"", minFontSize: 12, maxFontSize: 25, overflow: TextOverflow.ellipsis, ),
+                        ],
+                      )),
+                    ),
 
 
 
-                  Expanded(
-                    child:  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text( value.docs[i].get("name"),style: TextStyle(color: Colors.black,fontSize:fontSize1*2 ),),
-                            Text(d["designation"]??" ",style: TextStyle(color: Colors.grey,fontSize:fontSize1*1.5 ),),
-                            Text(d["email"]??"",style: TextStyle(color: Colors.grey,fontSize:fontSize1*1.5 ),),
-                            Text(d["phone"]??"",style: TextStyle(color: Colors.grey,fontSize:fontSize1*1.5 ),),
-                          ],
-                        ),
-                        Column(crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            d["bloodgroup"]==null?Container(height: 0,width: 0,): Container(height:fontSize1*4,width: fontSize1*5 ,decoration: BoxDecoration(borderRadius: BorderRadius.circular(fontSize1), color: Colors.blue),child: Center(child: Text(d["bloodgroup"]??"0",style: TextStyle(color: Colors.white),))),
-                           // Chip(avatar:d["bloodgroup"]??"" ,label: Text("Blood group")),
-                            InkWell(onTap: (){
-                            //  launchUrl(Uri("tel://"+d["phone"]??"")),
-                              launch("tel://"+d["phone"]??"");
-                            },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
+                    Expanded(
+                      child:  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis, ),
+                              AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,),
+                              AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,),
+                              AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis, ),
+                            ],
+                          ),
+                          Column(crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              d["bloodgroup"]==null?Container(height: 0,width: 0,): Container(height:18,width:28,
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(fontSize1), color: Colors.blue),child: Center(child: AutoSizeText(d["bloodgroup"]??"0",style: TextStyle(color: Colors.white),))),
+                             // Chip(avatar:d["bloodgroup"]??"" ,label: Text("Blood group")),
+                              InkWell(onTap: (){
+                              //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                launch("tel://"+d["phone"]??"");
+                              },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
 
-                          ],
-                        ),
-                      ],
-                    )
+                            ],
+                          ),
+                        ],
+                      )
 
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ));
-          allWidgets.add(Container(height: 0.5,width: double.infinity,color: Colors.grey,));
+         // allWidgets.add(Container(height: 0.5,width: width>800?width/2:width,color: Colors.grey,));
 
 
         }
