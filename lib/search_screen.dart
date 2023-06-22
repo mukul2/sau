@@ -1,3 +1,6 @@
+import 'dart:ui';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,7 +32,106 @@ class _SearchActivityState extends State<SearchActivity> {
             Map<String,dynamic> d = value.docs[i].data() as Map<String,dynamic>;
 
             if(d.toString().toLowerCase().contains(searchkey.toLowerCase())){
-              searchedW.add(InkWell( onTap: (){
+              searchedW.add(
+                 true?Container(
+                   //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+                   width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
+                   child: InkWell( onTap: (){
+                     Navigator.push(
+                       context,
+                       CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                   },
+                     child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
+                         borderRadius: BorderRadius.circular(2)) ,
+                       child: Padding(
+                         padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             Container(height:  MediaQuery.of(context).size.shortestSide * 0.1,width:  MediaQuery.of(context).size.shortestSide * 0.15,
+                               child: Padding(
+                                 padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                                 child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Stack(
+                                   children: [
+                                     CachedNetworkImage(
+                                       imageUrl: value.docs[i].get("photo1"),height: MediaQuery.of(context).size.shortestSide * 0.09,width:MediaQuery.of(context).size.shortestSide * 0.14 ,fit: BoxFit.cover,
+                                       placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+
+                                     ),
+                                     Align(alignment: Alignment.bottomCenter,child:d["workdesignation"]==null?Container(height: 0,width: 0,): Container(height: 20,
+                                         width:  MediaQuery.of(context).size.shortestSide * 0.15,child: ClipRect(child:
+                                         BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child:  AutoSizeText(d["workdesignation"]??"", minFontSize: 9, maxFontSize: 18, overflow: TextOverflow.ellipsis, ))))) ,),
+
+                                   ],
+                                 )),
+                               ),
+                             ),
+
+
+
+                             Expanded(
+                                 child: true? Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                                   children: [
+                                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                         AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
+
+                                       ],
+                                     ),
+                                     AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                                     AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                                     Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                       children: [
+                                         AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                                         if(d["phone"].toString().length>0)  InkWell(onTap: (){
+                                           //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                           launch("tel://"+d["phone"]??"");
+                                         },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call")))
+                                       ],
+                                     ),
+                                   ],
+                                 ):  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                   children: [
+                                     Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                                       children: [
+                                         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                           children: [
+                                             AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                             AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+
+                                           ],
+                                         ),
+                                         AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                                         AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                                         AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                                       ],
+                                     ),
+                                     InkWell(onTap: (){
+                                       //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                       launch("tel://"+d["phone"]??"");
+                                     },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
+                                     if(false)  Column(crossAxisAlignment: CrossAxisAlignment.end,
+                                       children: [
+                                         d["bloodgroup"]==null?Container(height: 0,width: 0,): Container(height:18,width:28,
+                                             decoration: BoxDecoration(borderRadius: BorderRadius.circular(fontSize1), color: Colors.blue),child: Center(child: AutoSizeText(d["bloodgroup"]??"0",style: TextStyle(color: Colors.white),))),
+                                         // Chip(avatar:d["bloodgroup"]??"" ,label: Text("Blood group")),
+                                         InkWell(onTap: (){
+                                           //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                           launch("tel://"+d["phone"]??"");
+                                         },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
+
+                                       ],
+                                     ),
+                                   ],
+                                 )
+
+                             ),
+                           ],
+                         ),
+                       ),
+                     ),
+                   ),
+                 ): InkWell( onTap: (){
                 Navigator.push(
                   context,
                   CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);

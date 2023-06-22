@@ -63,6 +63,7 @@ class MyApp extends StatelessWidget {
           '/admin': (context) =>  Admin(),
           '/manage': (context) =>  xplore_admin(),
           '/signup': (context) => const SignUP(),
+          '/register': (context) => Scaffold(body: Text("Register"),),
         },
       ),);
     return   MaterialApp(theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(

@@ -130,61 +130,101 @@ class _HomeState extends State<Home> {
       if(value.docs.isNotEmpty){
         for(int i = 0 ; i < value.docs.length ; i++){
           Map<String,dynamic> d =  value.docs[i].data() as Map<String,dynamic>;
-          allWidgets.add(Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.1),),
-              borderRadius: BorderRadius.circular(2)) ,width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+          allWidgets.add(Container(
+          //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+            width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
             child: InkWell( onTap: (){
               Navigator.push(
                 context,
                 CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
             },
-              child: Padding(
-                padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
-                      child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Column(
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: value.docs[i].get("photo1"),height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,
-                            placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
-
-                          ),
-                         d["workdesignation"]==null?Container(height: 0,width: 0,): AutoSizeText(d["workdesignation"]??"", minFontSize: 12, maxFontSize: 25, overflow: TextOverflow.ellipsis, ),
-                        ],
-                      )),
-                    ),
-
-
-
-                    Expanded(
-                      child:  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+              child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
+                  borderRadius: BorderRadius.circular(2)) ,
+                child: Padding(
+                  padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(height:  MediaQuery.of(context).size.shortestSide * 0.1,width:  MediaQuery.of(context).size.shortestSide * 0.15,
+                        child: Padding(
+                          padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                          child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Stack(
                             children: [
-                              AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis, ),
-                              AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,),
-                              AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,),
-                              AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis, ),
+                             CachedNetworkImage(
+                                imageUrl: value.docs[i].get("photo1"),height: MediaQuery.of(context).size.shortestSide * 0.09,width:MediaQuery.of(context).size.shortestSide * 0.14 ,fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+
+                              ),
+                             Align(alignment: Alignment.bottomCenter,child:d["workdesignation"]==null?Container(height: 0,width: 0,): Container(height: 20,
+                                 width:  MediaQuery.of(context).size.shortestSide * 0.15,child: ClipRect(child:
+                             BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child:  AutoSizeText(d["workdesignation"]??"", minFontSize: 9, maxFontSize: 18, overflow: TextOverflow.ellipsis, ))))) ,),
+
                             ],
-                          ),
-                          Column(crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              d["bloodgroup"]==null?Container(height: 0,width: 0,): Container(height:18,width:28,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(fontSize1), color: Colors.blue),child: Center(child: AutoSizeText(d["bloodgroup"]??"0",style: TextStyle(color: Colors.white),))),
-                             // Chip(avatar:d["bloodgroup"]??"" ,label: Text("Blood group")),
-                              InkWell(onTap: (){
+                          )),
+                        ),
+                      ),
+
+
+
+                      Expanded(
+                        child: true? Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
+
+                              ],
+                            ),
+                            AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                            AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                                if(d["phone"].toString().length>0)  InkWell(onTap: (){
+                                  //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                  launch("tel://"+d["phone"]??"");
+                                },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call")))
+                              ],
+                            ),
+                          ],
+                        ):  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    AutoSizeText(value.docs[i].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                    AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+
+                                  ],
+                                ),
+                                AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                                AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                                AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                              ],
+                            ),
+                            InkWell(onTap: (){
                               //  launchUrl(Uri("tel://"+d["phone"]??"")),
-                                launch("tel://"+d["phone"]??"");
-                              },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
+                              launch("tel://"+d["phone"]??"");
+                            },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
+                          if(false)  Column(crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                d["bloodgroup"]==null?Container(height: 0,width: 0,): Container(height:18,width:28,
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(fontSize1), color: Colors.blue),child: Center(child: AutoSizeText(d["bloodgroup"]??"0",style: TextStyle(color: Colors.white),))),
+                               // Chip(avatar:d["bloodgroup"]??"" ,label: Text("Blood group")),
+                                InkWell(onTap: (){
+                                //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                  launch("tel://"+d["phone"]??"");
+                                },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call"))),
 
-                            ],
-                          ),
-                        ],
-                      )
+                              ],
+                            ),
+                          ],
+                        )
 
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -244,22 +284,25 @@ class _HomeState extends State<Home> {
               Padding(
                 padding:  EdgeInsets.only(top: 0),
                 child: Container(height: AppBar().preferredSize.height-1,
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Stack(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(onPressed: (){
+                    if(false)  IconButton(onPressed: (){
                         _key.currentState!.openDrawer();
                       }, icon: Icon(Icons.menu)),
-                      Text(allCatr.last==""?"Sau Directory":allCatr.last),
-                      IconButton(onPressed: (){
+                      Align(alignment: Alignment.center,child: Text(allCatr.last==""?"Sau Directory":allCatr.last)),
+                      Align(alignment: Alignment.centerRight,
+                        child: IconButton(onPressed: (){
 
-                        //SearchActivity
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => const SearchActivity()),
-                        );
+                          //SearchActivity
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(builder: (context) => const SearchActivity()),
+                          );
 
 
-                      }, icon: Icon(Icons.search)),
+                        }, icon: Icon(Icons.search)),
+                      ),
 
 
                     ],
@@ -277,7 +320,7 @@ class _HomeState extends State<Home> {
       });
 
     },
-      key: _key, drawer: Card( margin: EdgeInsets.zero,
+      key: _key, drawer:true?null: Card( margin: EdgeInsets.zero,
         child: Container(color: Colors.white,width:MediaQuery.of(context).size.width * 0.7 ,
           child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
 
