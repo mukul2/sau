@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import 'admin_all_company.dart';
@@ -18,6 +20,22 @@ class xplore_admin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if(FirebaseAuth.instance.currentUser==null){
+      GoRouter.of(context).go("/admin");
+    }else{
+      FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+        try{
+          if(value.get("type")=="admin"){
+          }else{
+            GoRouter.of(context).go("/organizer");
+          }
+        }catch(e){
+          GoRouter.of(context).go("/organizer");
+        }
+      });
+    }
+
 
     return Builder(
       builder: (context) {
@@ -145,7 +163,11 @@ class ExampleSidebarX extends StatelessWidget {
           icon: Icons.favorite,
           label: 'Logout',
           onTap: () {
-            FirebaseAuth.instance.signOut();
+            FirebaseAuth.instance.signOut().then((value) {
+
+              GoRouter.of(context).go("/admin");
+
+            });
           },
         ),
         // SidebarXItem(

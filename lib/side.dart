@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/CategoryHome.dart';
 import 'package:sidebarx/sidebarx.dart';
@@ -21,7 +23,27 @@ class SidebarXExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  if(FirebaseAuth.instance.currentUser==null){
+      GoRouter.of(context).go("/admin");
+    }else{
+      FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
 
+        try{
+          if(value.get("type")=="admin"){
+            GoRouter.of(context).go("/manage");
+          }else{
+            FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+              Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+
+            });
+            //Provider.of<TempProvider>(context, listen: false).companyInfo!
+           // GoRouter.of(context).go("/organizer");
+          }
+        }catch(e){
+         // GoRouter.of(context).go("/admin");
+        }
+      });
+    }
     return Builder(
       builder: (context) {
         final isSmallScreen = MediaQuery.of(context).size.width < 600;
@@ -145,9 +167,10 @@ class ExampleSidebarX extends StatelessWidget {
           label: 'Logout',
           onTap: () {
             FirebaseAuth.instance.signOut();
+            GoRouter.of(context).go("/admin");
           },
         ),
-        SidebarXItem(
+   SidebarXItem(
           icon: Icons.qr_code,
           label: Provider.of<TempProvider>(context, listen: false).companyInfo!.get("shareCode"),
           // onTap: () {

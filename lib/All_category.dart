@@ -1183,7 +1183,7 @@ class _AllDiyState extends State<AllDi> {
                     setState(() {
                       open = true;
                     });
-                    drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+                    drawerKey.currentState!.showBottomSheet((context) => AddContent());
 
 
                   }, child: Row(
@@ -1191,7 +1191,7 @@ class _AllDiyState extends State<AllDi> {
                       Icon(Icons.add,color: Colors.blue,),
                       Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
-                        child: Text("Add Category"),
+                        child: Text("Add Article"),
                       ),
                     ],
                   )),

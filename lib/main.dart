@@ -10,6 +10,7 @@ import 'package:sau/superAdmin.dart';
 import 'package:sau/tokenPage.dart';
 
 import 'admin.dart';
+import 'another_start.dart';
 import 'home.dart';
 
 Future<void> main() async {
@@ -20,8 +21,8 @@ Future<void> main() async {
    runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp2 extends StatelessWidget {
+  const MyApp2({super.key});
 
   // This widget is the root of your application.
   @override
@@ -57,13 +58,14 @@ class MyApp extends StatelessWidget {
         initialRoute: '/sharecode',
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
-          '/': (context) => Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null?TokenPage(): Home(),
+        //  '/': (context) => Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer==null?TokenPage(): Home(),
+          '/': (context) =>  Home(id: "",),
           '/sharecode': (context) => const TokenPage(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/admin': (context) =>  Admin(),
           '/manage': (context) =>  xplore_admin(),
           '/signup': (context) => const SignUP(),
-          '/register': (context) => Scaffold(body: Text("Register"),),
+
         },
       ),);
     return   MaterialApp(theme: ThemeData(fontFamily: 'Nexa',inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
@@ -88,7 +90,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         // When navigating to the "/" route, build the FirstScreen widget.
-        '/': (context) => const Home(),
+        '/': (context) =>  Home(id: "",),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/admin': (context) => const Admin(),
       },

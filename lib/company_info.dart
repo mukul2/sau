@@ -1,7 +1,10 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'DrawerProvider.dart';
@@ -79,6 +82,18 @@ class _CompanyInfoState extends State<CompanyInfo> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SelectableText(snapshotC.data!.docs.first.get("shareCode")),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Signup link"),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SelectableText(window.location.href.replaceAll(GoRouter.of(context).location, "")+"/self-sign/"+snapshotC.data!.docs.first.get("shareCode")),
                       ),
                     ],
                   ),

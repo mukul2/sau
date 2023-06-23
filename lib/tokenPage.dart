@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'DrawerProvider.dart';
@@ -44,11 +45,23 @@ class _TokenPageState extends State<TokenPage> {
 
                 try{
                   if(value.docs.length>0){
+                    print("info downloaded");
+                    String path = '/home/'+ value.docs.first.id;
                     print(value.docs.first.data());
+                    print(path);
+                   // context.go(path);
+                    GoRouter.of(context).go(path);
+                    print("1");
                     Provider.of<TempProvider>(context, listen: false).currentShareCode = t;
+                    print("2");
                     Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer = value.docs.first.id;
-
-                    Navigator.pushNamed(context, '/');
+                    print("3");
+                    //String path = '/home/'+ value.docs.first.id;
+                    print("4");
+                    //home/:id
+                    print(path);
+                  //admin  context.go(path);
+                   // Navigator.pushNamed(context, '/');
                   }
 
                   setState(() {

@@ -19,7 +19,8 @@ import 'breadcrumb.dart';
 import 'const.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  String id;
+  Home({required this.id});
 
   @override
   State<Home> createState() => _HomeState();

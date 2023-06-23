@@ -35,11 +35,11 @@ class TempProvider extends ChangeNotifier {
   set shareCode(String? value) {
     _shareCode = value;
   }
-  QueryDocumentSnapshot? _companyInfo;
+  DocumentSnapshot? _companyInfo;
 
-  QueryDocumentSnapshot? get companyInfo => _companyInfo;
+  DocumentSnapshot? get companyInfo => _companyInfo;
 
-  set companyInfo(QueryDocumentSnapshot? value) {
+  set companyInfo(DocumentSnapshot? value) {
     _companyInfo = value;
 
   }

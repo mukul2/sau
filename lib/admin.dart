@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/drawer.dart';
 import 'package:sau/side.dart';
@@ -45,15 +46,34 @@ class _AdminState extends State<Admin> {
 
         });
         FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+          print(value.data());
 
-          try{
-            if(value.get("type")=="admin"){
-              at = adminType.superAdmin;
 
+
+            try{
+              if(value.get("type")=="admin"){
+                at = adminType.superAdmin;
+                setState(() {
+
+                });
+                GoRouter.of(context).go("/manage");
+
+              }else{
+                FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                  Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                  GoRouter.of(context).go("/organizer");
+
+                });
+
+              }
+            }catch(e){
+              FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                GoRouter.of(context).go("/organizer");
+
+              });
             }
-          }catch(e){
 
-          }
         });
         print('User is signed in!');
       }
@@ -85,7 +105,83 @@ class _AdminState extends State<Admin> {
   }
   @override
   Widget build(BuildContext context) {
+return Scaffold(body: Center(child: Card(
+  child: Container(width: 450,
+    child: Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Wrap(
+        children: [
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Text("Login form",style: TextStyle(fontSize: 20),),
+          // ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(controller: email,decoration: InputDecoration(label: Text("Email")),),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(controller: password,decoration: InputDecoration(label: Text("Password")),),
+          ),
+          InkWell( onTap: (){
+            try{
+              FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text).then((value) {
 
+                if(value.user==null){
+
+                }else{
+                  FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+                    try{
+                      if(value.get("type")=="admin"){
+                        at = adminType.superAdmin;
+                        setState(() {
+
+                        });
+                        GoRouter.of(context).go("/manage");
+
+                      }else{
+                        FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                          Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                          GoRouter.of(context).go("/organizer");
+
+                        });
+
+                      }
+                    }catch(e){
+                      FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                        Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                        GoRouter.of(context).go("/organizer");
+
+                      });
+                    }
+                  });
+                }
+
+              });
+            }catch(e){
+
+            }
+          },
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8,right: 4,left: 4),
+              child: Card(color: Colors.blue,child: Center(child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Login",style: TextStyle(color: Colors.white),),
+              ),),),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton(onPressed: (){
+              Navigator.pushNamed(context, "/signup");
+            }, child: Center(child: Text("Signup & Create directory"),)),
+          )
+        ],
+      ),
+    ),
+  ),
+),),);
    return loggedIn? at == adminType.admin? FutureBuilder<adminType>(
     future: work(),
     // If the user is already signed-in, use it as initial data
@@ -95,7 +191,8 @@ class _AdminState extends State<Admin> {
     else  if(snapshot.hasData && snapshot.data! ==adminType.superAdmin )
       return  xplore_admin();
     else return Center(child: CupertinoActivityIndicator(),);
-    }):xplore_admin():Scaffold(body: Center(child: Card(
+    }):xplore_admin():
+   Scaffold(body: Center(child: Card(
      child: Container(width: 450,
        child: Padding(
          padding: const EdgeInsets.all(20.0),
@@ -115,7 +212,31 @@ class _AdminState extends State<Admin> {
              ),
              InkWell( onTap: (){
                try{
-                 FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text);
+                 FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text).then((value) {
+
+                   if(value.user==null){
+
+                   }else{
+                     FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+                       try{
+                         if(value.get("type")=="admin"){
+                           at = adminType.superAdmin;
+                           setState(() {
+
+                           });
+                           GoRouter.of(context).go("/manage");
+
+                         }else{
+
+                         }
+                       }catch(e){
+
+                       }
+                     });
+                   }
+
+                 });
                }catch(e){
 
                }

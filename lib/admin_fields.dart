@@ -122,6 +122,76 @@ class _ManageFieldsState extends State<ManageFields> {
                 );
               }
             }
+            return  ListView.builder(shrinkWrap: true,
+              itemCount:  snapshot.data!.docs.length,
+
+              itemBuilder: (context, index) {
+                return Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15,right: 15),
+                    child: InkWell(onTap: () async {
+                      try {
+                        final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery,maxWidth: 100);
+                        pickedFile!.readAsBytes().then((value) {
+                          snapshot.data!.docs[index].reference.update({"img":base64Encode(value)});
+
+                        });
+
+                      } catch (e) {
+
+                      }
+
+                    },child: Container(height: 30,width: 30,margin: EdgeInsets.all(5), child:wi1(allData[index])  ,)),
+                  ),
+
+                  InkWell( onTap: (){
+                    TextEditingController c = TextEditingController(text:allData[index].get("value") );
+
+                    drawerKey.currentState!.showBottomSheet((context) => Scaffold(body: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          InkWell( onTap: (){
+                            Navigator.pop(context);
+                          },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.close),
+                                  Text("Close"),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextField(controller: c,decoration: InputDecoration(),),
+                          ),
+                          InkWell(onTap: (){
+                            allData[index].reference.update({"value":c.text});
+                            Navigator.pop(context);
+                          },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(color: Colors.blue,child: Center(child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text("Save",style: TextStyle(color: Colors.white),),
+                              ),),),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),));
+
+                  },child: Text(' ${allData[index].get("value")}'))
+
+
+                ],);
+              },
+            );
+
             return   ReorderableListView(shrinkWrap: true,physics: AlwaysScrollableScrollPhysics(),
               padding:  EdgeInsets.zero,
               proxyDecorator: proxyDecorator,
@@ -141,7 +211,8 @@ class _ManageFieldsState extends State<ManageFields> {
 
                   },child: Container(height: 50,width: 50,margin: EdgeInsets.all(5), child:wi1(allData[index])  ,)) ,
                     key: Key('$index'),subtitle:Text(' ${allData[index].get("order")}') ,
-                    title: InkWell( onTap: (){
+                    title:
+                    InkWell( onTap: (){
                       TextEditingController c = TextEditingController(text:allData[index].get("value") );
 
                       drawerKey.currentState!.showBottomSheet((context) => Scaffold(body: Padding(
