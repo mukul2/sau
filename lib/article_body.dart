@@ -8,11 +8,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:open_mail_app/open_mail_app.dart';
+import 'package:sau/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Article extends StatefulWidget {
   String id;
+  //Function onBack;
   Article({required this.id});
 
   @override
@@ -106,13 +109,15 @@ class _ArticleState extends State<Article> {
         child: Padding(
           padding:  EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
           child: InkWell(onTap: (){
-            Navigator.pop(context);
+            GoRouter.of(context).go(lastpath);
+           // Navigator.pop(context);
           },
             child: Row(crossAxisAlignment: CrossAxisAlignment.center,
               children: [
 
                 IconButton(onPressed: (){
-                  Navigator.pop(context);
+               // GoRouter.of(context).go(lastpath);
+                 // Navigator.pop(context);
                 }, icon: Icon(Icons.navigate_before,color: Colors.white)),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

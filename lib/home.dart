@@ -433,9 +433,9 @@ class _HomeState extends State<Home> {
             ),
             Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.1),),
 
-            StreamBuilder<QuerySnapshot>(
-                  stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
-                      .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .snapshots(),
+            FutureBuilder<QuerySnapshot>(
+                  future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+                      .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .get(),
                   builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                     if (snapshot.hasData && snapshot.data!.docs.length>0) {
                       return true?  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
@@ -457,7 +457,7 @@ class _HomeState extends State<Home> {
                                 padding: EdgeInsets.zero,shrinkWrap: true,physics: AlwaysScrollableScrollPhysics(),
                                 //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
                                 children:  snapshot.data!.docs.map((e) => true?Container(height: true?150:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
-                                  width: true?150: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
+                                  width: true?200: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
 
 
                                     allCatrID.add(e.id);
@@ -474,7 +474,7 @@ class _HomeState extends State<Home> {
                                         //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
                                         child:Stack(
                                           children: [
-                                            Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue,),placeholder: (context, url) =>
+                                            Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.grey,),placeholder: (context, url) =>
                                                 Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,
                                               width:  MediaQuery.of(context).size.width * 0.5,
                                               height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
@@ -628,9 +628,10 @@ class _HomeState extends State<Home> {
                     else {
                       return Container(height: 0,width: 0,);}
                   }),
-            StreamBuilder<QuerySnapshot>(
-                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer)
-                    .where("parent", isEqualTo:allCatrID.last ).snapshots(),
+            FutureBuilder<QuerySnapshot>(
+                future:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).
+                currentShareCodeCustomer)
+                    .where("parent", isEqualTo:allCatrID.last ).get(),
                 builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
                   if (snapshot.hasData && snapshot.data!.docs.length>0) {
                   return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
@@ -642,6 +643,7 @@ class _HomeState extends State<Home> {
                           //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
                          // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
                           child: InkWell( onTap: (){
+                            lastpath = GoRouter.of(context).location;
                             GoRouter.of(context).go("/articles/"+ snapshot.data!.docs[index].id);
                             // if(false)  Navigator.push(
                             //     context,
