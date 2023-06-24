@@ -1,11 +1,13 @@
 import 'dart:ui';
-
+import 'package:flutter/material.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/search_screen.dart';
@@ -33,10 +35,17 @@ class _HomeState extends State<Home> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
   bool isDrawerOpen = false;
 
+  List<Widget> categoryRow = [];
+
   List<Widget> allWidgets = [];
+  List<Widget> allWidgetsRibbon = [];
   refreshAndLoad(){
+
+    return;
     allWidgets = [];
-    FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last).get().then((value) {
+    allWidgets = [];
+    FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+        .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last).get().then((value) {
 
 
       if(value.docs.isNotEmpty){
@@ -88,10 +97,12 @@ class _HomeState extends State<Home> {
               },),
             ],),
         ));
+
    if( (allCatr.length>1)) allWidgets.add(Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),));
 
         for(int i = 0 ; i < value.docs.length ;  i++){
-          allWidgets.add(Container(height:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
+          allWidgets.add(
+              Container(height:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
             width: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
 
 
@@ -126,7 +137,8 @@ class _HomeState extends State<Home> {
 
     });
 
-    FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent", isEqualTo:allCatrID.last ).get().then((value) {
+    FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer)
+        .where("parent", isEqualTo:allCatrID.last ).get().then((value) {
 
       if(value.docs.isNotEmpty){
         for(int i = 0 ; i < value.docs.length ; i++){
@@ -135,9 +147,10 @@ class _HomeState extends State<Home> {
           //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
             width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
             child: InkWell( onTap: (){
-              Navigator.push(
-                context,
-                CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+              GoRouter.of(context).go("/articles/"+value.docs[i].id);
+            // if(false)  Navigator.push(
+            //     context,
+            //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
             },
               child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
                   borderRadius: BorderRadius.circular(2)) ,
@@ -253,11 +266,46 @@ class _HomeState extends State<Home> {
     //
     // });
 
-    refreshAndLoad();
+ //   refreshAndLoad();
 
   }
   @override
   Widget build(BuildContext context) {
+    Column body =  Column(mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(height: MediaQuery.of(context).viewPadding.top,),
+
+        Padding(
+          padding:  EdgeInsets.only(top: 0),
+          child: Container(height: AppBar().preferredSize.height-1,
+            child: Stack(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if(false)  IconButton(onPressed: (){
+                  _key.currentState!.openDrawer();
+                }, icon: Icon(Icons.menu)),
+                Align(alignment: Alignment.center,child: Text(allCatr.last==""?"Sau Directory":allCatr.last)),
+                Align(alignment: Alignment.centerRight,
+                  child: IconButton(onPressed: (){
+
+                    //SearchActivity
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(builder: (context) => const SearchActivity()),
+                    );
+
+
+                  }, icon: Icon(Icons.search)),
+                ),
+
+
+              ],
+            ),
+          ),
+        ),
+        Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
+      ],
+    );
     return  WillPopScope(
       onWillPop: () async {
       if  (allCatr.length>1) {
@@ -275,44 +323,10 @@ class _HomeState extends State<Home> {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
         statusBarBrightness: Brightness.dark,
-      ),child: Scaffold(appBar: PreferredSize(child: ClipRect(
+      ),child: Scaffold(appBar: false?null: PreferredSize(child: ClipRect(
       child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
         child: Container(color: Colors.white.withOpacity(0.5), height: AppBar().preferredSize.height+MediaQuery.of(context).viewPadding.top,
-          child: Column(mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(height: MediaQuery.of(context).viewPadding.top,),
-
-              Padding(
-                padding:  EdgeInsets.only(top: 0),
-                child: Container(height: AppBar().preferredSize.height-1,
-                  child: Stack(
-                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                    if(false)  IconButton(onPressed: (){
-                        _key.currentState!.openDrawer();
-                      }, icon: Icon(Icons.menu)),
-                      Align(alignment: Alignment.center,child: Text(allCatr.last==""?"Sau Directory":allCatr.last)),
-                      Align(alignment: Alignment.centerRight,
-                        child: IconButton(onPressed: (){
-
-                          //SearchActivity
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(builder: (context) => const SearchActivity()),
-                          );
-
-
-                        }, icon: Icon(Icons.search)),
-                      ),
-
-
-                    ],
-                  ),
-                ),
-              ),
-              Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
-            ],
-          ),
+          child: body,
         ),
       ),
     ),preferredSize: AppBar().preferredSize,),drawerScrimColor:Colors.transparent,onDrawerChanged: (bool d){
@@ -376,7 +390,337 @@ class _HomeState extends State<Home> {
       //     ],
       //   ),
       // ),),
-      backgroundColor: Colors.white,body:false?Column(
+      backgroundColor: Colors.white,body:true? SingleChildScrollView(
+        child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(color: Colors.grey.withOpacity(0.15),
+              child: Row(
+                children: [
+                  (allCatr.length>1)?   InkWell( onTap: (){
+                    allCatrID.removeLast();
+                    allCatr.removeLast();
+                    setState(() {
+
+                    });
+                    refreshAndLoad();
+                  },
+                    child: Padding(
+                      padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.01),
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.navigate_before,color: Colors.blue),
+                          Text("Back",style: TextStyle(color: Colors.blue),)
+                        ],
+                      ),
+                    ),
+                  ):Container(height: 0,width: 0,),
+                  BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
+                    setState(() {
+                      for(int i = 0 ; i < allCatrID.length ; i++){
+                        if(allCatrID[i]==d){
+                          allCatr.removeAt(i);
+                          allCatrID.removeAt(i);
+                          break;
+                        }else{
+                          allCatr.removeAt(i);
+                          allCatrID.removeAt(i);
+                        }
+                      }
+                    });
+                  },),
+                ],
+              ),
+            ),
+            Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.1),),
+
+            StreamBuilder<QuerySnapshot>(
+                  stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+                      .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .snapshots(),
+                  builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                    if (snapshot.hasData && snapshot.data!.docs.length>0) {
+                      return true?  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                              Text("Categories"),
+                              Row(
+                                children: [
+                                  IconButton(onPressed: (){}, icon: Icon(Icons.chevron_left)),
+                                  IconButton(onPressed: (){}, icon: Icon(Icons.chevron_right)),
+                                ],
+                              ),
+                            ],),
+                          ),
+                          Container(height: 150,
+                            child: ListView(scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.zero,shrinkWrap: true,physics: AlwaysScrollableScrollPhysics(),
+                                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
+                                children:  snapshot.data!.docs.map((e) => true?Container(height: true?150:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
+                                  width: true?150: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
+
+
+                                    allCatrID.add(e.id);
+                                    allCatr.add(e.get("name"));
+
+                                    setState(() {
+
+                                    });
+                                    refreshAndLoad();
+                                  },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                        //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                        child:Stack(
+                                          children: [
+                                            Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue,),placeholder: (context, url) =>
+                                                Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,
+                                              width:  MediaQuery.of(context).size.width * 0.5,
+                                              height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                              width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                            Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:
+                                            BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                          ],
+                                        ),),
+                                    ),
+                                  ),): Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: InkWell( onTap: (){
+
+
+                                    allCatrID.add(e.id);
+                                    allCatr.add(e.get("name"));
+
+                                    setState(() {
+
+                                    });
+                                  },
+                                    child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                      //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                      child: false?Stack(
+                                        children: [
+                                          Image.network(e.get("img"),fit: BoxFit.cover,
+                                            // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
+                                          ),
+                                          Align(alignment: Alignment.bottomCenter,
+                                            child: Container(height: 20,color: Colors.white,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(e.get("name"),textAlign: TextAlign.center,),
+                                              ),
+                                            ),
+                                          )
+
+                                        ],
+                                      ): Stack(
+                                        children: [
+                                          Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                            width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                          Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                        ],
+                                      ),),
+                                  ),
+                                )).toList()
+                            ),
+                          ),
+                        ],
+                      ):  Column(
+                        children: [
+                          if( (allCatr.length>1))    Container(color: Colors.grey.withOpacity(0.1),
+                            child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                (allCatr.length>1)?   InkWell( onTap: (){
+                                  allCatrID.removeLast();
+                                  allCatr.removeLast();
+                                  setState(() {
+
+                                  });
+                                },
+                                  child: Padding(
+                                    padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.1),
+                                    child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.navigate_before,color: Colors.blue),
+                                        Text("Back",style: TextStyle(color: Colors.blue),)
+                                      ],
+                                    ),
+                                  ),
+                                ):Container(height: 0,width: 0,),
+
+                                if(false)   (allCatr.length>1)? IconButton(onPressed: (){
+                                  setState(() {
+
+
+                                  });
+                                  allCatrID.removeLast();
+                                  allCatr.removeLast();
+
+                                }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+                                BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
+                                  setState(() {
+                                    for(int i = 0 ; i < allCatrID.length ; i++){
+                                      if(allCatrID[i]==d){
+                                        allCatr.removeAt(i);
+                                        allCatrID.removeAt(i);
+                                        break;
+                                      }else{
+                                        allCatr.removeAt(i);
+                                        allCatrID.removeAt(i);
+                                      }
+                                    }
+                                  });
+                                },),
+                              ],),
+                          ),
+                          if( (allCatr.length>1))     Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
+
+                          ListView(scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                           //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
+                              children:  snapshot.data!.docs.map((e) => Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: InkWell( onTap: (){
+
+
+                                  allCatrID.add(e.id);
+                                  allCatr.add(e.get("name"));
+
+                                  setState(() {
+
+                                  });
+                                },
+                                  child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                    //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                    child: false?Stack(
+                                      children: [
+                                        Image.network(e.get("img"),fit: BoxFit.cover,
+                                          // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
+                                        ),
+                                        Align(alignment: Alignment.bottomCenter,
+                                          child: Container(height: 20,color: Colors.white,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(8.0),
+                                              child: Text(e.get("name"),textAlign: TextAlign.center,),
+                                            ),
+                                          ),
+                                        )
+
+                                      ],
+                                    ): Stack(
+                                      children: [
+                                        Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                          width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                        Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                      ],
+                                    ),),
+                                ),
+                              )).toList()
+                          ),
+
+
+
+
+                        ],
+                      );
+
+                    }
+                    else {
+                      return Container(height: 0,width: 0,);}
+                  }),
+            StreamBuilder<QuerySnapshot>(
+                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer)
+                    .where("parent", isEqualTo:allCatrID.last ).snapshots(),
+                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                  if (snapshot.hasData && snapshot.data!.docs.length>0) {
+                  return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+
+                      itemBuilder: (context, index) {
+                        Map<String,dynamic> d = snapshot.data!.docs[index].data() as Map<String,dynamic>;
+                        return Container(
+                          //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+                         // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
+                          child: InkWell( onTap: (){
+                            GoRouter.of(context).go("/articles/"+ snapshot.data!.docs[index].id);
+                            // if(false)  Navigator.push(
+                            //     context,
+                            //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                          },
+                            child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
+                                borderRadius: BorderRadius.circular(2)) ,
+                              child: Padding(
+                                padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(height:  100,width:  100,
+                                      child: Padding(
+                                        padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Stack(
+                                          children: [
+                                            CachedNetworkImage(
+                                              imageUrl:  snapshot.data!.docs[index].get("photo1"),
+                                              height:100,
+                                              width:100 ,fit: BoxFit.cover,
+                                              placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+
+                                            ),
+                                            Align(alignment: Alignment.bottomCenter,child:d["workdesignation"]==null?Container(height: 0,width: 0,):
+                                            Container(height: 20,
+                                                width: 100,child: ClipRect(child:
+                                                BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child:  AutoSizeText(d["workdesignation"]??"", minFontSize: 9, maxFontSize: 18, overflow: TextOverflow.ellipsis, ))))) ,),
+
+                                          ],
+                                        )),
+                                      ),
+                                    ),
+
+
+
+                                    Expanded(
+                                        child:  Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                AutoSizeText( snapshot.data!.docs[index].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                                AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
+
+                                              ],
+                                            ),
+                                            AutoSizeText(d["designation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                                            AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                                                if(d["phone"].toString().length>0)  InkWell(onTap: (){
+                                                  //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                                  launch("tel://"+d["phone"]??"");
+                                                },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call")))
+                                              ],
+                                            ),
+                                          ],
+                                        )
+
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+
+
+
+
+                  }
+                  else {
+                    return Container(height: 0,width: 0,);}
+                }),
+          ],
+        ),
+      ):  false?Column(
         children: [
           StreamBuilder<QuerySnapshot>(
               stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .snapshots(),
@@ -493,9 +837,9 @@ class _HomeState extends State<Home> {
 
                     itemBuilder: (context, index) {
                       return InkWell( onTap: (){
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                        // Navigator.push(
+                        //   context,
+                        //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
                       },
                         child: Padding(
                           padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
@@ -592,11 +936,22 @@ class _HomeState extends State<Home> {
                   return Scaffold(body: CircularProgressIndicator());}
               })
         ],
-      ):   false?Text(allWidgets.length.toString()): SingleChildScrollView(
-        child: allWidgets.length>0?Wrap(
+      ):   false?Text(allWidgets.length.toString()): MediaQuery.of(context).size.width>1000? Row(crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(color: Color.fromARGB(255,52, 73, 94),width: 300,height: MediaQuery.of(context).size.height,),
+          Expanded(
+            child: SingleChildScrollView(
+              child: allWidgets.length>0?Wrap(
+                // shrinkWrap: true,
+                children:allWidgets,):Center(child: Text("No items"),),
+            ),
+          ),
+        ],
+      ):SingleChildScrollView(
+        child:    allWidgets.length>0?Wrap(
           // shrinkWrap: true,
           children:allWidgets,):Center(child: Text("No items"),),
-      ) ,),) ,);
+      ),),) ,);
    return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
@@ -808,9 +1163,9 @@ class _HomeState extends State<Home> {
 
                    itemBuilder: (context, index) {
                      return InkWell( onTap: (){
-                       Navigator.push(
-                         context,
-                         CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                       // Navigator.push(
+                       //   context,
+                       //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
                      },
                        child: Padding(
                          padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),

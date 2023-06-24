@@ -12,7 +12,7 @@ import 'package:open_mail_app/open_mail_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Article extends StatefulWidget {
-  QueryDocumentSnapshot id;
+  String id;
   Article({required this.id});
 
   @override
@@ -149,629 +149,221 @@ class _ArticleState extends State<Article> {
       //     ],
       //   ),
       // ),),
-      body:true?SingleChildScrollView(
-        child: Column(
-          //shrinkWrap: true,
+      body:
+      FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance.collection("sau-article").doc(widget.id).get() , // a previously-obtained Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotArticle) {
 
-          mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 8,left: 8,right: 8,bottom: 8),
-              child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                child: Container(height: MediaQuery.of(context).size.height * 0.3,
-                  child: Stack(children: [
-                    widget.id.get("photo1").toString().length==0? Container(height: 0,width: 0,) : CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.25,fit: BoxFit.cover,),
+            if (snapshotArticle.hasData) {
+              return  SingleChildScrollView(
+                child: Column(
+                  //shrinkWrap: true,
 
-                    ClipRect(child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),child: Container())),
-                    Align(alignment: Alignment.center ,child: Column(mainAxisAlignment: MainAxisAlignment.end,crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        widget.id.get("photo2").toString().length==0? Container(height: 0,width: 0,) :   ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),child: Image.network(widget.id.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,)),
+                  mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8,left: 8,right: 8,bottom: 8),
+                      child:  ClipRRect( borderRadius: BorderRadius.circular(8),
+                        child: Container(height: MediaQuery.of(context).size.height * 0.3,
+                          child: Stack(children: [
+                            snapshotArticle.data!.get("photo1").toString().length==0? Container(height: 0,width: 0,) : CachedNetworkImage(placeholder: (context, url) => 
+                                Center(child: CupertinoActivityIndicator(),),imageUrl:snapshotArticle.data!.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.25,
+                              fit: BoxFit.cover,),
 
-                        Text( widget.id.get("name",),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: MediaQuery.of(context).size.width * 0.055),),
+                            ClipRect(child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),child: Container())),
+                            Align(alignment: Alignment.center ,child: Column(mainAxisAlignment: MainAxisAlignment.end,crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                snapshotArticle.data!.get("photo2").toString().length==0? Container(height: 0,width: 0,) :   ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),
+                                   child: Image.network(snapshotArticle.data!.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,)),
 
-                       Row(mainAxisAlignment: MainAxisAlignment.center,
-                         children: [
-                           InkWell(onTap: () async {
+                                Text(snapshotArticle.data!.get("name",),style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: MediaQuery.of(context).size.width * 0.055),),
 
-                             EmailContent email = EmailContent(
-                               to: [
-                                 widget.id.get("email")
-                               ],
-                               subject: 'Hello!',
-                               body: 'How are you doing?',
-                               cc: [],
-                               bcc: [],
-                             );
-
-                             OpenMailAppResult result =
-                             await OpenMailApp.composeNewEmailInMailApp(
-                                 nativePickerTitle: 'Select email app to compose',
-                                 emailContent: email);
-                             if (!result.didOpen && !result.canOpen) {
-                              //showNoMailAppsDialog(context);
-                             } else if (!result.didOpen && result.canOpen) {
-                               showDialog(
-                                 context: context,
-                                 builder: (_) => MailAppPickerDialog(
-                                   mailApps: result.options,
-                                   emailContent: email,
-                                 ),
-                               );
-                             }
-
-
-
-
-
-                           },
-                             child: Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                                 padding:  EdgeInsets.all(8.0),
-                                 child:Icon(Icons.email,color: Colors.white,),
-                               ))),
-                             ),
-                           ),
-                           InkWell( onTap: (){
-                             launch("https://"+widget.id.get("fb"));
-                           },
-                             child: Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                                 padding:  EdgeInsets.all(8.0),
-                                 child: Icon(Icons.facebook,color: Colors.white,),
-                               ))),
-                             ),
-                           ),
-                           InkWell(onTap: (){
-                             launch("https://"+widget.id.get("linkedin"));
-                           },
-                             child: Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                                 padding:  EdgeInsets.all(8.0),
-                                 child: FaIcon(FontAwesomeIcons.linkedin,color: Colors.white,),
-                               ))),
-                             ),
-                           ),
-                           InkWell(onTap: () async {
-                             var contact = widget.id.get("whatsapp");
-                             var androidUrl = "whatsapp://send?phone=$contact&text=Hi, I need some help";
-                             var iosUrl = "https://wa.me/$contact?text=${Uri.parse('Hi, I need some help')}";
-
-                             try{
-                               if(Platform.isIOS){
-                                 await launchUrl(Uri.parse(iosUrl));
-                               }
-                               else{
-                                 await launchUrl(Uri.parse(androidUrl));
-                               }
-                             } on Exception{
-                              // EasyLoading.showError('WhatsApp is not installed.');
-                             }
-                           },
-                             child: Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                                 padding:  EdgeInsets.all(8.0),
-                                 child: FaIcon(FontAwesomeIcons.whatsapp,color: Colors.white,),
-                               ))),
-                             ),
-                           ),
-                           InkWell(onTap: (){
-                             launch("https://"+widget.id.get("website"));
-                           },
-                             child: Padding(
-                               padding: const EdgeInsets.all(8.0),
-                               child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
-                                 padding:  EdgeInsets.all(8.0),
-                                 child: FaIcon(FontAwesomeIcons.firefoxBrowser,color: Colors.white,),
-                               ))),
-                             ),
-                           ),
-
-                         ],
-                       ),
-                       if(false) FutureBuilder<QuerySnapshot>(
-                            future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").limit(4). get() ,  // a previously-obtained Future<String> or null
-                            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
-
-                              if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                                return Row(mainAxisAlignment: MainAxisAlignment.center,
-                                  children:snapshotC.data!.docs.map((e) => wi1(e)).toList() ,
-                                );
-                                return  Container(decoration: BoxDecoration(border: Border.all()),
-                                  child: ListView.separated(shrinkWrap: true,
-                                    itemCount: snapshotC.data!.docs.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
-
-                                      try{
-                                        return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(snapshotC.data!.docs[index].get("value")),
-                                              Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
-                                            ],
-                                          ),
-                                        );
-
-                                        // return Padding(
-                                        //   padding: const EdgeInsets.all(8.0),
-                                        //   child: TextFormField(controller: c,onChanged: (String s){
-                                        //     allData[ snapshotC.data!.docs[index].get("key")] = s;
-                                        //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                                        // );
-                                      }catch(e){
-                                        return Text("--");
-                                      }
-
-                                    }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
-                                    //  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                                  ),
-                                );
-
-                                //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                              }else{
-                                return Text("--");
-
-                              }
-                            })
-                        
-                      ],
-                    )),
-
-                  ],),
-                ),
-              ),
-            ),
-            FutureBuilder<QuerySnapshot>(
-                future: FirebaseFirestore.instance.collection("directoryapp_blocks").orderBy("order").get() , // a previously-obtained Future<String> or null
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-
-                  if (snapshot.hasData) {
-                    return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.docs.length,
-
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                            child: Container(
-                              //height: MediaQuery.of(context).size.height * 0.25,
-                              color: Colors.white,
-                              child:Column(
-                                children: [
-                                  Container(color: Colors.blue,child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Center(child: Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.white),)),
-                                  )),
-                                  ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                                    itemCount:snapshot.data!.docs[index].get("items").length,
-                                    itemBuilder: (BuildContext context, int index2) {
-                                      try{
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child:  FutureBuilder<DocumentSnapshot>(
-                                              future: FirebaseFirestore.instance.collection("sau_datatype").doc(snapshot.data!.docs[index].get("items")[index2]).get() , // a previously-obtained Future<String> or null
-                                              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotD) {
-                                                if(snapshot.hasData){
-                                                  return  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Text(snapshotD.data!.get("value")),
-                                                      Text(widget.id.get(snapshotD.data!.get("key"))),
-                                                    ],
-                                                  );
-                                                }else{
-                                                  return Center(child: CupertinoActivityIndicator(),);
-                                                }
-                                              }),
-                                        );
-                                      }catch(e){
-                                        return Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(e.toString()),
-                                              Text("--"),
-                                            ],
-                                          ),
-                                        );
-                                      }
-
-                                    }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }else{
-                    return Text("--");
-                  }
-                }),
-
-          if(false)  Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  //height: MediaQuery.of(context).size.height * 0.25,
-                  color: Colors.white,
-                  child:Column(
-                    children: [
-                      Container(color: Colors.blue,child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: Text("CONTACT INFORMATION",style: TextStyle(color: Colors.white),)),
-                      )),
-                      FutureBuilder<QuerySnapshot>(
-                          future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").limit(5). get() ,  // a previously-obtained Future<String> or null
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
-
-                            if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                              return   ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                              itemCount: snapshotC.data!.docs.length-1,
-                              itemBuilder: (BuildContext context, int index) {
-                              Map<String,dynamic> m = snapshotC.data!.docs[index+1].data() as Map<String,dynamic>;
-                              try{
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      wi1G(snapshotC.data!.docs[index+1]),
-                                      Text(widget.id.get(m["key"])),
-                                    ],
-                                  ),
-                                );
-                              }catch(e){
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      wi1G(snapshotC.data!.docs[index+1]),
-                                      Text("--"),
-                                    ],
-                                  ),
-                                );
-                              }
-
-                              }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },);
-                              return Column(mainAxisAlignment: MainAxisAlignment.center,
-                                children:snapshotC.data!.docs.map((e) => wi1(e)).toList() ,
-                              );
-                              return  Container(decoration: BoxDecoration(border: Border.all()),
-                                child: ListView.separated(shrinkWrap: true,
-                                  itemCount: snapshotC.data!.docs.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
-
-                                    try{
-                                      return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(snapshotC.data!.docs[index].get("value")),
-                                            Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
-                                          ],
-                                        ),
-                                      );
-
-                                      // return Padding(
-                                      //   padding: const EdgeInsets.all(8.0),
-                                      //   child: TextFormField(controller: c,onChanged: (String s){
-                                      //     allData[ snapshotC.data!.docs[index].get("key")] = s;
-                                      //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                                      // );
-                                    }catch(e){
-                                      return Text("--");
-                                    }
-
-                                  }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
-                                  //  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                                ),
-                              );
-
-                              //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                            }else{
-                              return Text("--");
-
-                            }
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if(false)    Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  //height: MediaQuery.of(context).size.height * 0.25,
-                  color: Colors.white,
-                  child:Column(
-                    children: [
-                      Container(color: Colors.blue,child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: Text("ADDITIONAL INFORMATION",style: TextStyle(color: Colors.white))),
-                      )),
-                      FutureBuilder<QuerySnapshot>(
-                          future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").limit(9). get() ,  // a previously-obtained Future<String> or null
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
-
-                            if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                              return   ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                                itemCount: snapshotC.data!.docs.length-5,
-                                itemBuilder: (BuildContext context, int index) {
-                                  Map<String,dynamic> m = snapshotC.data!.docs[index+5].data() as Map<String,dynamic>;
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        wi1G(snapshotC.data!.docs[index+5]),
-                                        Text(widget.id.get(m["key"])),
-                                      ],
-                                    ),
-                                  );
-                                }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },);
-                              return Column(mainAxisAlignment: MainAxisAlignment.center,
-                                children:snapshotC.data!.docs.map((e) => wi1(e)).toList() ,
-                              );
-                              return  Container(decoration: BoxDecoration(border: Border.all()),
-                                child: ListView.separated(shrinkWrap: true,
-                                  itemCount: snapshotC.data!.docs.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
-
-                                    try{
-                                      return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(snapshotC.data!.docs[index].get("value")),
-                                            Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
-                                          ],
-                                        ),
-                                      );
-
-                                      // return Padding(
-                                      //   padding: const EdgeInsets.all(8.0),
-                                      //   child: TextFormField(controller: c,onChanged: (String s){
-                                      //     allData[ snapshotC.data!.docs[index].get("key")] = s;
-                                      //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                                      // );
-                                    }catch(e){
-                                      return Text("--");
-                                    }
-
-                                  }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
-                                  //  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                                ),
-                              );
-
-                              //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                            }else{
-                              return Text("--");
-
-                            }
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            if(false)     Padding(
-              padding: const EdgeInsets.all(8.0),
-              child:  ClipRRect( borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  //height: MediaQuery.of(context).size.height * 0.25,
-                  color: Colors.white,
-                  child:Column(
-                    children: [
-                      Container(color: Colors.blue,child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(child: Text("OTHERS INFORMATION",style: TextStyle(color: Colors.white))),
-                      )),
-                      FutureBuilder<QuerySnapshot>(
-                          future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order"). get() ,  // a previously-obtained Future<String> or null
-                          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
-
-                            if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                              return   ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                                itemCount: snapshotC.data!.docs.length-8,
-                                itemBuilder: (BuildContext context, int index) {
-                                  Map<String,dynamic> m = snapshotC.data!.docs[index+8].data() as Map<String,dynamic>;
-                                  return m["key"]==null?Container(height: 0,width: 0,): Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        wi1G(snapshotC.data!.docs[index+8]),
-                                        Text(widget.id.get(m["key"])),
-                                      ],
-                                    ),
-                                  );
-                                }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },);
-                              return Column(mainAxisAlignment: MainAxisAlignment.center,
-                                children:snapshotC.data!.docs.map((e) => wi1(e)).toList() ,
-                              );
-                              return  Container(decoration: BoxDecoration(border: Border.all()),
-                                child: ListView.separated(shrinkWrap: true,
-                                  itemCount: snapshotC.data!.docs.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
-
-                                    try{
-                                      return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(snapshotC.data!.docs[index].get("value")),
-                                            Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
-                                          ],
-                                        ),
-                                      );
-
-                                      // return Padding(
-                                      //   padding: const EdgeInsets.all(8.0),
-                                      //   child: TextFormField(controller: c,onChanged: (String s){
-                                      //     allData[ snapshotC.data!.docs[index].get("key")] = s;
-                                      //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                                      // );
-                                    }catch(e){
-                                      return Text("--");
-                                    }
-
-                                  }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
-                                  //  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                                ),
-                              );
-
-                              //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                            }else{
-                              return Text("--");
-
-                            }
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-         if(false)   Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: true? FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance.collection("sau_datatype").orderBy("order"). get() , // a previously-obtained Future<String> or null
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
-
-                    if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                      return  Container(decoration: BoxDecoration(border: Border.all()),
-                        child: ListView.separated(shrinkWrap: true,
-                          itemCount: snapshotC.data!.docs.length,
-                          itemBuilder: (BuildContext context, int index) {
-                          Map<String,dynamic> m = widget.id.data() as Map<String,dynamic>;
-
-                            try{
-                              return  m[snapshotC.data!.docs[index].get("key")]==null?Container(height: 0,width: 0,): Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                Row(mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(snapshotC.data!.docs[index].get("value")),
-                                    Expanded(child: Text( m[snapshotC.data!.docs[index].get("key")].toString(),textAlign: TextAlign.end,)),
+                                    InkWell(onTap: () async {
+
+                                      EmailContent email = EmailContent(
+                                        to: [
+                                          snapshotArticle.data!.get("email")
+                                        ],
+                                        subject: 'Hello!',
+                                        body: 'How are you doing?',
+                                        cc: [],
+                                        bcc: [],
+                                      );
+
+                                      OpenMailAppResult result =
+                                      await OpenMailApp.composeNewEmailInMailApp(
+                                          nativePickerTitle: 'Select email app to compose',
+                                          emailContent: email);
+                                      if (!result.didOpen && !result.canOpen) {
+                                        //showNoMailAppsDialog(context);
+                                      } else if (!result.didOpen && result.canOpen) {
+                                        showDialog(
+                                          context: context,
+                                          builder: (_) => MailAppPickerDialog(
+                                            mailApps: result.options,
+                                            emailContent: email,
+                                          ),
+                                        );
+                                      }
+
+
+
+
+
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                          padding:  EdgeInsets.all(8.0),
+                                          child:Icon(Icons.email,color: Colors.white,),
+                                        ))),
+                                      ),
+                                    ),
+                                    InkWell( onTap: (){
+                                      launch("https://"+snapshotArticle.data!.get("fb"));
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                          padding:  EdgeInsets.all(8.0),
+                                          child: Icon(Icons.facebook,color: Colors.white,),
+                                        ))),
+                                      ),
+                                    ),
+                                    InkWell(onTap: (){
+                                      launch("https://"+snapshotArticle.data!.get("linkedin"));
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                          padding:  EdgeInsets.all(8.0),
+                                          child: FaIcon(FontAwesomeIcons.linkedin,color: Colors.white,),
+                                        ))),
+                                      ),
+                                    ),
+                                    InkWell(onTap: () async {
+                                      var contact =snapshotArticle.data!.get("whatsapp");
+                                      var androidUrl = "whatsapp://send?phone=$contact&text=Hi, I need some help";
+                                      var iosUrl = "https://wa.me/$contact?text=${Uri.parse('Hi, I need some help')}";
+
+                                      try{
+                                        if(Platform.isIOS){
+                                          await launchUrl(Uri.parse(iosUrl));
+                                        }
+                                        else{
+                                          await launchUrl(Uri.parse(androidUrl));
+                                        }
+                                      } on Exception{
+                                        // EasyLoading.showError('WhatsApp is not installed.');
+                                      }
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                          padding:  EdgeInsets.all(8.0),
+                                          child: FaIcon(FontAwesomeIcons.whatsapp,color: Colors.white,),
+                                        ))),
+                                      ),
+                                    ),
+                                    InkWell(onTap: (){
+                                      launch("https://"+snapshotArticle.data!.get("website"));
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Container(color: Colors.blue, child: Padding(
+                                          padding:  EdgeInsets.all(8.0),
+                                          child: FaIcon(FontAwesomeIcons.firefoxBrowser,color: Colors.white,),
+                                        ))),
+                                      ),
+                                    ),
+
                                   ],
                                 ),
-                              );
+                              
 
-                              // return Padding(
-                              //   padding: const EdgeInsets.all(8.0),
-                              //   child: TextFormField(controller: c,onChanged: (String s){
-                              //     allData[ snapshotC.data!.docs[index].get("key")] = s;
-                              //   },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                              // );
-                            }catch(e){
-                              return Text("--");
-                            }
+                              ],
+                            )),
 
-                          }, separatorBuilder: (BuildContext context, int index) { return  Container(height: 0.5,width: double.infinity,color: Colors.grey,); },
-                          //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                          ],),
                         ),
-                      );
-
-                      //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                    }else{
-                      return Text("--");
-
-                    }
-                  }): Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
-                if(widget.id.get("c1").toString().length>0)   Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
-
-
-                if(widget.id.get("c2").toString().length>0)    Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.04),),
-                if(widget.id.get("c3").toString().length>0)    Text(widget.id.get("c3"),style: TextStyle(fontStyle: FontStyle.italic,fontSize:MediaQuery.of(context).size.width * 0.03),),
-                if(widget.id.get("c4").toString().length>0)    Text(widget.id.get("c4")),
-                if(widget.id.get("c5").toString().length>0)    Text(widget.id.get("c5")),
-
-              ],),
-            ),
-
-          ],),
-      ): Column(
-        //shrinkWrap: true,
-        //mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-
-        Container(height: MediaQuery.of(context).size.height * 0.35+(MediaQuery.of(context).viewPadding.top)*2.5,
-          child: Stack(
-            children: [
-              Container(height: MediaQuery.of(context).size.height * 0.35+(MediaQuery.of(context).viewPadding.top)*2.5,
-                child: Column(children: [
-                  Container(height: (MediaQuery.of(context).viewPadding.top)*2.5,),
-                  Container(height: MediaQuery.of(context).size.height * 0.35,
-                    child: Stack(children: [
-                      widget.id.get("photo1").toString().length>10? Container(height: 0,width: 0,) : Image.network(widget.id.get("photo1"),width: MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height * 0.35,fit: BoxFit.cover,),
-                      widget.id.get("photo2").toString().length>10? Container(height: 0,width: 0,) :  Align(alignment: Alignment.center ,child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.05),child: Image.network(widget.id.get("photo2"),width:MediaQuery.of(context).size.height * 0.1 ,height: MediaQuery.of(context).size.height * 0.1,fit: BoxFit.cover,))),
-
-                    ],),
-                  )
-
-                ],),
-              ),
-           Align(alignment: Alignment.topCenter,child: ClipRect(
-                child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                  child: Container(color: Colors.black.withOpacity(0.5),
-                    child: Padding(
-                      padding:  EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
-                      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-
-                          IconButton(onPressed: (){
-                            Navigator.pop(context);
-                          }, icon: Icon(Icons.navigate_before,color: Colors.white)),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("Back",style: TextStyle(color: Colors.white),),
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                ),
-              ),),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              //shrinkWrap: true,
-             mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-           if(widget.id.get("c1").toString().length>0)   Text(widget.id.get("c1"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
-              if(widget.id.get("c2").toString().length>0)    Text(widget.id.get("c2"),style: TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),),
-              if(widget.id.get("c3").toString().length>0)    Text(widget.id.get("c3")),
-              if(widget.id.get("c4").toString().length>0)    Text(widget.id.get("c4")),
-              if(widget.id.get("c5").toString().length>0)    Text(widget.id.get("c5")),
-            ],),
-          ),
-        ),
+                    FutureBuilder<QuerySnapshot>(
+                        future: FirebaseFirestore.instance.collection("directoryapp_blocks").orderBy("order").get() , // a previously-obtained Future<String> or null
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-      ],
-    ),),);
-    return Scaffold(body: Column(
-      children: [
-        Row(
-          children: [
-            IconButton(onPressed: (){
-              Navigator.pop(context);
-            }, icon: Icon(Icons.navigate_before)),
-          ],
-        ),
-        Text(widget.id.get("c1")),
-        Text(widget.id.get("c2")),
-        Text(widget.id.get("c3")),
-        Text(widget.id.get("c4")),
-        Text(widget.id.get("c5")),
-      ],
-    ),);
+                          if (snapshot.hasData) {
+                            return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.docs.length,
+
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child:  ClipRRect( borderRadius: BorderRadius.circular(8),
+                                    child: Container(
+                                      //height: MediaQuery.of(context).size.height * 0.25,
+                                      color: Colors.white,
+                                      child:Column(
+                                        children: [
+                                          Container(color: Colors.blue,child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Center(child: Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.white),)),
+                                          )),
+                                          ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                                            itemCount:snapshot.data!.docs[index].get("items").length,
+                                            itemBuilder: (BuildContext context, int index2) {
+                                              try{
+                                                return Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child:  FutureBuilder<DocumentSnapshot>(
+                                                      future: FirebaseFirestore.instance.collection("sau_datatype").doc(snapshot.data!.docs[index].get("items")[index2]).get() , // a previously-obtained Future<String> or null
+                                                      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotD) {
+                                                        if(snapshot.hasData){
+                                                          return  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            children: [
+                                                              Text(snapshotD.data!.get("value")),
+                                                              Text(snapshotArticle.data!.get(snapshotD.data!.get("key"))),
+                                                            ],
+                                                          );
+                                                        }else{
+                                                          return Center(child: CupertinoActivityIndicator(),);
+                                                        }
+                                                      }),
+                                                );
+                                              }catch(e){
+                                                return Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(e.toString()),
+                                                      Text("--"),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+
+                                            }, separatorBuilder: (BuildContext context, int index) { return Container(height: 0.5,width: double.infinity,color: Colors.grey,); },),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }else{
+                            return Text("--");
+                          }
+                        }),
+
+
+
+                  ],),
+              );
+            }else{
+              return Text("--");
+            }
+          })));
   }
 }

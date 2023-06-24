@@ -14,6 +14,7 @@ import 'DrawerProvider.dart';
 import 'Signup.dart';
 import 'addContent.dart';
 import 'admin.dart';
+import 'article_body.dart';
 import 'home.dart';
 
 /// This sample app shows an app with two screens.
@@ -122,10 +123,48 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: 'articles/:id',
           builder: (BuildContext context, GoRouterState state) {
-            return Scaffold(body:Text( state.pathParameters['id']!));
+            return Article(id:state.pathParameters['id']!);
           },
         ),
+        GoRoute(
+          path: ':id',
+          builder: (BuildContext context, GoRouterState state) {
+       return   FutureBuilder<QuerySnapshot>(
+          future: FirebaseFirestore.instance.collection("company").where("shareCode",isEqualTo:state.pathParameters['id']! ).get() , // a previously-obtained Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
+          if (snapshot.hasData && snapshot.data!.docs.length>0) {
+            GoRouter.of(context).go("/home/"+ snapshot.data!.docs.first.id);
+          return Center(child: CircularProgressIndicator(),);
+          }else   if (snapshot.hasData && snapshot.data!.docs.length==0) {
+            return Scaffold(body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const Text('So company found',style: TextStyle(fontSize: 25),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const Text('Go to the Details screen'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () => context.go('/'),
+                    child: Text('Go to home'),
+                  ),
+                ),
+              ],
+            )),);
+
+          }else{
+            return Center(child: CircularProgressIndicator(),);
+          }});
+
+           // return Scaffold(appBar: AppBar(title: Text("direct home"),),body:Text( state.pathParameters['id']!));
+          },
+        ),
 
 
       ],

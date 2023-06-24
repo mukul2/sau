@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/DrawerProvider.dart';
 import 'package:sau/utils.dart';
@@ -37,9 +38,10 @@ class _SearchActivityState extends State<SearchActivity> {
                    //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
                    width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
                    child: InkWell( onTap: (){
-                     Navigator.push(
-                       context,
-                       CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                     GoRouter.of(context).go("/articles/"+value.docs[i].id);
+                   // if(false)  Navigator.push(
+                   //     context,
+                   //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
                    },
                      child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
                          borderRadius: BorderRadius.circular(2)) ,
@@ -132,9 +134,9 @@ class _SearchActivityState extends State<SearchActivity> {
                      ),
                    ),
                  ): InkWell( onTap: (){
-                Navigator.push(
-                  context,
-                  CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                // Navigator.push(
+                //   context,
+                //   CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
               },
                 child: Padding(
                   padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
@@ -247,9 +249,9 @@ class _SearchActivityState extends State<SearchActivity> {
 
                         Map<String,dynamic> d = snapshot.data!.docs[index].data() as Map<String,dynamic>;
                         return InkWell( onTap: (){
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                          // Navigator.push(
+                          //   context,
+                          //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
                         },
                           child: Padding(
                             padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),

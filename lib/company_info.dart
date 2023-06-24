@@ -1,4 +1,4 @@
-import 'dart:html';
+import 'package:universal_html/html.dart' as uni_html;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,7 +93,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
                       Text("Signup link"),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: SelectableText(window.location.href.replaceAll(GoRouter.of(context).location, "")+"/self-sign/"+snapshotC.data!.docs.first.get("shareCode")),
+                        child: SelectableText(uni_html.window.location.href.replaceAll(GoRouter.of(context).location, "")+"/self-sign/"+snapshotC.data!.docs.first.get("shareCode")),
                       ),
                     ],
                   ),

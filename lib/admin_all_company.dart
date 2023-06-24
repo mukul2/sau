@@ -121,9 +121,9 @@ class MyData extends DataTableSource {
 
                           itemBuilder: (context, index) {
                             return InkWell( onTap: (){
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                              // Navigator.push(
+                              //   context,
+                              //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
                             },
                               child: Padding(
                                 padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
@@ -365,9 +365,9 @@ Text("Finish edit",style: TextStyle(color: Colors.blue),),
 
                                     itemBuilder: (context, index) {
                                       return InkWell( onTap: (){
-                                        Navigator.push(
-                                          context,
-                                          CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                                        // Navigator.push(
+                                        //   context,
+                                        //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
                                       },
                                         child: Padding(
                                           padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
