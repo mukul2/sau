@@ -27,6 +27,8 @@ class Admin extends StatefulWidget {
 class _AdminState extends State<Admin> {
   bool loggedIn = false;
   adminType at = adminType.admin;
+
+  bool busy = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -105,7 +107,7 @@ class _AdminState extends State<Admin> {
   }
   @override
   Widget build(BuildContext context) {
-return Scaffold(body: Center(child: Card(
+return Scaffold(body: Center(child: Container(decoration: BoxDecoration(border: Border.all(width: 0.5,color: Colors.black),borderRadius: BorderRadius.circular(10)),
   child: Container(width: 450,
     child: Padding(
       padding: const EdgeInsets.all(20.0),
@@ -123,9 +125,126 @@ return Scaffold(body: Center(child: Card(
             padding: const EdgeInsets.all(8.0),
             child: TextFormField(controller: password,decoration: InputDecoration(label: Text("Password")),),
           ),
-          InkWell( onTap: (){
-            try{
-              FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text).then((value) {
+          busy?Center(child: CircularProgressIndicator(),): InkWell( onTap: () async {
+            setState(() {
+              busy = true;
+            });
+            try {
+              UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: email.text, password: password.text
+              );
+              if(userCredential.user==null){
+
+              }else{
+                FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+                  try{
+                    if(value.get("type")=="admin"){
+                      at = adminType.superAdmin;
+                      setState(() {
+                        busy = false;
+                      });
+                      GoRouter.of(context).go("/manage");
+
+                    }else{
+                      FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                        Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                        setState(() {
+                          busy = false;
+                        });
+                        GoRouter.of(context).go("/organizer");
+
+                      });
+
+                    }
+                  }catch(e){
+                    setState(() {
+                      busy = false;
+                    });
+                    FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                      Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                      setState(() {
+                        busy = false;
+                      });
+                      GoRouter.of(context).go("/organizer");
+
+                    });
+                  }
+                });
+              }
+            } on FirebaseAuthException catch (e) {
+              if (e.code == 'user-not-found') {
+                setState(() {
+                  busy = false;
+                });
+                print('No user found for that email.');
+              } else if (e.code == 'wrong-password') {
+                setState(() {
+                  busy = false;
+                });
+                print('Wrong password provided for that user.');
+              }
+            }
+          if(false)  try{
+
+              try {
+                UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: email.text, password: password.text
+                );
+                if(userCredential.user==null){
+
+                }else{
+                  FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).get().then((value) {
+
+                    try{
+                      if(value.get("type")=="admin"){
+                        at = adminType.superAdmin;
+                        setState(() {
+                          busy = false;
+                        });
+                        GoRouter.of(context).go("/manage");
+
+                      }else{
+                        FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                          Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                          setState(() {
+                            busy = false;
+                          });
+                          GoRouter.of(context).go("/organizer");
+
+                        });
+
+                      }
+                    }catch(e){
+                      setState(() {
+                        busy = false;
+                      });
+                      FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                        Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                        setState(() {
+                          busy = false;
+                        });
+                        GoRouter.of(context).go("/organizer");
+
+                      });
+                    }
+                  });
+                }
+              } on FirebaseAuthException catch (e) {
+                if (e.code == 'user-not-found') {
+                  setState(() {
+                    busy = false;
+                  });
+                  print('No user found for that email.');
+                } else if (e.code == 'wrong-password') {
+                  setState(() {
+                    busy = false;
+                  });
+                  print('Wrong password provided for that user.');
+                }
+              }
+
+            if(false)  FirebaseAuth.instance.signInWithEmailAndPassword(email: email.text, password: password.text).then((value) {
 
                 if(value.user==null){
 
@@ -136,21 +255,30 @@ return Scaffold(body: Center(child: Card(
                       if(value.get("type")=="admin"){
                         at = adminType.superAdmin;
                         setState(() {
-
+                          busy = false;
                         });
                         GoRouter.of(context).go("/manage");
 
                       }else{
                         FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
                           Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                          setState(() {
+                            busy = false;
+                          });
                           GoRouter.of(context).go("/organizer");
 
                         });
 
                       }
                     }catch(e){
+                      setState(() {
+                        busy = false;
+                      });
                       FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
                         Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+                        setState(() {
+                          busy = false;
+                        });
                         GoRouter.of(context).go("/organizer");
 
                       });
@@ -160,7 +288,9 @@ return Scaffold(body: Center(child: Card(
 
               });
             }catch(e){
-
+              setState(() {
+                busy = false;
+              });
             }
           },
             child: Padding(
@@ -174,7 +304,8 @@ return Scaffold(body: Center(child: Card(
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(onPressed: (){
-              Navigator.pushNamed(context, "/signup");
+            //  Navigator.pushNamed(context, "/signup");
+              GoRouter.of(context).go("/signup");
             }, child: Center(child: Text("Signup & Create directory"),)),
           )
         ],

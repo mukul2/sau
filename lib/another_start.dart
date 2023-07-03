@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -45,42 +46,76 @@ final GoRouter _router = GoRouter(
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
                   if (snapshot.hasData) {
-                   
-                    return Scaffold(appBar: PreferredSize(preferredSize: Size(0,200),child: Card( shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),color: Colors.white,margin: EdgeInsets.zero,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Signup for"),
-                            Text(snapshot.data!.docs.first.get("companyName",),style: TextStyle(fontSize: 20),),
-                            Text(snapshot.data!.docs.first.get("companyEmail"),style: TextStyle(fontSize: 15),),
-                            Text(snapshot.data!.docs.first.get("companyTelephone"),style: TextStyle(fontSize: 15),),
-                            FutureBuilder<DocumentSnapshot>(
-                                future: FirebaseFirestore.instance.collection("directoryApp_users").doc(snapshot.data!.docs.first.get("adminUid") ).get() , // a previously-obtained Future<String> or null
-                                builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                    Widget h = Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Signup for"),
+                          Text(snapshot.data!.docs.first.get("companyName",),style: TextStyle(fontSize: 20),),
+                          Text(snapshot.data!.docs.first.get("companyEmail"),style: TextStyle(fontSize: 15),),
+                          Text(snapshot.data!.docs.first.get("companyTelephone"),style: TextStyle(fontSize: 15),),
+                          FutureBuilder<DocumentSnapshot>(
+                              future: FirebaseFirestore.instance.collection("directoryApp_users").doc(snapshot.data!.docs.first.get("adminUid") ).get() , // a previously-obtained Future<String> or null
+                              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
 
-                                  if (snapshot.hasData) {
+                                if (snapshot.hasData) {
 
-                                    return Row(
-                                      children: [
-                                        Text("Ornazination admin : "),
-                                        Text(snapshot.data!.get("name")),
+                                  return Row(
+                                    children: [
+                                      Text("Ornazination admin : "),
+                                      Text(snapshot.data!.get("name")),
 
-                                      ],
-                                    );
-                                  }else{
+                                    ],
+                                  );
+                                }else{
                                   //  return Scaffold(body: Center(child:CircularProgressIndicator() ,),);
-                                    return CircularProgressIndicator();
-                                  }
-                                }),
+                                  return CircularProgressIndicator();
+                                }
+                              }),
 
 
-                          ],
-                        ),
+                        ],
                       ),
-                    ),),body:  AddContentSelf(companyId:snapshot.data!.docs.first.id ,),);
+                    );
+
+
+                   
+                    return Scaffold(
+                    //   appBar: PreferredSize(preferredSize: Size(0,200),child:
+                    // Card( shape: RoundedRectangleBorder(
+                    //   borderRadius: BorderRadius.zero,
+                    // ),color: Colors.white,margin: EdgeInsets.zero,
+                    //   child:h ,
+                    // ),),
+                      body:  Container(color: Colors.blue,child: Center(child: Card(shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ) , margin: EdgeInsets.zero,child: Container(width: MediaQuery.of(context).size.width>1000?800: MediaQuery.of(context).size.width,child: ListView(shrinkWrap: true,
+                      children: [
+
+                        Center(child: Text(snapshot.data!.docs.first.get("companyName",),style: TextStyle(fontSize: 40),)),
+                        Center(child: Text(snapshot.data!.docs.first.get("companyEmail"),style: TextStyle(fontSize: 15),)),
+                        Center(child: Text(snapshot.data!.docs.first.get("companyTelephone"),style: TextStyle(fontSize: 15),)),
+                        FutureBuilder<DocumentSnapshot>(
+                            future: FirebaseFirestore.instance.collection("directoryApp_users").doc(snapshot.data!.docs.first.get("adminUid") ).get() , // a previously-obtained Future<String> or null
+                            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+                              if (snapshot.hasData) {
+
+                                return Row(mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Ornazination admin : "),
+                                    Text(snapshot.data!.get("name")),
+
+                                  ],
+                                );
+                              }else{
+                                //  return Scaffold(body: Center(child:CircularProgressIndicator() ,),);
+                                return CupertinoActivityIndicator();
+                              }
+                            }),
+                        AddContentSelf(companyId:snapshot.data!.docs.first.id ,),
+                      ],
+                    ))))),);
                   }else{
                     return Scaffold(body: Center(child:CircularProgressIndicator() ,),);
                   }
