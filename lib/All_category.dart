@@ -17,7 +17,7 @@ class AllCategory extends StatefulWidget {
 class MyData extends DataTableSource {
   MyData(this._data,this.key);
   GlobalKey<ScaffoldState> key;
-  final List<dynamic> _data;
+  final List<QueryDocumentSnapshot> _data;
 
 
   @override
@@ -32,7 +32,7 @@ class MyData extends DataTableSource {
 
 
     return DataRow(cells: [
-      DataCell(Text(_data[index].data()['name'])),
+      DataCell(Text(_data[index].get('name'))),
 
 
       DataCell(_data[index].get("parent")==""?Text("--"): FutureBuilder<DocumentSnapshot>(
@@ -45,43 +45,70 @@ class MyData extends DataTableSource {
             else {
               return Text("--");}
           })),
-      DataCell(TextButton(onPressed: (){
+      DataCell(Row(
+        children: [
+          TextButton(onPressed: (){
 
-        key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
-            color: Colors.white,
-            height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
+            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(onPressed: (){
-                              Navigator.pop(context);
-                            }, icon: Icon(Icons.arrow_back_rounded)),
+                            Row(
+                              children: [
+                                IconButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, icon: Icon(Icons.arrow_back_rounded)),
+                              ],
+                            ),
+                            AddCategoryEdit(ref:_data[index].reference ,data: _data[index].data() as Map<String,dynamic>,),
+
+
+
+
+
+
                           ],
                         ),
-                        AddCategoryEdit(ref:_data[index].reference ,data: _data[index].data() as Map<String,dynamic>,),
+                      ),
 
-
-
-
-
-
-                      ],
-                    ),
+                    ],
                   ),
+                ))),));
 
-                ],
-              ),
-            ))),));
+          },child: Text("Edit"),),
+          TextButton(onPressed: (){
 
-      },child: Text("Edit"),)),
+    showDialog<void>(
+    context: key.currentState!.context,
+
+    builder: (BuildContext context) {
+      return AlertDialog(title: Text("Delete"),content: Text("Do  you want to delete?"),actions: [
+
+        TextButton(onPressed: (){
+          _data[index].reference.delete();
+          Navigator.pop(context);
+
+
+        }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+        TextButton(onPressed: (){
+
+          Navigator.pop(context);
+
+        }, child: Text("No",style: TextStyle(color: Colors.blue),)),
+      ],);
+    });
+
+          }, child: Text("Delete",style: TextStyle(color: Colors.red),)),
+        ],
+      )),
       // DataCell(Text(_data[index].data()["phone"])),
     ]);
   }
@@ -295,11 +322,13 @@ class _AllCategoryState extends State<AllCategory> {
 //           ],
 //         ),),
           backgroundColor: Colors.white,key: drawerKey,body: true?   true?
-        FutureBuilder<QuerySnapshot>(
-            future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get() , // a previously-obtained Future<String> or null
+        StreamBuilder<QuerySnapshot>(
+            stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories")
+                .where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots() , // a previously-obtained Future<String> or null
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-              if (snapshot.hasData) {
+              if (snapshot.hasData && snapshot.data!.docs.length>0) {
+
                 final DataTableSource _allUsers = MyData(snapshot.data!.docs,drawerKey);
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
@@ -333,7 +362,37 @@ class _AllCategoryState extends State<AllCategory> {
                 );
                return Text(snapshot.data!.docs.length.toString());
               }else{
-                return Text("--");
+                return Scaffold(
+                  body:  true?InkWell(onTap: (){
+                    setState(() {
+                      open = true;
+                    });
+                    drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+
+                  },
+                    child: Center(child: Container(child:Padding(
+                      padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                      child: Text("Create your first category"),
+                    ) ,decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),)),
+                  ):Center(
+                    child: TextButton(onPressed: (){
+                      setState(() {
+                        open = true;
+                      });
+                      drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+
+
+                    }, child: Row(
+                      children: [
+                        Icon(Icons.add,color: Colors.blue,),
+                        Padding(
+                          padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                          child: Text("Create your first category"),
+                        ),
+                      ],
+                    )),
+                  ),
+                );
               }
             }):ListView(shrinkWrap: true,children: listWidgets,): StreamBuilder<QuerySnapshot>(
             stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
@@ -903,50 +962,77 @@ class MyDataArticles extends DataTableSource {
       DataCell(_data[index].get("parent")==""?Text("--"): FutureBuilder<DocumentSnapshot>(
           future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(_data[index].get("parent")).get(),
           builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data!.exists) {
               return Text(snapshot.data!.get("name"));
 
             }
             else {
               return Text("--");}
           })),
-      DataCell(TextButton(onPressed: (){
+      DataCell(Row(
+        children: [
+          TextButton(onPressed: (){
 
-        key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
-            color: Colors.white,
-            height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
+            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
+                color: Colors.white,
+                height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(onPressed: (){
-                              Navigator.pop(context);
-                            }, icon: Icon(Icons.arrow_back_rounded)),
+                            Row(
+                              children: [
+                                IconButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, icon: Icon(Icons.arrow_back_rounded)),
+                              ],
+                            ),
+                            EditContent(ref:_data[index].reference ,data:_data[index].data() as Map<String,dynamic>,),
+
+
+
+
+
+
                           ],
                         ),
-                        EditContent(ref:_data[index].reference ,data:_data[index].data() as Map<String,dynamic>,),
+                      ),
 
-
-
-
-
-
-                      ],
-                    ),
+                    ],
                   ),
+                ))),));
 
-                ],
-              ),
-            ))),));
+          },child: Text("Edit"),),
+          TextButton(onPressed: (){
 
-      },child: Text("Edit"),)),
+            showDialog<void>(
+                context: key.currentState!.context,
+
+                builder: (BuildContext context) {
+                  return AlertDialog(title: Text("Delete"),content: Text("Do  you want to delete?"),actions: [
+
+                    TextButton(onPressed: (){
+                      _data[index].reference.delete();
+                      Navigator.pop(context);
+
+
+                    }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+                    TextButton(onPressed: (){
+
+                      Navigator.pop(context);
+
+                    }, child: Text("No",style: TextStyle(color: Colors.blue),)),
+                  ],);
+                });
+
+          }, child: Text("Delete",style: TextStyle(color: Colors.red),)),
+        ],
+      )),
       // DataCell(Text(_data[index].data()["phone"])),
     ]);
   }
@@ -1170,11 +1256,13 @@ class _AllDiyState extends State<AllDi> {
 //             Container(height: 0.5,color: Colors.grey,width: double.infinity,),
 //           ],
 //         ),),
-          backgroundColor: Colors.white,key: drawerKey,body: true? true? FutureBuilder<QuerySnapshot>(
-            future: FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get() , // a previously-obtained Future<String> or null
+          backgroundColor: Colors.white,key: drawerKey,body: true? true?
+        StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection(appDatabsePrefix+"article")
+                .where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots() , // a previously-obtained Future<String> or null
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-              if (snapshot.hasData) {
+              if (snapshot.hasData && snapshot.data!.docs.length>0) {
                 final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,drawerKey);
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
@@ -1208,7 +1296,26 @@ class _AllDiyState extends State<AllDi> {
                 );
                 return Text(snapshot.data!.docs.length.toString());
               }else{
-                return Text("--");
+                return Scaffold(body: Center(child: Container(height: 50,width: 300,decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(4)),
+                  child: Center(
+                    child: TextButton(onPressed: (){
+                      setState(() {
+                        open = true;
+                      });
+                      drawerKey.currentState!.showBottomSheet((context) => AddContent());
+
+
+                    }, child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add,color: Colors.blue,),
+                        Padding(
+                          padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                          child: Text("Add your first Article"),
+                        ),
+                      ],
+                    )),
+                  ),
+                )));
               }
             }): ListView(physics: AlwaysScrollableScrollPhysics(),shrinkWrap: true,children: listWidgets,) : StreamBuilder<QuerySnapshot>(
             stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
