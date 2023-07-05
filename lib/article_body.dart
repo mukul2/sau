@@ -109,6 +109,7 @@ class _ArticleState extends State<Article> {
         child: Padding(
           padding:  EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
           child: InkWell(onTap: (){
+            context.pop();
             GoRouter.of(context).go(lastpath);
            // Navigator.pop(context);
           },

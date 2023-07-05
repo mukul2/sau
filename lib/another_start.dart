@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/com_admin.dart';
+import 'package:sau/search_screen.dart';
 import 'package:sau/superAdmin.dart';
 import 'package:sau/tokenPage.dart';
 
@@ -159,6 +160,12 @@ final GoRouter _router = GoRouter(
           path: 'articles/:id',
           builder: (BuildContext context, GoRouterState state) {
             return Article(id:state.pathParameters['id']!);
+          },
+        ),
+        GoRoute(
+          path: 'search',
+          builder: (BuildContext context, GoRouterState state) {
+            return SearchActivity();
           },
         ),
         GoRoute(
