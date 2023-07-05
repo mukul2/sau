@@ -11,6 +11,7 @@ import 'package:sau/tokenPage.dart';
 
 import 'admin.dart';
 import 'another_start.dart';
+import 'app_providers.dart';
 import 'home.dart';
 
 Future<void> main() async {
@@ -32,6 +33,7 @@ class MyApp2 extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
         ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
+        ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

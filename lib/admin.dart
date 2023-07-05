@@ -69,7 +69,9 @@ class _AdminState extends State<Admin> {
 
               }
             }catch(e){
-              FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+
+
+          FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
                 Provider.of<TempProvider>(context, listen: false).companyInfo = value;
                 GoRouter.of(context).go("/organizer");
 

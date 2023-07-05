@@ -796,7 +796,7 @@ class _HomeState extends State<Home> {
                           // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
                           child: InkWell( onTap: (){
                             lastpath = GoRouter.of(context).location;
-                            context.go("/articles/"+ e.id);
+                            context.push("/articles/"+ e.id);
                             // if(false)  Navigator.push(
                             //     context,
                             //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);

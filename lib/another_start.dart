@@ -16,6 +16,7 @@ import 'DrawerProvider.dart';
 import 'Signup.dart';
 import 'addContent.dart';
 import 'admin.dart';
+import 'app_providers.dart';
 import 'article_body.dart';
 import 'home.dart';
 
@@ -221,10 +222,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return  MultiProvider(
         providers: [
           ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
           ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
+          ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
         ],
         child:MaterialApp.router(theme: ThemeData(
             fontFamily: 'Nexa',

@@ -41,7 +41,10 @@ class _AddCategoryState extends State<AddContent> {
 
     FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").get().then((value) {
 
+
+
       for(int i = 0 ; i < value.docs.length ; i++){
+        Map<String,dynamic> dataType = value.docs[i].data() as Map<String,dynamic>;
         Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = "";
         allField.add(Padding(
           padding:  EdgeInsets.all(8.0),
@@ -51,7 +54,7 @@ class _AddCategoryState extends State<AddContent> {
             Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = s;
           },decoration: InputDecoration(suffixIcon:Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Image.memory(base64Decode(  value.docs[i].get("img")),width: 20,),
+            child:dataType.containsKey("img")? Image.memory(base64Decode(  value.docs[i].get("img")),width: 20,):null,
           ),label: Text( value.docs[i].get("value"))),),
         ));
       }

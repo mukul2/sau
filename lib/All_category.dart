@@ -1,13 +1,20 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
+import 'package:sau/const.dart';
 import 'package:sau/utils.dart';
+import 'package:universal_html/html.dart';
 
 import 'DrawerProvider.dart';
 import 'addCategory.dart';
 import 'addContent.dart';
-
+import 'app_providers.dart';
+import 'package:pdf/widgets.dart' as pw;
 class AllCategory extends StatefulWidget {
   const AllCategory({Key? key}) : super(key: key);
 
@@ -333,19 +340,30 @@ class _AllCategoryState extends State<AllCategory> {
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
 
-                  header:  TextButton(onPressed: (){
+                  header: true?Row(
+                    children: [
+                      ElevatedButton(onPressed: (){
+
+                        setState(() {
+                          open = true;
+                        });
+                        drawerKey.currentState!.showBottomSheet((context) => true?AddCategory(): AddCategory());
+
+                      }, child:Text("Add",style: TextStyle(color: Colors.white),) ),
+                    ],
+                  ): TextButton(onPressed: (){
                     setState(() {
                       open = true;
                     });
-                    drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+                    drawerKey.currentState!.showBottomSheet((context) => true?AddCategory(): AddCategory());
 
 
-                  }, child: Row(
+                  }, child: true?ElevatedButton(onPressed: (){}, child:Text("Add") ): Row(
                     children: [
                       Icon(Icons.add,color: Colors.blue,),
                       Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
-                        child: Text("Add Category"),
+                        child: Text("Add"),
                       ),
                     ],
                   )),
@@ -956,6 +974,19 @@ class MyDataArticles extends DataTableSource {
 
 
     return DataRow(cells: [
+      DataCell(Consumer<ArticlesProvider>(
+        builder: (_, bar, __) => Checkbox(value:bar.tests.contains(_data[index].id) , onChanged: (bool? b){
+          if(bar.tests.contains(_data[index].id)){
+            Map<String ,dynamic> d = _data[index].data() as Map<String ,dynamic>;
+            bar.removeItem(id :_data[index].id,data :d);
+          }else{
+            Map<String ,dynamic> d = _data[index].data() as Map<String ,dynamic>;
+            bar.addItem(id: _data[index].id,data :d);
+          }
+        }),
+      ),),
+
+      //ArticlesProvider
       DataCell(Text(_data[index].data()['name'])),
 
 
@@ -1045,6 +1076,8 @@ class _AllDiyState extends State<AllDi> {
   }
   List<Widget> listWidgets = [];
   bool open = false;
+
+  bool selectAll = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -1267,24 +1300,209 @@ class _AllDiyState extends State<AllDi> {
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
 
-                  header:  TextButton(onPressed: (){
-                    setState(() {
-                      open = true;
-                    });
-                    drawerKey.currentState!.showBottomSheet((context) => AddContent());
-
-
-                  }, child: Row(
+                  header:  Row(
                     children: [
-                      Icon(Icons.add,color: Colors.blue,),
-                      Padding(
+                      ElevatedButton(onPressed: (){
+                        setState(() {
+                          open = true;
+                        });
+                        drawerKey.currentState!.showBottomSheet((context) => AddContent());
+
+
+                      }, child: Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
                         child: Text("Add Article"),
+                      )),
+
+                      Consumer<ArticlesProvider>(
+                        builder: (_, bar, __) => bar.tests.length>0?Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ElevatedButton(onPressed: (){
+                            bool valOne = false;
+                            bool valtwo = false;
+                            bool valthree = false;
+                            TextEditingController c = TextEditingController();
+                            TextEditingController c2 = TextEditingController();
+
+                            showDialog<void>(
+                            context: context,
+
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                builder: (context,setS) {
+                                  return AlertDialog(title: Text("Send Message"),content: Container(width: 600,child: Wrap(
+                                    children: [
+                                      Row(children: [
+                                        Expanded(child: CheckboxListTile(title: Text("SMS"),value:valOne ,onChanged: (bool? b){
+                                          setS(() {
+                                            valOne = b!;
+                                          });
+                                        },)),
+                                        Expanded(child: CheckboxListTile(title: Text("Email"),value:valtwo ,onChanged: (bool? b){
+                                          setS(() {
+                                            valtwo = b!;
+                                          });
+                                        },)),
+                                      ],),
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: TextFormField(controller: c,decoration: InputDecoration(hintText: "Title...."),),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: TextFormField(controller: c2,maxLines: 8,minLines: 5,decoration: InputDecoration(hintText: "Body...."),),
+                                      ),
+                                      ElevatedButton(onPressed: (){
+
+
+
+
+                                      }, child: Text("Send",style: TextStyle(color: Colors.white),)),
+
+                                    ],
+                                  ),),);
+                                }
+                              );
+
+                            });
+
+
+                          }, child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                            child: Text("Send Message",style: TextStyle(color: Colors.white),),
+                          )),
+                        ):Container(width: 0,height: 0,),
                       ),
+                      Consumer<ArticlesProvider>(
+                        builder: (_, bar, __) => bar.tests.length>0?Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ElevatedButton(onPressed: () async {
+                            List<pw.Widget>allWidget = [];
+                            double fontSize = 9 ;
+                            double wi = 0.1;
+                            FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                              allWidget.add(pw.Center(child: pw.Text(value.get("companyName"),style: pw.TextStyle(fontSize: 18))));
+                              allWidget.add(pw.Center(child: pw.Text(value.get("companyAddress"),style: pw.TextStyle(fontSize: 14))));
+                              allWidget.add(pw.Center(child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center,children: [
+                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyEmail")),),
+                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyTelephone")),),
+
+                              ])));
+                              allWidget.add(pw.Container(height :5));
+
+                              allWidget.add(pw.Row(
+                                  children: [
+
+
+
+
+
+                                    pw.Expanded(flex: 3,child: pw.Container(child: pw.Text("   Name   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 3,child:pw.Container(child:  pw.Text("   Email   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 1,child: pw.Container(child: pw.Text("   Phone   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
+                                    pw.Expanded(flex: 2,child:  pw.Container(child: pw.Text("   Designation   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 2,child: pw.Container(child:  pw.Text("   Work designation   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
+
+
+
+
+
+
+
+
+                                  ]
+                              ));
+                              String v = "   ";
+
+
+                              for(int i = 0 ; i < bar.data.length ; i++){
+                                allWidget.add(pw.Row(
+                                    children: [
+
+
+                                      pw.Expanded(flex: 3,child: pw.Container(child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 3,child:pw.Container(child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 1,child: pw.Container(child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
+                                      pw.Expanded(flex: 2,child:  pw.Container(child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 2,child: pw.Container(child:  pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
+
+
+
+
+
+
+
+
+
+
+
+
+                                    ]
+                                ));
+                              }
+
+
+                              final pdf = pw.Document();
+                              pdf.addPage(
+                                pw.MultiPage(footer:(context) => pw.Row(
+                                    children: [
+                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                    ]
+                                ),margin: pw.EdgeInsets.all(30),
+                                  pageFormat: PdfPageFormat.a4,
+                                  build: (context) => allWidget,//here goes the widgets list
+                                ),
+                              );
+                              Uint8List uint8list2 =await pdf.save();
+                              String content = base64Encode(uint8list2);
+                              final anchor = AnchorElement(
+                                  href:
+                                  "data:application/octet-stream;charset=utf-16le;base64,$content")
+                                ..setAttribute(
+                                    "download",
+                                    "file.pdf")
+                                ..click();
+                              
+                            });
+                           
+
+
+
+
+
+                          }, child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                            child: Text("Export PDF",style: TextStyle(color: Colors.white),),
+                          )),
+                        ):Container(width: 0,height: 0,),
+                      ),
+
+
+
                     ],
-                  )),
+                  ),
                   rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
-                  columns: const [
+                  columns:  [
+                    DataColumn(label: Checkbox(value: selectAll,onChanged: (bool? b){
+                      setState(() {
+                        selectAll = b!;
+                      });
+                      Provider.of<ArticlesProvider>(context, listen: false).tests = [];
+                      if(b == true){
+
+                        for(int  i = 0 ; i < snapshot.data!.docs.length ; i++){
+                          Map<String ,dynamic> d = snapshot.data!.docs[i].data() as Map<String ,dynamic>;
+
+                          Provider.of<ArticlesProvider>(context, listen: false).addItem(id:  snapshot.data!.docs[i].id,data: d);
+                        }
+
+                        //Provider.of<GlobalDataProvider>(context, listen: false
+                      }else{
+
+                      }
+
+                    },)),
                     DataColumn(label: Text('Name')),
                     DataColumn(label: Text('Parent category')),
 

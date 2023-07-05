@@ -8,6 +8,7 @@ import 'package:sau/CategoryHome.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import 'All_category.dart';
+import 'Communicate.dart';
 import 'DrawerProvider.dart';
 import 'company_info.dart';
 
@@ -162,6 +163,10 @@ class ExampleSidebarX extends StatelessWidget {
           icon: Icons.people,
           label: 'Company info',
         ),
+        // const SidebarXItem(
+        //   icon: Icons.people,
+        //   label: 'Communicate',
+        // ),
          SidebarXItem(
           icon: Icons.favorite,
           label: 'Logout',
@@ -170,7 +175,7 @@ class ExampleSidebarX extends StatelessWidget {
             GoRouter.of(context).go("/admin");
           },
         ),
-   SidebarXItem(
+        SidebarXItem(
           icon: Icons.qr_code,
           label: Provider.of<TempProvider>(context, listen: false).companyInfo!.get("shareCode"),
           // onTap: () {
@@ -205,6 +210,7 @@ class _ScreensExample extends StatelessWidget {
             return true?AllDi(): CategoryHome();
           case 2:
             return CompanyInfo();
+
           default:
             return pageTitle;
         }

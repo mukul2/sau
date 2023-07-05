@@ -47,21 +47,24 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDZp12IY9BafrRwks-W_6zHObDZWk9iQjI',
-    appId: '1:782813816644:web:00b77e0c6a4ea1191b1911',
-    messagingSenderId: '782813816644',
-    projectId: 'brain-sugar',
-    authDomain: 'brain-sugar.firebaseapp.com',
-    storageBucket: 'brain-sugar.appspot.com',
-    measurementId: 'G-3L9ERG0K95',
+    apiKey: "AIzaSyC-l9iziNIRpUE2HA0OOng9KQ8hz0LUcQg",
+    authDomain: "directory-app-2c683.firebaseapp.com",
+    projectId: "directory-app-2c683",
+    storageBucket: "directory-app-2c683.appspot.com",
+    messagingSenderId: "135527654970",
+    appId: "1:135527654970:web:5fe030e0e6a10fbbc47703",
+    measurementId: "G-XKW2Z8B3TV"
+
+
+
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDe3a3F55CuEemejGG1aX_-f9QoPuDLNpw',
-    appId: '1:782813816644:android:703d4adb8e2e055f1b1911',
-    messagingSenderId: '782813816644',
-    projectId: 'brain-sugar',
-    storageBucket: 'brain-sugar.appspot.com',
+    apiKey: 'AIzaSyBBU8rU_-J2BTzcAibyVevJ0GtAi_C6RlQ',
+    appId: '1:135527654970:android:c009246ab882f8aec47703',
+    messagingSenderId: '135527654970',
+    projectId: "directory-app-2c683",
+    storageBucket: 'directory-app-2c683.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
