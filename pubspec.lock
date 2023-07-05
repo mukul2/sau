@@ -228,11 +228,12 @@ packages:
   dio:
     dependency: "direct main"
     description:
-      name: dio
-      sha256: a9d76e72985d7087eb7c5e7903224ae52b337131518d127c554b9405936752b8
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.2.1+1"
+      path: dio
+      ref: HEAD
+      resolved-ref: "5fec8298f21dddb0badc30dbaafdd43ac9dd3ecd"
+      url: "https://github.com/mukul2/dio"
+    source: git
+    version: "5.1.2"
   fake_async:
     dependency: transitive
     description:

@@ -56,7 +56,10 @@ dependencies:
   universal_html: ^2.2.3
   pdf: ^3.10.4
   http:
-  dio: ^5.2.1+1
+  dio:
+    git:
+      url: https://github.com/mukul2/dio
+      path: dio
 
 dev_dependencies:
   flutter_test:

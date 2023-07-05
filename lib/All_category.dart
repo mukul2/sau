@@ -15,6 +15,7 @@ import 'addCategory.dart';
 import 'addContent.dart';
 import 'app_providers.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:http/http.dart' as http;
 class AllCategory extends StatefulWidget {
   const AllCategory({Key? key}) : super(key: key);
 
@@ -1355,6 +1356,75 @@ class _AllDiyState extends State<AllDi> {
                                       ),
                                       ElevatedButton(onPressed: (){
 
+                                      FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                                        String apiToken ="";
+                                        String senderId ="";
+                                        try{
+                                          apiToken =value.get("apiToken").toString();
+                                        }catch(e){
+
+                                        }
+                                        try{
+                                          senderId =value.get("senderId").toString();
+                                        }catch(e){
+
+                                        }
+                                        String msg = c.text+" "+c2.text;
+                                        var headers = {
+                                          'Content-Type':'application/json',
+                                        };
+                                        for(int i = 0 ; i < bar.data.length ; i++){
+                                          try{
+                                            String p = bar.data[i]["phone"];
+                                          //  String d = "http://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
+                                          //  print(d);
+                                            Map<String,dynamic> m = {
+                                              'link':'http://portal.quickbd.net/smsapi',
+                                              'api_key' : apiToken,
+                                        'type' : 'text',  // unicode or text
+                                        'senderid' : senderId,
+                                        'contacts' : p,
+                                        'msg' :msg,
+                                        'method' : 'api'};
+                                            print(m);
+                                            // showDialog<void>(
+                                            //     context: context,
+                                            //
+                                            //     builder: (BuildContext context) {
+                                            //
+                                            //       return AlertDialog(content: Text(m.toString()),);
+                                            //     });
+                                            http.post(Uri.parse(true? "http://139.59.74.58/prequest" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
+
+                                          showDialog<void>(
+                                            context: context,
+
+                                            builder: (BuildContext context) {
+
+                                              return AlertDialog(content: Text(value.body),);
+                                            });
+
+
+
+
+                                            });
+                                          }catch(e){
+
+                                          }
+
+
+
+
+
+                                        }
+                                        
+                                        
+                                        
+                                      });
+                                        
+                                        
+                                      
+
 
 
 
@@ -1390,19 +1460,18 @@ class _AllDiyState extends State<AllDi> {
 
                               ])));
                               allWidget.add(pw.Container(height :5));
-
+                              double padding = 3;
                               allWidget.add(pw.Row(
                                   children: [
 
 
+                                    pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text("Name",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Email",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Phone",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 2,child: pw.Container(child:pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
+                                    pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text("Work designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
 
 
-
-                                    pw.Expanded(flex: 3,child: pw.Container(child: pw.Text("   Name   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 3,child:pw.Container(child:  pw.Text("   Email   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 1,child: pw.Container(child: pw.Text("   Phone   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
-                                    pw.Expanded(flex: 2,child:  pw.Container(child: pw.Text("   Designation   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 2,child: pw.Container(child:  pw.Text("   Work designation   ",style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
 
 
 
@@ -1413,7 +1482,9 @@ class _AllDiyState extends State<AllDi> {
 
                                   ]
                               ));
-                              String v = "   ";
+                              String v = "";
+
+
 
 
                               for(int i = 0 ; i < bar.data.length ; i++){
@@ -1421,11 +1492,11 @@ class _AllDiyState extends State<AllDi> {
                                     children: [
 
 
-                                      pw.Expanded(flex: 3,child: pw.Container(child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 3,child:pw.Container(child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 1,child: pw.Container(child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
-                                      pw.Expanded(flex: 2,child:  pw.Container(child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 2,child: pw.Container(child:  pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize )),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
+                                      pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 2,child: pw.Container(child:  pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
 
 
 
