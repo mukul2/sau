@@ -131,10 +131,19 @@ return Scaffold(body: Center(child: Container(decoration: BoxDecoration(border: 
             setState(() {
               busy = true;
             });
+
+
+
+            print("checking Signup ");
+
             try {
               UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email.text, password: password.text
               );
+              print("Signup successful");
+              setState(() {
+                busy = false;
+              });
               if(userCredential.user==null){
 
               }else{

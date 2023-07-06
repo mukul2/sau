@@ -1,4 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/DrawerProvider.dart';
@@ -19,6 +21,12 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseUIAuth.configureProviders([
+    EmailAuthProvider(),
+   // PhoneAuthProvider(),
+   // GoogleProvider(clientId: "135527654970-57sshh94689dt9ki0j386irsbht9eju2.apps.googleusercontent.com"),
+
+  ]);
    runApp(const MyApp());
 }
 

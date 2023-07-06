@@ -8,7 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/const.dart';
 import 'package:sau/utils.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' as uniHtml;
 
 import 'DrawerProvider.dart';
 import 'addCategory.dart';
@@ -1527,7 +1527,7 @@ class _AllDiyState extends State<AllDi> {
                               );
                               Uint8List uint8list2 =await pdf.save();
                               String content = base64Encode(uint8list2);
-                              final anchor = AnchorElement(
+                              final anchor = uniHtml.AnchorElement(
                                   href:
                                   "data:application/octet-stream;charset=utf-16le;base64,$content")
                                 ..setAttribute(

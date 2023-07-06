@@ -18,6 +18,7 @@ import 'addContent.dart';
 import 'admin.dart';
 import 'app_providers.dart';
 import 'article_body.dart';
+import 'fire_auth.dart';
 import 'home.dart';
 
 /// This sample app shows an app with two screens.
@@ -141,7 +142,7 @@ final GoRouter _router = GoRouter(
         GoRoute(
           path: 'admin',
           builder: (BuildContext context, GoRouterState state) {
-            return  Admin();
+            return  true?LoginFire(): Admin();
           },
         ),
         GoRoute(

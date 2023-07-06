@@ -451,9 +451,18 @@ class _AddContentSelfState extends State<AddContentSelf> {
     parentategoryId = "";
     parentategoryname = "";
 
-    FirebaseFirestore.instance.collection("sau_datatype").orderBy("order").get().then((value) {
+    FirebaseFirestore.instance.collection("sau_datatype").get().then((value) {
+
 
       for(int i = 0 ; i < value.docs.length ; i++){
+        print(value.docs[i].data());
+        Widget w = Container(height: 0,width: 0,);
+
+        try{
+          w = Image.memory(base64Decode(  value.docs[i].get("img")),width: 20,);
+        }catch(e){
+
+        }
         Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = "";
         allField.add(Padding(
           padding:  EdgeInsets.all(8.0),
@@ -463,13 +472,14 @@ class _AddContentSelfState extends State<AddContentSelf> {
               Provider.of<TempProvider>(context, listen: false).allData[value.docs[i].get("key")] = s;
             },decoration: InputDecoration(suffixIcon:Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Image.memory(base64Decode(  value.docs[i].get("img")),width: 20,),
+            child: w,
           ),label: Text( value.docs[i].get("value"))),),
         ));
-      }
-      setState(() {
+        setState(() {
 
-      });
+        });
+      }
+
     });
   }
   @override
@@ -481,23 +491,13 @@ class _AddContentSelfState extends State<AddContentSelf> {
     // TextEditingController category5 =  TextEditingController();
     // String parentategoryId = "";
 
-    Column(
-      //shrinkWrap: true,
-      children: allField,);
+
     return Stack(
       children: [
         Padding(
           padding:  EdgeInsets.all(20.0),
           child: SingleChildScrollView(
             child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
-              Row(
-                children: [
-                  IconButton(onPressed: (){
-                    Navigator.pop(context);
-                  }, icon: Icon(Icons.arrow_back_rounded)),
-                ],
-              ),
-
 
 
 
@@ -570,7 +570,7 @@ class _AddContentSelfState extends State<AddContentSelf> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text("Categoy"),
                     ),
-                    TextButton(onPressed: (){
+                    ElevatedButton(onPressed: (){
                       showDialog<void>(
                         context: context,
                         barrierDismissible: false, // user must tap button!
@@ -615,7 +615,7 @@ class _AddContentSelfState extends State<AddContentSelf> {
                                     );
                                   }
                                   else {
-                                    return CircularProgressIndicator();}
+                                    return CupertinoActivityIndicator();}
                                 }),
                             actions: <Widget>[
                               TextButton(
@@ -637,7 +637,82 @@ class _AddContentSelfState extends State<AddContentSelf> {
                 ),),
               ),
 
-              Row(
+
+              Wrap(
+                children: [
+                  Container(width: MediaQuery.of(context).size.width>800?360:MediaQuery.of(context).size.width-20,margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Primary Photo"),
+                              ElevatedButton(onPressed: () async {
+
+                                try {
+                                  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                  pickedFile!.readAsBytes().then((value) {
+
+
+                                    setState(() {
+                                      photo1 = value;
+                                    });
+                                  });
+
+                                } catch (e) {
+                                  setState(() {
+                                    photo1 = null ;
+                                  });
+                                }
+
+                              }, child: Text("Choose")),
+
+                            ],
+                          ),
+                        ),
+                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo1==null?Center(child: Text("Select an image")):Image.memory(photo1!,fit: BoxFit.cover,),),
+                      ],
+                    ),
+                  ),
+                  Container(width: MediaQuery.of(context).size.width>800?380:MediaQuery.of(context).size.width-20,margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Seconday Photo"),
+                              ElevatedButton(onPressed: () async {
+
+                                try {
+                                  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                  pickedFile!.readAsBytes().then((value) {
+
+                                    setState(() {
+                                      photo2 = value;
+                                    });
+                                  });
+
+                                } catch (e) {
+                                  setState(() {
+                                    photo2 = null ;
+                                  });
+                                }
+
+                              }, child: Text("Choose")),
+
+                            ],
+                          ),
+                        ),
+                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo2==null?Center(child: Text("Select an image")):Image.memory(photo2!,fit: BoxFit.cover,),),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+
+            if(false)  Row(
                 children: [
                   Expanded(child: Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
                     child: Column(
@@ -907,11 +982,16 @@ class _EditContentState extends State<EditContent> {
                       return  ListView.builder(shrinkWrap: true,
                         itemCount: snapshotC.data!.docs.length,
                         itemBuilder: (BuildContext context, int index) {
+                        Widget IDW = Container(height: 0,width: 0,);
+                        try{
+                          IDW = Image.memory(base64Decode( snapshotC.data!.docs[index].get("img")),width: 20,);
+                        }catch(w){}
 
                           try{
                             // TextEditingController c = TextEditingController();
                             // allControlller.add(c);
                             //widget.data[ snapshotC.data!.docs[index].get("key")] = "";
+
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Padding(
@@ -923,11 +1003,15 @@ class _EditContentState extends State<EditContent> {
                                   widget.ref.update({snapshotC.data!.docs[index].get("key"):s});
                                 },decoration: InputDecoration(suffixIcon:Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Image.memory(base64Decode( snapshotC.data!.docs[index].get("img")),width: 20,),
+                                  child: IDW,
                                 ) ,label: Text( snapshotC.data!.docs[index].get("value")),),),
                               ),
                             );
                           }catch(e){
+                            print("c1");
+                            print(e);
+
+
 
                             try{
                               return Padding(
@@ -948,6 +1032,8 @@ class _EditContentState extends State<EditContent> {
                                 ),
                               );
                             }catch(e){
+                              print("c2");
+                              print(e);
                               return Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Padding(

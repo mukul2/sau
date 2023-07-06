@@ -210,7 +210,20 @@ class _ScreensExample extends StatelessWidget {
             return true?AllDi(): CategoryHome();
           case 2:
             return CompanyInfo();
-
+          case 4:
+            return Scaffold(body: Center(child:StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection("company").where("adminUid",isEqualTo: FirebaseAuth.instance.currentUser!.uid).snapshots() , // a previously-obtained Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
+          if(snapshotC.hasData){
+            try{
+             return SelectableText(snapshotC.data!.docs.first.get("shareCode"),style: TextStyle(color: Colors.blue,fontSize: 50),);
+            }catch(e){
+              return Text("Error occured");
+            }
+          }else{
+            return CircularProgressIndicator();
+          }
+        }),),);
           default:
             return pageTitle;
         }

@@ -114,6 +114,23 @@ class _CompanyInfoState extends State<CompanyInfo> {
                         ),
                       ),
                     ),
+                    StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance.collection("directoryApp_users").doc( FirebaseAuth.instance.currentUser!.uid).snapshots() , // a previously-obtained Future<String> or null
+                    builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshotC) {
+                      if(snapshotC.hasData){
+                       return Padding(
+                          padding: const EdgeInsets.only(top: 20,left: 8,right: 8,bottom: 8),
+                          child: TextFormField(decoration: InputDecoration(label: Text("Admin name")),initialValue: snapshotC.data!.get("name"),onChanged: (String s){
+                            snapshotC.data!.reference.update({"name":s});
+
+                          },),
+                        );
+                      }else{
+                        return Container(height: 0,width: 0,);
+                      }
+
+                    }),
+
                     Padding(
                       padding: const EdgeInsets.only(top: 20,left: 8,right: 8,bottom: 8),
                       child: TextFormField(decoration: InputDecoration(label: Text("Company name")),initialValue: snapshotC.data!.docs.first.get("companyName"),onChanged: (String s){
@@ -248,6 +265,59 @@ class _CompanyInfoState extends State<CompanyInfo> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: SelectableText(uni_html.window.location.href.replaceAll(GoRouter.of(context).location, "")+"/self-sign/"+snapshotC.data!.docs.first.get("shareCode"),style: TextStyle(color: Colors.blue),),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all(color: Colors.grey)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Delete account and all information"),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextButton(onPressed: (){
+                              showDialog<void>(
+                              context: context,
+                          
+                              builder: (BuildContext context) {return AlertDialog(title: Text("Delete account and information"),content: Text("Are you sure to delete your account and all information?"),actions: [
+                                TextButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, child: Text("No")),
+                                TextButton(onPressed: (){
+                                 // FirebaseFirestore.instance.collection("directoryApp_users").doc(FirebaseAuth.instance.currentUser!.uid).delete().then((value) {
+                                  String uid = FirebaseAuth.instance.currentUser!.uid;
+                                  FirebaseFirestore.instance.collection("company").where("adminUid",isEqualTo:uid ).get().then((value) {
+
+                                    value.docs[0].reference.delete().then((value) {
+
+
+                                      FirebaseAuth.instance.currentUser!.delete().then((value) {
+                                        FirebaseFirestore.instance.collection("directoryApp_users").doc(uid).delete().then((value) {
+
+
+                                            GoRouter.of(context).go("/");
+
+
+
+                                        });
+
+                                      });
+
+                                    });
+
+                                  });
+
+
+                                //  });
+
+                                }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+                                
+                              ],);});
+                                
+                              },child: Text("Delete",style: TextStyle(color: Colors.redAccent),),),
                             ),
                           ],
                         ),
