@@ -2,7 +2,77 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'block_change_activity.dart';
+class MyData extends DataTableSource {
+  MyData(this._data,this.context);
+  BuildContext context;
+  final List<dynamic> _data;
 
+
+  @override
+  bool get isRowCountApproximate => false;
+  @override
+  int get rowCount => _data.length;
+  @override
+  int get selectedRowCount => 0;
+  @override
+  DataRow getRow(int index) {
+
+
+    return DataRow(cells: [
+      DataCell(IconButton(onPressed: (){
+        int order =  _data[index].get("order");
+        _data[index].reference.update({"order":order-1});
+      }, icon: Icon(Icons.arrow_circle_up))),
+      DataCell(IconButton(onPressed: (){
+        int order =  _data[index].get("order");
+        _data[index].reference.update({"order":order+1});
+      }, icon: Icon(Icons.arrow_circle_down))),
+      DataCell(Text( _data[index].get("name"))),
+
+      DataCell(Row(
+        children: [
+          ElevatedButton(onPressed: (){
+
+            showDialog<void>(
+                context:context,
+
+                builder: (BuildContext context) {
+                  return AlertDialog(content:false?Text("o"): StatefulBuilder(
+                      builder: (context,setState) {
+                        return Container(height: 500,width: 500,
+                          child:Block_update_activity(qds: _data[index],),
+                        );
+                      }
+                  ) ,title: Text(_data[index].get("name")),);});
+          },child: Text("Edit"),),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: ElevatedButton(onPressed: (){
+
+              showDialog<void>(
+                  context:context,
+
+                  builder: (BuildContext context) {return AlertDialog(title: Text("Delete"),content: Text("Do you want to delete?"),actions: [
+                    TextButton(onPressed: (){
+                      _data[index].reference.delete();
+                      Navigator.pop(context);
+
+                    }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+                    TextButton(onPressed: (){
+
+                      Navigator.pop(context);
+                    }, child: Text("No",style: TextStyle(),)),
+                  ],);});
+
+
+            }, child: Text("Delete",style: TextStyle(),)),
+          ),
+        ],
+      )),
+      // DataCell(Text(_data[index].data()["phone"])),
+    ]);
+  }
+}
 class AdminProfileBlocks extends StatefulWidget {
   const AdminProfileBlocks({Key? key}) : super(key: key);
 
@@ -20,7 +90,7 @@ class _AdminProfileBlocksState extends State<AdminProfileBlocks> {
         padding:  EdgeInsets.only(left: 20),
         child: Column(mainAxisAlignment: MainAxisAlignment.center,crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Create informatio blocks",style: TextStyle(fontSize: 30),),
+            Text("Create information blocks",style: TextStyle(fontSize: 30),),
             Row(
               children: [
                 TextButton(onPressed: (){
@@ -57,9 +127,28 @@ class _AdminProfileBlocksState extends State<AdminProfileBlocks> {
         //.orderBy("order")
         stream:FirebaseFirestore.instance.collection("directoryapp_blocks").orderBy("order")  .snapshots(),
     builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+
+
+
           if(snapshot.hasData && snapshot.data!.docs.length>0){
 
+            int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
+            final DataTableSource _allUsers = MyData(snapshot.data!.docs,  context);
+            return   PaginatedDataTable(
 
+              header: null,
+              rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
+              columns: const [
+                DataColumn(label: Text('Move up')),
+                DataColumn(label: Text('Move down')),
+                DataColumn(label: Text('Name of the block')),
+                DataColumn(label: Text('Action')),
+
+                // DataColumn(label: Text('Id')),
+                // DataColumn(label: Text('Phone'))
+              ],
+              source: _allUsers,
+            );
 
             return  ListView.separated(shrinkWrap: true,
             itemCount: snapshot.data!.docs.length,

@@ -1461,6 +1461,7 @@ class _AllDiyState extends State<AllDi> {
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: ElevatedButton(onPressed: () async {
                             List<pw.Widget>allWidget = [];
+                            List<pw.Widget>allWidgetBox = [];
                             double fontSize = 9 ;
                             double wi = 0.1;
                             FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
@@ -1500,6 +1501,32 @@ class _AllDiyState extends State<AllDi> {
 
 
                               for(int i = 0 ; i < bar.data.length ; i++){
+                                 pw.Widget  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Container(height: 150,width: 50));
+
+                                try{
+                                http.Response r = await  http.get(Uri.parse(bar.data[i]["photo1"]));
+                                pw.MemoryImage mI = pw.MemoryImage(r.bodyBytes);
+                                imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Image(mI,height: 70,width: 50));
+                                }catch(e){
+
+                                }
+
+                                allWidgetBox.add(pw.Container(margin: pw.EdgeInsets.all(3),decoration: pw.BoxDecoration(border: pw.Border.all()),width: 200,height: 80,child:pw.Row(crossAxisAlignment:pw.CrossAxisAlignment.center,
+                                    mainAxisAlignment:pw.MainAxisAlignment.start,
+                                  children:[
+
+                                    imgWi,
+                                    pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.center,children: [
+                                      pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                      pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                      pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                      pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                      pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                    ])
+
+                                  ]
+                                ) ),);
+
                                 allWidget.add(pw.Row(
                                     children: [
 
@@ -1527,6 +1554,7 @@ class _AllDiyState extends State<AllDi> {
 
 
                               final pdf = pw.Document();
+                              final pdf2 = pw.Document();
                               pdf.addPage(
                                 pw.MultiPage(footer:(context) => pw.Row(
                                     children: [
@@ -1546,6 +1574,60 @@ class _AllDiyState extends State<AllDi> {
                                     "download",
                                     "file.pdf")
                                 ..click();
+
+
+                              List<List<pw.Widget>> allRow = [];
+                              List<pw.Widget> allRowD = [];
+
+                              for(int v = 0 ; v < 100;v++){
+                                List<pw.Widget> ddd = [pw.Container(height: 0,width: 0)];
+                                allRow.add(ddd);
+                              }
+
+                              int currentLine = 0;
+
+
+                              for(int i = 0 ; i < allWidgetBox.length; i++){
+
+
+
+                                if(allRow[currentLine].length<3){
+                                  allRow[currentLine].add(allWidgetBox[i]);
+                                }else{
+                                  currentLine++;
+                                  allRow[currentLine].add(allWidgetBox[i]);
+                                }
+
+                              }
+                              for(int i = 0 ; i < allRow.length; i++){
+                                allRowD.add(pw.Row(children:allRow[i] ));
+
+
+                              }
+
+
+                              pdf2.addPage(
+                                pw.MultiPage(footer:(context) => pw.Row(
+                                    children: [
+                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                    ]
+                                ),margin: pw.EdgeInsets.all(30),
+                                  pageFormat: PdfPageFormat.a4,
+                                  build: (context) => allRowD,//here goes the widgets list
+                                ),
+                              );
+                              Uint8List uint8list3 =await pdf2.save();
+                              String content3 = base64Encode(uint8list3);
+                              final anchor3 = uniHtml.AnchorElement(
+                                  href:
+                                  "data:application/octet-stream;charset=utf-16le;base64,$content3")
+                                ..setAttribute(
+                                    "download",
+                                    "file.pdf")
+                                ..click();
+
+
+
                               
                             });
                            

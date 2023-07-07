@@ -285,7 +285,7 @@ class _HomeState extends State<Home> {
                 if(false)  IconButton(onPressed: (){
                   _key.currentState!.openDrawer();
                 }, icon: Icon(Icons.menu)),
-                Align(alignment: Alignment.center,child: Text(allCatr.last==""?"Sau Directory":allCatr.last,style: TextStyle(color: Colors.blue),)),
+                Align(alignment: Alignment.center,child: Text(allCatr.last==""?"Directory":allCatr.last,style: TextStyle(color: Colors.blue),)),
                 Align(alignment: Alignment.centerRight,
                   child: IconButton(onPressed: (){
                     context.push("/search");

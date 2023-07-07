@@ -45,33 +45,59 @@ class SidebarXExampleApp extends StatelessWidget {
         }
       });
     }
-    return Builder(
+    return WillPopScope(onWillPop: ()async{
+    final shouldPop = await showDialog<bool>(
+      context: context,
       builder: (context) {
-        final isSmallScreen = MediaQuery.of(context).size.width < 600;
-        return Scaffold(appBar: isSmallScreen?PreferredSize(child: Container(child: Row(
-          children: [
-            IconButton(onPressed: (){
-              _key.currentState?.openDrawer();
-            }, icon: Icon(Icons.menu)),
+        return AlertDialog(
+          title: const Text('Do you want to go back?'),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('No'),
+            ),
           ],
-        ),), preferredSize: AppBar().preferredSize):null,
-          key: _key,
-
-          drawer: ExampleSidebarX(controller: _controller),
-          body: Row(
-            children: [
-              if (!isSmallScreen) ExampleSidebarX(controller: _controller),
-              Expanded(
-                child: Center(
-                  child: _ScreensExample(
-                    controller: _controller,
-                  ),
-                ),
-              ),
-            ],
-          ),
         );
       },
+    );
+    return shouldPop!;},
+      child: Builder(
+        builder: (context) {
+          final isSmallScreen = MediaQuery.of(context).size.width < 600;
+          return Scaffold(appBar: isSmallScreen?PreferredSize(child: Container(child: Row(
+            children: [
+              IconButton(onPressed: (){
+                _key.currentState?.openDrawer();
+              }, icon: Icon(Icons.menu)),
+            ],
+          ),), preferredSize: AppBar().preferredSize):null,
+            key: _key,
+
+            drawer: ExampleSidebarX(controller: _controller),
+            body: Row(
+              children: [
+                if (!isSmallScreen) ExampleSidebarX(controller: _controller),
+                Expanded(
+                  child: Center(
+                    child: _ScreensExample(
+                      controller: _controller,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -156,11 +182,11 @@ class ExampleSidebarX extends StatelessWidget {
           // },
         ),
         const SidebarXItem(
-          icon: Icons.supervised_user_circle_outlined,
+          icon: Icons.people,
           label: 'Members',
         ),
         const SidebarXItem(
-          icon: Icons.people,
+          icon: Icons.info_outlined,
           label: 'Company info',
         ),
         // const SidebarXItem(
@@ -168,7 +194,7 @@ class ExampleSidebarX extends StatelessWidget {
         //   label: 'Communicate',
         // ),
          SidebarXItem(
-          icon: Icons.favorite,
+          icon: Icons.logout,
           label: 'Logout',
           onTap: () {
             FirebaseAuth.instance.signOut();

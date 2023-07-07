@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1187,7 +1189,7 @@ class _EditContentState extends State<EditContent> {
                             TextButton(onPressed: () async {
 
                               try {
-                                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery,maxWidth: 400);
                                 pickedFile!.readAsBytes().then((value) {
 
 
@@ -1206,7 +1208,13 @@ class _EditContentState extends State<EditContent> {
 
                           ],
                         ),
-                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo1==null?Center(child: link1.length==0? Text("Select an image"):Image.network(link1)): Image.memory(photo1!,fit: BoxFit.cover,),),
+
+                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo1==null?Center(child: link1.length==0? Text("Select an image"):true?CachedNetworkImage(
+    imageUrl:link1,
+    progressIndicatorBuilder: (context, url, downloadProgress) =>
+    CircularProgressIndicator(value: downloadProgress.progress),
+    errorWidget: (context, url, error) => Icon(Icons.error),
+    ): Image.network(link1)):   Image.memory(photo1!,fit: BoxFit.cover,),),
                       ],
                     ),
                   )),
@@ -1220,7 +1228,7 @@ class _EditContentState extends State<EditContent> {
                             TextButton(onPressed: () async {
 
                               try {
-                                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery,maxWidth: 400);
                                 pickedFile!.readAsBytes().then((value) {
 
                                   setState(() {
@@ -1309,24 +1317,51 @@ class _EditContentState extends State<EditContent> {
                 setState(() {
                   isLoading = true;
                 });
-                firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+
+                final metadata = SettableMetadata(
+                  contentType: 'image/jpeg',
+
+                );
+
+
+               // firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
                 String li1 = "";
                 String li2 = "";
                 if(photo1==null){
                   li1 = link1;
                 }else{
-                  String fileName ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
-                  firebase_storage.Reference ref = storage.ref(fileName);
-                  await ref.putData(photo1!);
+
+                  UploadTask uploadTask;
+
+                  // Create a Reference to the file
+                  Reference ref = FirebaseStorage.instance
+                      .ref()
+                      .child('member-image')
+                      .child('/'+DateTime.now().millisecondsSinceEpoch.toString()+".jpg");
+
+
+
+                  // uploadTask = ref.putData(photo1!, metadata);
+                  //
+                  // uploadTask.
+                  // String fileName ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
+                  // firebase_storage.Reference ref = storage.ref(fileName);
+                  await ref.putData(photo1!,metadata);
                   li1 = await  ref.getDownloadURL();
                 }
                 if(photo2==null){
                   li2 = link2;
                 }else{
-                  String fileName2 ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
-                  firebase_storage.Reference ref2 = storage.ref(fileName2);
-                  await ref2.putData(photo2!);
-                  li2 = await  ref2.getDownloadURL();
+                  Reference ref = FirebaseStorage.instance
+                      .ref()
+                      .child('member-image')
+                      .child('/'+DateTime.now().millisecondsSinceEpoch.toString()+".jpg");
+
+
+                //  String fileName2 ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
+                //  firebase_storage.Reference ref2 = storage.ref(fileName2);
+                  await ref.putData(photo2!,metadata);
+                  li2 = await  ref.getDownloadURL();
                 }
 
 

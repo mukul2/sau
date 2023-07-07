@@ -152,6 +152,12 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
+          path: 'forgot-password',
+          builder: (BuildContext context, GoRouterState state) {
+            return  ForgotPass();
+          },
+        ),
+        GoRoute(
           path: 'signup',
           builder: (BuildContext context, GoRouterState state) {
             return  SignUP();

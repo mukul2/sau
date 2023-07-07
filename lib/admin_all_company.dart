@@ -35,172 +35,198 @@ class MyData extends DataTableSource {
       DataCell(Text(_data[index].data()['companyAddress'])),
 
 
-      DataCell(TextButton(onPressed: (){
+      DataCell(Row(
+        children: [
+          ElevatedButton(onPressed: (){
 
-        key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Scaffold(
-          appBar: PreferredSize(preferredSize: Size(0,40),child: InkWell( onTap: (){
-            Navigator.pop(context);
-          },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Scaffold(
+              appBar: PreferredSize(preferredSize: Size(0,40),child: InkWell( onTap: (){
+                Navigator.pop(context);
+              },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.navigate_before_rounded,color: Colors.blue),
+                      Text("Finish edit",style: TextStyle(color: Colors.blue),),
+                    ],
+                  ),
+                ),
+              ),),body: SingleChildScrollView(
+              child: Column(
                 children: [
-                  Icon(Icons.navigate_before_rounded,color: Colors.blue),
-                  Text("Finish edit",style: TextStyle(color: Colors.blue),),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(onChanged: (String s){
+                      _data[index].reference.update({"companyName":s});
+                    },initialValue:_data[index].get("companyName"),decoration: InputDecoration(label: Text("Company name")),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(onChanged: (String s){
+                      _data[index].reference.update({"companyEmail":s});
+                    },initialValue: _data[index].get("companyEmail"),decoration: InputDecoration(label: Text("Company email")),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(onChanged: (String s){
+                      _data[index].reference.update({"companyTelephone":s});
+                    },initialValue: _data[index].get("companyTelephone"),decoration: InputDecoration(label: Text("Company telephone")),),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(onChanged: (String s){
+                      _data[index].reference.update({"companyAddress":s});
+                    },initialValue: _data[index].get("companyAddress"),decoration: InputDecoration(label: Text("Company address")),),
+                  ),
+
+                  InkWell(onTap: (){
+                    key.currentState!.showBottomSheet((context) => Scaffold( appBar: PreferredSize(preferredSize: Size(0,40),child: InkWell( onTap: (){
+                      Navigator.pop(context);
+                    },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.navigate_before_rounded,color: Colors.blue),
+                            Text("Back to details",style: TextStyle(color: Colors.blue),),
+                          ],
+                        ),
+                      ),
+                    ),),body:StreamBuilder<QuerySnapshot>(
+                        stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo:_data[index].id).snapshots(),
+                        builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                          if (snapshot.hasData) {
+
+                            int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
+                            final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,  key);
+                            return _allUsers.rowCount>0?  PaginatedDataTable(
+
+                              header: null,
+                              rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
+                              columns: const [
+                                DataColumn(label: Text('Photo')),
+                                DataColumn(label: Text('Name')),
+                                DataColumn(label: Text('Action')),
+
+                                // DataColumn(label: Text('Id')),
+                                // DataColumn(label: Text('Phone'))
+                              ],
+                              source: _allUsers,
+                            ):Center(child: Text("No data"),);
+
+
+
+                            return ListView.separated(shrinkWrap: true,physics:AlwaysScrollableScrollPhysics(),padding: EdgeInsets.zero,
+                              itemCount: snapshot.data!.docs.length,
+
+                              itemBuilder: (context, index) {
+                                return InkWell( onTap: (){
+                                  // Navigator.push(
+                                  //   context,
+                                  //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
+                                },
+                                  child: Padding(
+                                    padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                                          child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: true?CachedNetworkImage(
+                                            imageUrl: snapshot.data!.docs[index].get("photo1"),height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,
+                                            placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+
+                                          ): Image.network(snapshot.data!.docs[index].get("photo1"),
+                                            height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,),),
+                                        ),
+
+
+
+                                        Expanded(
+                                          child:  true?Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),): Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+
+
+                                              Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
+                                              Text(snapshot.data!.docs[index].get("c2"),maxLines: 2,style: TextStyle(color: Colors.grey),),
+
+
+                                              if(false)snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                                                  stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                                                  builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                                                    if (snapshot.hasData) {
+                                                      return Text(snapshot.data!.get("name"));
+
+                                                    }
+                                                    else {
+                                                      return Scaffold(body: CircularProgressIndicator());}
+                                                  }):Text("--")
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                                return ListTile(trailing: IconButton(onPressed: (){
+                                  snapshot.data!.docs[index].reference.delete();
+
+                                },icon: Icon(Icons.delete),),subtitle: snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
+                                    stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
+                                    builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
+                                      if (snapshot.hasData) {
+                                        return Text(snapshot.data!.get("name"));
+
+                                      }
+                                      else {
+                                        return Scaffold(body: CircularProgressIndicator());}
+                                    }):Text("--") ,
+                                  title: Text(snapshot.data!.docs[index].get("c1")),
+                                );
+                              }, separatorBuilder: (BuildContext context, int index) { return Container(width: double.infinity,height: 0.5,color: Colors.grey,); },
+                            );
+                          }
+                          else {
+                            return Scaffold(body: CircularProgressIndicator());}
+                        }) ,)) ;
+                  },
+                    child: Card(color: Colors.blue,child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("View articles",style: TextStyle(color: Colors.white),),
+                    ),),
+                  ),
+
+
                 ],
               ),
-            ),
-          ),),body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(onChanged: (String s){
-                  _data[index].reference.update({"companyName":s});
-                },initialValue:_data[index].get("companyName"),decoration: InputDecoration(label: Text("Company name")),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(onChanged: (String s){
-                  _data[index].reference.update({"companyEmail":s});
-                },initialValue: _data[index].get("companyEmail"),decoration: InputDecoration(label: Text("Company email")),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(onChanged: (String s){
-                  _data[index].reference.update({"companyTelephone":s});
-                },initialValue: _data[index].get("companyTelephone"),decoration: InputDecoration(label: Text("Company telephone")),),
-              ),
+            ),),));
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(onChanged: (String s){
-                  _data[index].reference.update({"companyAddress":s});
-                },initialValue: _data[index].get("companyAddress"),decoration: InputDecoration(label: Text("Company address")),),
-              ),
+          },child: Text("Edit"),),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: ElevatedButton(onPressed: (){
 
-              InkWell(onTap: (){
-                key.currentState!.showBottomSheet((context) => Scaffold( appBar: PreferredSize(preferredSize: Size(0,40),child: InkWell( onTap: (){
-                  Navigator.pop(context);
-                },
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Icon(Icons.navigate_before_rounded,color: Colors.blue),
-                        Text("Back to details",style: TextStyle(color: Colors.blue),),
-                      ],
-                    ),
-                  ),
-                ),),body:StreamBuilder<QuerySnapshot>(
-                    stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo:_data[index].id).snapshots(),
-                    builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-                      if (snapshot.hasData) {
+              showDialog<void>(
+                  context: key.currentState!.context,
 
-                        int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
-                        final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,  key);
-                        return _allUsers.rowCount>0?  PaginatedDataTable(
+                  builder: (BuildContext context) {return AlertDialog(title: Text("Delete"),content: Text("Do you want to delete?"),actions: [
+                    TextButton(onPressed: (){
+                      _data[index].reference.delete();
+                      Navigator.pop(context);
 
-                          header: null,
-                          rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
-                          columns: const [
-                            DataColumn(label: Text('Photo')),
-                            DataColumn(label: Text('Name')),
-                            DataColumn(label: Text('Action')),
+                    }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+                    TextButton(onPressed: (){
 
-                            // DataColumn(label: Text('Id')),
-                            // DataColumn(label: Text('Phone'))
-                          ],
-                          source: _allUsers,
-                        ):Center(child: Text("No data"),);
+                      Navigator.pop(context);
+                    }, child: Text("No",style: TextStyle(),)),
+                  ],);});
 
 
-
-                        return ListView.separated(shrinkWrap: true,physics:AlwaysScrollableScrollPhysics(),padding: EdgeInsets.zero,
-                          itemCount: snapshot.data!.docs.length,
-
-                          itemBuilder: (context, index) {
-                            return InkWell( onTap: (){
-                              // Navigator.push(
-                              //   context,
-                              //   CupertinoPageRoute(builder: (context) => Article(id:snapshot.data!.docs[index] ,)),);
-                            },
-                              child: Padding(
-                                padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Padding(
-                                      padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
-                                      child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: true?CachedNetworkImage(
-                                        imageUrl: snapshot.data!.docs[index].get("photo1"),height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,
-                                        placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
-
-                                      ): Image.network(snapshot.data!.docs[index].get("photo1"),
-                                        height: MediaQuery.of(context).size.height * 0.12,width:MediaQuery.of(context).size.height * 0.1 ,fit: BoxFit.cover,),),
-                                    ),
-
-
-
-                                    Expanded(
-                                      child:  true?Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),): Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-
-
-                                          Text(snapshot.data!.docs[index].get("name"),style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize:MediaQuery.of(context).size.width * 0.05 ),),
-                                          Text(snapshot.data!.docs[index].get("c2"),maxLines: 2,style: TextStyle(color: Colors.grey),),
-
-
-                                          if(false)snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
-                                              stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
-                                              builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-                                                if (snapshot.hasData) {
-                                                  return Text(snapshot.data!.get("name"));
-
-                                                }
-                                                else {
-                                                  return Scaffold(body: CircularProgressIndicator());}
-                                              }):Text("--")
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                            return ListTile(trailing: IconButton(onPressed: (){
-                              snapshot.data!.docs[index].reference.delete();
-
-                            },icon: Icon(Icons.delete),),subtitle: snapshot.data!.docs[index].get("parent").toString().length>0? StreamBuilder<DocumentSnapshot>(
-                                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(snapshot.data!.docs[index].get("parent")).snapshots(),
-                                builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-                                  if (snapshot.hasData) {
-                                    return Text(snapshot.data!.get("name"));
-
-                                  }
-                                  else {
-                                    return Scaffold(body: CircularProgressIndicator());}
-                                }):Text("--") ,
-                              title: Text(snapshot.data!.docs[index].get("c1")),
-                            );
-                          }, separatorBuilder: (BuildContext context, int index) { return Container(width: double.infinity,height: 0.5,color: Colors.grey,); },
-                        );
-                      }
-                      else {
-                        return Scaffold(body: CircularProgressIndicator());}
-                    }) ,)) ;
-              },
-                child: Card(color: Colors.blue,child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text("View articles",style: TextStyle(color: Colors.white),),
-                ),),
-              ),
-
-
-            ],
+            }, child: Text("Delete",style: TextStyle(),)),
           ),
-        ),),));
-
-      },child: Text("Edit"),)),
+        ],
+      )),
       // DataCell(Text(_data[index].data()["phone"])),
     ]);
   }
@@ -237,11 +263,16 @@ class MyDataArticles extends DataTableSource {
 
 
 
-      DataCell(TextButton(onPressed: (){
+      DataCell(Row(
+        children: [
+          ElevatedButton(onPressed: (){
 
-        key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,));
+            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,));
 
-      },child: Text("Edit"),)),
+          },child: Text("Edit"),),
+
+        ],
+      )),
       // DataCell(Text(_data[index].data()["phone"])),
     ]);
   }
@@ -258,7 +289,7 @@ class _AdminAllCompanyState extends State<AdminAllCompany> {
         padding: const EdgeInsets.all(15.0),
         child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Sau directory",style: TextStyle(fontSize: 25),),
+            Text("Directory",style: TextStyle(fontSize: 25),),
             Text("Company info and peoples",style: TextStyle(fontSize: 15,),),
           ],
         ),
@@ -267,7 +298,7 @@ class _AdminAllCompanyState extends State<AdminAllCompany> {
       //.orderBy("order")
         stream:FirebaseFirestore.instance.collection("company") .orderBy("companyName").snapshots(),
         builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData &&snapshot.data!.docs.length>0) {
             int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
             final DataTableSource _allUsers = MyData(snapshot.data!.docs,  drawerKey);
             return   PaginatedDataTable(
