@@ -101,7 +101,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
 
                 }
                 Provider.of<TempProvider>(context, listen: false).companyInfo =  snapshotC.data!.docs.first;
-                return Column(
+                return ListView(shrinkWrap: true,
                   children: [
                     Container(width: double.infinity,
                       child: Padding(
@@ -172,11 +172,13 @@ class _CompanyInfoState extends State<CompanyInfo> {
             if(apiToken.length>0)   Padding(
               padding: const EdgeInsets.all(0.0),
               child: FutureBuilder<http.Response>(
-                      future: http.post(Uri.parse(true? "http://139.59.74.58/request" : "https://www.google.com"),headers: headers,body: jsonEncode({"link":"https://portal.quickbd.net/api/?api_key=$apiToken&act=balance"})) , // a previously-obtained Future<String> or null
+                    //  future: http.post(Uri.parse(true? "https://mmuenglish.com/api-node/request" : "https://www.google.com"),headers: headers,body: jsonEncode({"link":"https://portal.quickbd.net/api/?api_key=$apiToken&act=balance"})) , // a previously-obtained Future<String> or null
+                      future: http.post(Uri.parse(true? "https://us-central1-staht-connect-322113.cloudfunctions.net/imageProxy" : "https://www.google.com"),headers: headers,body: jsonEncode({"link":"https://portal.quickbd.net/api/?api_key=$apiToken&act=balance"})) , // a previously-obtained Future<String> or null
                       builder: (BuildContext context, AsyncSnapshot<http.Response> snapshotC) {
                         print("Checking balance");
 
                         if(snapshotC.hasData){
+                          print("req finish");
                           print(snapshotC.data!.body);
                           try{
                             dynamic res = jsonDecode(snapshotC.data!.body);

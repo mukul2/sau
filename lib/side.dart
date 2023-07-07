@@ -156,8 +156,8 @@ class ExampleSidebarX extends StatelessWidget {
           // },
         ),
         const SidebarXItem(
-          icon: Icons.search,
-          label: 'Article',
+          icon: Icons.supervised_user_circle_outlined,
+          label: 'Members',
         ),
         const SidebarXItem(
           icon: Icons.people,

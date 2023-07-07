@@ -1355,6 +1355,7 @@ class _AllDiyState extends State<AllDi> {
                                         child: TextFormField(controller: c2,maxLines: 8,minLines: 5,decoration: InputDecoration(hintText: "Body...."),),
                                       ),
                                       ElevatedButton(onPressed: (){
+                                        Navigator.pop(context);
 
                                       FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
                                         String apiToken ="";
@@ -1376,10 +1377,20 @@ class _AllDiyState extends State<AllDi> {
                                         for(int i = 0 ; i < bar.data.length ; i++){
                                           try{
                                             String p = bar.data[i]["phone"];
-                                          //  String d = "http://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
-                                          //  print(d);
+                                           String d = "https://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
+                                          print(d);
                                             Map<String,dynamic> m = {
-                                              'link':'http://portal.quickbd.net/smsapi',
+                                              'link':d,
+                                              // 'api_key' : apiToken,
+                                              // 'type' : 'text',  // unicode or text
+                                              // 'senderid' : senderId,
+                                              // 'contacts' : p,
+                                              // 'msg' :msg,
+                                              // 'method' : 'api'
+                                            };
+                                            Map<String,dynamic> m2 = {
+                                              'post':true,
+                                              'link':'https://portal.quickbd.net/smsapi',
                                               'api_key' : apiToken,
                                         'type' : 'text',  // unicode or text
                                         'senderid' : senderId,
@@ -1394,15 +1405,16 @@ class _AllDiyState extends State<AllDi> {
                                             //
                                             //       return AlertDialog(content: Text(m.toString()),);
                                             //     });
-                                            http.post(Uri.parse(true? "http://139.59.74.58/prequest" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
+                                            http.post(Uri.parse(true? "https://us-central1-staht-connect-322113.cloudfunctions.net/imageProxy" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
 
-                                          showDialog<void>(
-                                            context: context,
-
-                                            builder: (BuildContext context) {
-
-                                              return AlertDialog(content: Text(value.body),);
-                                            });
+                                        // print(value.body);
+                                        //   showDialog<void>(
+                                        //     context: context,
+                                        //
+                                        //     builder: (BuildContext context) {
+                                        //
+                                        //       return AlertDialog(content: Text(value.body),);
+                                        //     });
 
 
 
