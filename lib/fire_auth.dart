@@ -30,16 +30,19 @@ class _LoginFireState extends State<LoginFire> {
           FirebaseFirestore.instance.collection("directoryApp_users").doc(state.user!.uid).get().then((value) {
 
             if(value.exists){
+              print("user found");
               try{
                 if(value.get("type")=="admin"){
+                  print("admin");
 
                   GoRouter.of(context).go("/manage");
 
                 }else{
+                  print("organizer");
                   FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
                     Provider.of<TempProvider>(context, listen: false).companyInfo = value;
 
-                   // GoRouter.of(context).go("/organizer");
+                    GoRouter.of(context).go("/organizer");
 
                   });
 
@@ -49,7 +52,7 @@ class _LoginFireState extends State<LoginFire> {
                 FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
                   Provider.of<TempProvider>(context, listen: false).companyInfo = value;
 
-                  //GoRouter.of(context).go("/organizer");
+                  GoRouter.of(context).go("/organizer");
 
                 });
               }
