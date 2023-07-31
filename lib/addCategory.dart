@@ -12,8 +12,8 @@ import 'package:firebase_core/firebase_core.dart' as firebase_core;
 
 import 'DrawerProvider.dart';
 class AddCategory extends StatefulWidget {
-  const AddCategory({Key? key}) : super(key: key);
-
+  Function? goBack;
+  AddCategory({this.goBack});
   @override
   State<AddCategory> createState() => _AddCategoryState();
 }
@@ -29,7 +29,7 @@ class _AddCategoryState extends State<AddCategory> {
   @override
   Widget build(BuildContext context) {
     return true?Container(width: 500,height: 450,margin: EdgeInsets.all(20),decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)),
-      child: true?Padding(
+      child: false?Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
@@ -402,6 +402,14 @@ class _AddCategoryState extends State<AddCategory> {
                 setState(() {
                   isLoading = false;
                 });
+
+                if(widget.goBack==null){
+
+                }else{
+                  widget.goBack!();
+                }
+
+
                 // Navigator.pop(context);
 
               },

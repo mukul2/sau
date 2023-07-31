@@ -40,11 +40,19 @@ class _SidebarXExampleAppState extends State<SidebarXExampleApp> {
         case "00":
           return AllCategory();
           case "01":
-          return AddCategory();
+          return AddCategory(goBack: (){
+            setState(() {
+              selected  = "00";
+            });
+          },);
           case "10":
         return AllDi();
         case "11":
-        return AddContent();
+        return AddContent(goBack: (){
+          setState(() {
+            selected  = "10";
+          });
+        },);
         case "20":
         return CompanyInfo();
         case "30":

@@ -460,7 +460,8 @@ class _HomeState extends State<Home> {
                           w = MediaQuery.of(context).size.width / 7;
                         }
 
-                        return Wrap(children:snapshot.data!.docs.map((e) => Container(margin: EdgeInsets.all(5),width:w,height: 140,decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)),
+                        return Wrap(children:snapshot.data!.docs.map((e) => Container(margin: EdgeInsets.all(5),width:w-20,height: 140,
+                          decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)),
                           child: Padding(
                             padding: const EdgeInsets.all(3.0),
                             child: InkWell( onTap: (){
@@ -798,7 +799,7 @@ class _HomeState extends State<Home> {
                               //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
                             },
                               child: Padding(
-                                padding:  EdgeInsets.all(MediaQuery.of(context).size.shortestSide * 0.01),
+                                padding:  EdgeInsets.all(MediaQuery.of(context).size.shortestSide * 0.03),
                                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(height:  100,width:  100,

@@ -1331,138 +1331,129 @@ class _AllDiyState extends State<AllDi> {
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
 
-                  header: true?Text("Members"):  Row(
+                  header: false?Text("Members"):  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ElevatedButton(onPressed: (){
-                        setState(() {
-                          open = true;
-                        });
-                        drawerKey.currentState!.showBottomSheet((context) => AddContent());
+                      Text("Members"),
+                      Row(
+                        children: [
+                          Consumer<ArticlesProvider>(
+                            builder: (_, bar, __) => bar.tests.length>0?Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: ElevatedButton(onPressed: (){
+                                bool valOne = false;
+                                bool valtwo = false;
+                                bool valthree = false;
+                                TextEditingController c = TextEditingController();
+                                TextEditingController c2 = TextEditingController();
 
+                                showDialog<void>(
+                                    context: context,
 
-                      }, child: Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
-                        child: Text("Add Article"),
-                      )),
-
-                      Consumer<ArticlesProvider>(
-                        builder: (_, bar, __) => bar.tests.length>0?Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ElevatedButton(onPressed: (){
-                            bool valOne = false;
-                            bool valtwo = false;
-                            bool valthree = false;
-                            TextEditingController c = TextEditingController();
-                            TextEditingController c2 = TextEditingController();
-
-                            showDialog<void>(
-                                context: context,
-
-                                builder: (BuildContext context) {
-                                  return StatefulBuilder(
-                                      builder: (context,setS) {
-                                        return AlertDialog(title: Text("Send Message"),content: Container(width: 600,child: Wrap(
-                                          children: [
-                                            Row(children: [
-                                              Expanded(child: CheckboxListTile(title: Text("SMS"),value:valOne ,onChanged: (bool? b){
-                                                setS(() {
-                                                  valOne = b!;
-                                                });
-                                              },)),
-                                              Expanded(child: CheckboxListTile(title: Text("Email"),value:valtwo ,onChanged: (bool? b){
-                                                setS(() {
-                                                  valtwo = b!;
-                                                });
-                                              },)),
-                                            ],),
-
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              child: TextFormField(controller: c,decoration: InputDecoration(hintText: "Title...."),),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 8),
-                                              child: TextFormField(controller: c2,maxLines: 8,minLines: 5,decoration: InputDecoration(hintText: "Body...."),),
-                                            ),
-                                            ElevatedButton(onPressed: (){
-                                              Navigator.pop(context);
-
-                                              FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
-                                                String apiToken ="";
-                                                String senderId ="";
-                                                try{
-                                                  apiToken =value.get("apiToken").toString();
-                                                }catch(e){
-
-                                                }
-                                                try{
-                                                  senderId =value.get("senderId").toString();
-                                                }catch(e){
-
-                                                }
-                                                String msg = c.text+" "+c2.text;
-                                                var headers = {
-                                                  'Content-Type':'application/json',
-                                                };
-                                                for(int i = 0 ; i < bar.data.length ; i++){
-                                                  try{
-                                                    String p = bar.data[i]["phone"];
-                                                    String d = "https://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
-                                                    print(d);
-                                                    Map<String,dynamic> m = {
-                                                      'link':d,
-                                                      // 'api_key' : apiToken,
-                                                      // 'type' : 'text',  // unicode or text
-                                                      // 'senderid' : senderId,
-                                                      // 'contacts' : p,
-                                                      // 'msg' :msg,
-                                                      // 'method' : 'api'
-                                                    };
-                                                    Map<String,dynamic> m2 = {
-                                                      'post':true,
-                                                      'link':'https://portal.quickbd.net/smsapi',
-                                                      'api_key' : apiToken,
-                                                      'type' : 'text',  // unicode or text
-                                                      'senderid' : senderId,
-                                                      'contacts' : p,
-                                                      'msg' :msg,
-                                                      'method' : 'api'};
-                                                    print(m);
-                                                    // showDialog<void>(
-                                                    //     context: context,
-                                                    //
-                                                    //     builder: (BuildContext context) {
-                                                    //
-                                                    //       return AlertDialog(content: Text(m.toString()),);
-                                                    //     });
-                                                    http.post(Uri.parse(true? "https://us-central1-staht-connect-322113.cloudfunctions.net/imageProxy" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
-
-                                                      // print(value.body);
-                                                      //   showDialog<void>(
-                                                      //     context: context,
-                                                      //
-                                                      //     builder: (BuildContext context) {
-                                                      //
-                                                      //       return AlertDialog(content: Text(value.body),);
-                                                      //     });
-
-
-
-
+                                    builder: (BuildContext context) {
+                                      return StatefulBuilder(
+                                          builder: (context,setS) {
+                                            return AlertDialog(title: Text("Send Message"),content: Container(width: 600,child: Wrap(
+                                              children: [
+                                                Row(children: [
+                                                  Expanded(child: CheckboxListTile(title: Text("SMS"),value:valOne ,onChanged: (bool? b){
+                                                    setS(() {
+                                                      valOne = b!;
                                                     });
-                                                  }catch(e){
+                                                  },)),
+                                                  Expanded(child: CheckboxListTile(title: Text("Email"),value:valtwo ,onChanged: (bool? b){
+                                                    setS(() {
+                                                      valtwo = b!;
+                                                    });
+                                                  },)),
+                                                ],),
 
-                                                  }
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                                  child: TextFormField(controller: c,decoration: InputDecoration(hintText: "Title...."),),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                                  child: TextFormField(controller: c2,maxLines: 8,minLines: 5,decoration: InputDecoration(hintText: "Body...."),),
+                                                ),
+                                                ElevatedButton(onPressed: (){
+                                                  Navigator.pop(context);
+
+                                                  FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                                                    String apiToken ="";
+                                                    String senderId ="";
+                                                    try{
+                                                      apiToken =value.get("apiToken").toString();
+                                                    }catch(e){
+
+                                                    }
+                                                    try{
+                                                      senderId =value.get("senderId").toString();
+                                                    }catch(e){
+
+                                                    }
+                                                    String msg = c.text+" "+c2.text;
+                                                    var headers = {
+                                                      'Content-Type':'application/json',
+                                                    };
+                                                    for(int i = 0 ; i < bar.data.length ; i++){
+                                                      try{
+                                                        String p = bar.data[i]["phone"];
+                                                        String d = "https://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
+                                                        print(d);
+                                                        Map<String,dynamic> m = {
+                                                          'link':d,
+                                                          // 'api_key' : apiToken,
+                                                          // 'type' : 'text',  // unicode or text
+                                                          // 'senderid' : senderId,
+                                                          // 'contacts' : p,
+                                                          // 'msg' :msg,
+                                                          // 'method' : 'api'
+                                                        };
+                                                        Map<String,dynamic> m2 = {
+                                                          'post':true,
+                                                          'link':'https://portal.quickbd.net/smsapi',
+                                                          'api_key' : apiToken,
+                                                          'type' : 'text',  // unicode or text
+                                                          'senderid' : senderId,
+                                                          'contacts' : p,
+                                                          'msg' :msg,
+                                                          'method' : 'api'};
+                                                        print(m);
+                                                        // showDialog<void>(
+                                                        //     context: context,
+                                                        //
+                                                        //     builder: (BuildContext context) {
+                                                        //
+                                                        //       return AlertDialog(content: Text(m.toString()),);
+                                                        //     });
+                                                        http.post(Uri.parse(true? "https://us-central1-staht-connect-322113.cloudfunctions.net/imageProxy" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
+
+                                                          // print(value.body);
+                                                          //   showDialog<void>(
+                                                          //     context: context,
+                                                          //
+                                                          //     builder: (BuildContext context) {
+                                                          //
+                                                          //       return AlertDialog(content: Text(value.body),);
+                                                          //     });
+
+
+
+
+                                                        });
+                                                      }catch(e){
+
+                                                      }
 
 
 
 
 
-                                                }
+                                                    }
 
 
 
-                                              });
+                                                  });
 
 
 
@@ -1470,208 +1461,213 @@ class _AllDiyState extends State<AllDi> {
 
 
 
-                                            }, child: Text("Send",style: TextStyle(color: Colors.white),)),
+                                                }, child: Text("Send",style: TextStyle(color: Colors.white),)),
 
-                                          ],
-                                        ),),);
-                                      }
+                                              ],
+                                            ),),);
+                                          }
+                                      );
+
+                                    });
+
+
+                              }, child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                                child: Text("Send Message",style: TextStyle(color: Colors.white),),
+                              )),
+                            ):Container(width: 0,height: 0,),
+                          ),
+                          Consumer<ArticlesProvider>(
+                            builder: (_, bar, __) => bar.tests.length>0?Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              child: ElevatedButton(onPressed: () async {
+                                List<pw.Widget>allWidget = [];
+                                List<pw.Widget>allWidgetBox = [];
+                                double fontSize = 9 ;
+                                double wi = 0.1;
+                                FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                                  allWidget.add(pw.Center(child: pw.Text(value.get("companyName"),style: pw.TextStyle(fontSize: 18))));
+                                  allWidget.add(pw.Center(child: pw.Text(value.get("companyAddress"),style: pw.TextStyle(fontSize: 14))));
+                                  allWidget.add(pw.Center(child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center,children: [
+                                    pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyEmail")),),
+                                    pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyTelephone")),),
+
+                                  ])));
+                                  allWidget.add(pw.Container(height :5));
+                                  double padding = 3;
+                                  allWidget.add(pw.Row(
+                                      children: [
+
+
+                                        pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text("Name",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                        pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Email",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                        pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Phone",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                        pw.Expanded(flex: 2,child: pw.Container(child:pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
+                                        pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text("Work designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+
+
+
+
+
+
+
+
+
+
+                                      ]
+                                  ));
+                                  String v = "";
+
+
+
+
+                                  for(int i = 0 ; i < bar.data.length ; i++){
+                                    pw.Widget  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Container(height: 150,width: 50));
+
+                                    try{
+                                      http.Response r = await  http.get(Uri.parse(bar.data[i]["photo1"]));
+                                      pw.MemoryImage mI = pw.MemoryImage(r.bodyBytes);
+                                      imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Image(mI,height: 70,width: 50));
+                                    }catch(e){
+
+                                    }
+
+                                    allWidgetBox.add(pw.Container(margin: pw.EdgeInsets.all(3),decoration: pw.BoxDecoration(border: pw.Border.all()),width: 200,height: 80,child:pw.Row(crossAxisAlignment:pw.CrossAxisAlignment.center,
+                                        mainAxisAlignment:pw.MainAxisAlignment.start,
+                                        children:[
+
+                                          imgWi,
+                                          pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.start, mainAxisAlignment:pw.MainAxisAlignment.center,children: [
+                                            pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                            pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                            pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                            pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                            pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                          ])
+
+                                        ]
+                                    ) ),);
+
+                                    allWidget.add(pw.Row(
+                                        children: [
+
+
+                                          pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                          pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                          pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                          pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                          pw.Expanded(flex: 2,child: pw.Container(child:  pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
+
+
+
+
+
+
+
+
+
+
+
+
+                                        ]
+                                    ));
+                                  }
+
+
+                                  final pdf = pw.Document();
+                                  final pdf2 = pw.Document();
+                                  pdf.addPage(
+                                    pw.MultiPage(footer:(context) => pw.Row(
+                                        children: [
+                                          pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                        ]
+                                    ),margin: pw.EdgeInsets.all(30),
+                                      pageFormat: PdfPageFormat.a4,
+                                      build: (context) => allWidget,//here goes the widgets list
+                                    ),
                                   );
+                                  Uint8List uint8list2 =await pdf.save();
+                                  String content = base64Encode(uint8list2);
+                                  final anchor = uniHtml.AnchorElement(
+                                      href:
+                                      "data:application/octet-stream;charset=utf-16le;base64,$content")
+                                    ..setAttribute(
+                                        "download",
+                                        "file.pdf")
+                                    ..click();
+
+
+                                  List<List<pw.Widget>> allRow = [];
+                                  List<pw.Widget> allRowD = [];
+
+                                  for(int v = 0 ; v < 100;v++){
+                                    List<pw.Widget> ddd = [pw.Container(height: 0,width: 0)];
+                                    allRow.add(ddd);
+                                  }
+
+                                  int currentLine = 0;
+
+
+                                  for(int i = 0 ; i < allWidgetBox.length; i++){
+
+
+
+                                    if(allRow[currentLine].length<3){
+                                      allRow[currentLine].add(allWidgetBox[i]);
+                                    }else{
+                                      currentLine++;
+                                      allRow[currentLine].add(allWidgetBox[i]);
+                                    }
+
+                                  }
+                                  for(int i = 0 ; i < allRow.length; i++){
+                                    allRowD.add(pw.Row(children:allRow[i] ));
+
+
+                                  }
+
+
+                                  pdf2.addPage(
+                                    pw.MultiPage(footer:(context) => pw.Row(
+                                        children: [
+                                          pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                        ]
+                                    ),margin: pw.EdgeInsets.all(30),
+                                      pageFormat: PdfPageFormat.a4,
+                                      build: (context) => allRowD,//here goes the widgets list
+                                    ),
+                                  );
+                                  Uint8List uint8list3 =await pdf2.save();
+                                  String content3 = base64Encode(uint8list3);
+                                  final anchor3 = uniHtml.AnchorElement(
+                                      href:
+                                      "data:application/octet-stream;charset=utf-16le;base64,$content3")
+                                    ..setAttribute(
+                                        "download",
+                                        "file.pdf")
+                                    ..click();
+
+
+
 
                                 });
 
 
-                          }, child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
-                            child: Text("Send Message",style: TextStyle(color: Colors.white),),
-                          )),
-                        ):Container(width: 0,height: 0,),
+
+
+
+
+                              }, child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                                child: Text("Export PDF",style: TextStyle(color: Colors.white),),
+                              )),
+                            ):Container(width: 0,height: 0,),
+                          ),
+                        ],
                       ),
-                      Consumer<ArticlesProvider>(
-                        builder: (_, bar, __) => bar.tests.length>0?Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ElevatedButton(onPressed: () async {
-                            List<pw.Widget>allWidget = [];
-                            List<pw.Widget>allWidgetBox = [];
-                            double fontSize = 9 ;
-                            double wi = 0.1;
-                            FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
-                              allWidget.add(pw.Center(child: pw.Text(value.get("companyName"),style: pw.TextStyle(fontSize: 18))));
-                              allWidget.add(pw.Center(child: pw.Text(value.get("companyAddress"),style: pw.TextStyle(fontSize: 14))));
-                              allWidget.add(pw.Center(child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center,children: [
-                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyEmail")),),
-                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyTelephone")),),
-
-                              ])));
-                              allWidget.add(pw.Container(height :5));
-                              double padding = 3;
-                              allWidget.add(pw.Row(
-                                  children: [
-
-
-                                    pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text("Name",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Email",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Phone",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                    pw.Expanded(flex: 2,child: pw.Container(child:pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
-                                    pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text("Work designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
 
 
 
-
-
-
-
-
-
-
-                                  ]
-                              ));
-                              String v = "";
-
-
-
-
-                              for(int i = 0 ; i < bar.data.length ; i++){
-                                pw.Widget  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Container(height: 150,width: 50));
-
-                                try{
-                                  http.Response r = await  http.get(Uri.parse(bar.data[i]["photo1"]));
-                                  pw.MemoryImage mI = pw.MemoryImage(r.bodyBytes);
-                                  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Image(mI,height: 70,width: 50));
-                                }catch(e){
-
-                                }
-
-                                allWidgetBox.add(pw.Container(margin: pw.EdgeInsets.all(3),decoration: pw.BoxDecoration(border: pw.Border.all()),width: 200,height: 80,child:pw.Row(crossAxisAlignment:pw.CrossAxisAlignment.center,
-                                    mainAxisAlignment:pw.MainAxisAlignment.start,
-                                    children:[
-
-                                      imgWi,
-                                      pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.start, mainAxisAlignment:pw.MainAxisAlignment.center,children: [
-                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),
-                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),
-                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),
-                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
-                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
-                                      ])
-
-                                    ]
-                                ) ),);
-
-                                allWidget.add(pw.Row(
-                                    children: [
-
-
-                                      pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
-                                      pw.Expanded(flex: 2,child: pw.Container(child:  pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
-
-
-
-
-
-
-
-
-
-
-
-
-                                    ]
-                                ));
-                              }
-
-
-                              final pdf = pw.Document();
-                              final pdf2 = pw.Document();
-                              pdf.addPage(
-                                pw.MultiPage(footer:(context) => pw.Row(
-                                    children: [
-                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
-                                    ]
-                                ),margin: pw.EdgeInsets.all(30),
-                                  pageFormat: PdfPageFormat.a4,
-                                  build: (context) => allWidget,//here goes the widgets list
-                                ),
-                              );
-                              Uint8List uint8list2 =await pdf.save();
-                              String content = base64Encode(uint8list2);
-                              final anchor = uniHtml.AnchorElement(
-                                  href:
-                                  "data:application/octet-stream;charset=utf-16le;base64,$content")
-                                ..setAttribute(
-                                    "download",
-                                    "file.pdf")
-                                ..click();
-
-
-                              List<List<pw.Widget>> allRow = [];
-                              List<pw.Widget> allRowD = [];
-
-                              for(int v = 0 ; v < 100;v++){
-                                List<pw.Widget> ddd = [pw.Container(height: 0,width: 0)];
-                                allRow.add(ddd);
-                              }
-
-                              int currentLine = 0;
-
-
-                              for(int i = 0 ; i < allWidgetBox.length; i++){
-
-
-
-                                if(allRow[currentLine].length<3){
-                                  allRow[currentLine].add(allWidgetBox[i]);
-                                }else{
-                                  currentLine++;
-                                  allRow[currentLine].add(allWidgetBox[i]);
-                                }
-
-                              }
-                              for(int i = 0 ; i < allRow.length; i++){
-                                allRowD.add(pw.Row(children:allRow[i] ));
-
-
-                              }
-
-
-                              pdf2.addPage(
-                                pw.MultiPage(footer:(context) => pw.Row(
-                                    children: [
-                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
-                                    ]
-                                ),margin: pw.EdgeInsets.all(30),
-                                  pageFormat: PdfPageFormat.a4,
-                                  build: (context) => allRowD,//here goes the widgets list
-                                ),
-                              );
-                              Uint8List uint8list3 =await pdf2.save();
-                              String content3 = base64Encode(uint8list3);
-                              final anchor3 = uniHtml.AnchorElement(
-                                  href:
-                                  "data:application/octet-stream;charset=utf-16le;base64,$content3")
-                                ..setAttribute(
-                                    "download",
-                                    "file.pdf")
-                                ..click();
-
-
-
-
-                            });
-
-
-
-
-
-
-                          }, child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
-                            child: Text("Export PDF",style: TextStyle(color: Colors.white),),
-                          )),
-                        ):Container(width: 0,height: 0,),
-                      ),
 
 
 

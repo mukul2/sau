@@ -15,7 +15,8 @@ import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'DrawerProvider.dart';
 
 class AddContent extends StatefulWidget {
-  const AddContent({Key? key}) : super(key: key);
+  Function? goBack;
+  AddContent({this.goBack});
 
   @override
   State<AddContent> createState() => _AddCategoryState();
@@ -402,6 +403,12 @@ class _AddCategoryState extends State<AddContent> {
                     photo1  = null;
                     photo2  = null;
                   });
+
+                  if(widget.goBack==null){
+
+                  }else{
+                    widget.goBack!();
+                  }
                 //  Navigator.pop(context);
 
                 },
