@@ -5,25 +5,52 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/CategoryHome.dart';
+import 'package:sau/addContent.dart';
 import 'package:sidebarx/sidebarx.dart';
 
 import 'All_category.dart';
 import 'Communicate.dart';
 import 'DrawerProvider.dart';
+import 'addCategory.dart';
+import 'com_admin_drawer/data.dart';
 import 'company_info.dart';
 
 void main() {
   runApp(SidebarXExampleApp());
 }
 
-class SidebarXExampleApp extends StatelessWidget {
+class SidebarXExampleApp extends StatefulWidget {
   SidebarXExampleApp({Key? key}) : super(key: key);
 
+  @override
+  State<SidebarXExampleApp> createState() => _SidebarXExampleAppState();
+}
+
+class _SidebarXExampleAppState extends State<SidebarXExampleApp> {
   final _controller = SidebarXController(selectedIndex: 0, extended: true);
+
   final _key = GlobalKey<ScaffoldState>();
+
+  String selected  = "00";
 
   @override
   Widget build(BuildContext context) {
+    getWidget(){
+      switch(selected){
+        case "00":
+          return AllCategory();
+          case "01":
+          return AddCategory();
+          case "10":
+        return AllDi();
+        case "11":
+        return AddContent();
+        case "20":
+        return CompanyInfo();
+        case "30":
+        return CompanyInfo();
+      }
+    }
   if(FirebaseAuth.instance.currentUser==null){
       GoRouter.of(context).go("/admin");
     }else{
@@ -70,7 +97,33 @@ class SidebarXExampleApp extends StatelessWidget {
       },
     );
     return shouldPop!;},
-      child: Builder(
+      child: true?Scaffold(
+        body: Row(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
+
+          Container(width: 250,height: MediaQuery.of(context).size.height,color: Colors.white,child:  ListView.separated(padding: EdgeInsets.only(top: 50),
+            itemCount: drawerDataComAdmin.length,shrinkWrap: true,
+
+            itemBuilder: (context, index) {
+            return  MainMenu(data :drawerDataComAdmin[index],pos: index,posSelected: (String s){
+
+              setState(() {
+                selected = s;
+              });
+
+
+            },);
+              return Row(children: [
+                Icon(drawerDataComAdmin[index]["icon"]),
+                Text(drawerDataComAdmin[index]["name"]),
+              ],);
+            }, separatorBuilder: (BuildContext context, int index) { return Container(color: Colors.black,height: 0.1,width: double.infinity,);  },
+          )),
+          Container(width: 0.5,height: MediaQuery.of(context).size.height,color: Colors.grey,),
+          Container(child: getWidget(),),
+
+
+        ],),
+      ): Builder(
         builder: (context) {
           final isSmallScreen = MediaQuery.of(context).size.width < 600;
           return Scaffold(appBar: isSmallScreen?PreferredSize(child: Container(child: Row(
@@ -286,3 +339,74 @@ const accentCanvasColor = Color(0xFF3E3E61);
 const white = Colors.white;
 final actionColor = const Color(0xFF5F5FA7).withOpacity(0.6);
 final divider = Divider(color: white.withOpacity(0.3), height: 1);
+
+
+
+class MainMenu extends StatefulWidget {
+  Map<String,dynamic> data;
+  Function(String)posSelected;
+  int pos;
+  MainMenu({required this.data,required this.posSelected,required this.pos});
+
+  @override
+  State<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends State<MainMenu> {
+
+  bool selected = false;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell( onTap: (){
+          if(widget.data["name"].toString()=="Logout"){
+            FirebaseAuth.instance.signOut().then((value) => context.go("/"));
+          }
+
+
+
+          widget.posSelected(widget.pos.toString()+"0");
+          setState(() {
+            selected = !selected;
+          });
+        },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(children: [
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Icon(widget.data["icon"]),
+              ),
+              Text(widget.data["name"]),
+            ],),
+          ),
+        ),
+     if(selected)   Padding(
+       padding: const EdgeInsets.only(left: 50),
+       child: ListView.separated(
+            itemCount: widget.data["sub"].length,shrinkWrap: true,
+
+            itemBuilder: (context, index) {
+              return InkWell( onTap: (){
+                widget.posSelected(widget.pos.toString()+index.toString());
+              },
+                child: Row(children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("-"),
+                  ),
+                  Text(widget.data["sub"][index]),
+                ],),
+              );
+              return Row(children: [
+                Icon(drawerDataComAdmin[index]["icon"]),
+                Text(drawerDataComAdmin[index]["name"]),
+              ],);
+            }, separatorBuilder: (BuildContext context, int index) { return Container(color: Colors.black,height: 0.1,width: double.infinity,); },
+          ),
+     )
+      ],
+    );
+  }
+}

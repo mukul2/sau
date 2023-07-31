@@ -90,8 +90,8 @@ final GoRouter _router = GoRouter(
                     // ),color: Colors.white,margin: EdgeInsets.zero,
                     //   child:h ,
                     // ),),
-                      body:  Container(color: Colors.blue,child: Center(child: Card(shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
+                      body:  Container(child: Center(child: Card(color: Colors.white,shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ) , margin: EdgeInsets.zero,child: Container(width: MediaQuery.of(context).size.width>1000?800: MediaQuery.of(context).size.width,child: ListView(shrinkWrap: true,
                       children: [
 
@@ -236,23 +236,27 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
           ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
         ],
-        child:MaterialApp.router(theme: ThemeData(
+        child:MaterialApp.router(theme: ThemeData(cardTheme: CardTheme(margin: EdgeInsets.zero), scaffoldBackgroundColor: Colors.grey.shade300,dialogBackgroundColor: Colors.grey.shade300,dialogTheme: DialogTheme(backgroundColor: Colors.grey.shade300),
             fontFamily: 'Nexa',
-            inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
+            inputDecorationTheme: InputDecorationTheme( fillColor: Colors.grey.shade50,contentPadding: EdgeInsets.symmetric(horizontal: 15),filled: true,border:  OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color:Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(4),
+              borderSide:  BorderSide(color:Colors.black, //width: 0.3
+              ),borderRadius: BorderRadius.circular(4),
             ),
                 enabledBorder:  OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
-                  borderSide:  BorderSide(color: Colors.black.withOpacity(0.8), width: 0.5),borderRadius: BorderRadius.circular(4),
+                  borderSide:  BorderSide(color: Colors.black, //width: 0.3
+                  ),borderRadius: BorderRadius.circular(4),
                 ),
                 disabledBorder:   OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
-                  borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 0.5),borderRadius: BorderRadius.circular(4),
+                  borderSide:  BorderSide(color: Colors.grey, //width: 0.3
+                  ),borderRadius: BorderRadius.circular(4),
                 ),
                 focusedBorder:    OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
-                  borderSide:  BorderSide(color: Colors.blue, width: 1),borderRadius: BorderRadius.circular(4),
+                  borderSide:  BorderSide(color: Colors.blue,// width:1
+                  ),borderRadius: BorderRadius.circular(4),
                 ),floatingLabelBehavior: FloatingLabelBehavior.always)),
           routerConfig: _router,
         ));

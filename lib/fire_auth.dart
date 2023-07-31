@@ -28,11 +28,127 @@ class _LoginFireState extends State<LoginFire> {
 
     return  Scaffold(
       body: Center(
-        child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        child: Container(width: MediaQuery.of(context).size.width>500?500: MediaQuery.of(context).size.width,decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.white),
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: false? AuthStateListener<EmailAuthController>(
+            child:  true?Wrap(children: [
+              Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 8),
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                  Text("Login",style: TextStyle(fontSize: 40),),
+                  TextButton(onPressed: (){
+                    context.push("/signup");
+                  }, child: Text("Sign up your company")),
+                ],),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(controller: c,decoration: InputDecoration(hintText: "Email",contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 0)),),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(controller: c2,obscureText: true,decoration: InputDecoration(hintText: "Password",contentPadding: EdgeInsets.symmetric(horizontal: 10,vertical: 0)),),
+              ),
+
+              Row(mainAxisAlignment: MainAxisAlignment.end,children: [
+                TextButton(onPressed: (){
+                  GoRouter.of(context).push("/forgot-password");
+                  // context.push("forgot-password");
+                  //forgot-password
+
+                }, child: Text("Forgot password?",style: TextStyle(color: Colors.redAccent),)),
+              ],),
+              busy?Center(child: CircularProgressIndicator(),): InkWell( onTap: () async {
+                setState(() {
+                  busy = true;
+                });
+
+
+                try {
+                  UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: c.text,
+                      password: c2.text
+                  );
+                  FirebaseFirestore.instance.collection("directoryApp_users").doc(userCredential.user!.uid).get().then((value) {
+
+                    if(value.exists){
+                      print("user found");
+                      try{
+                        if(value.get("type")=="admin"){
+                          print("admin");
+
+                          GoRouter.of(context).go("/manage");
+
+                        }else{
+                          print("organizer");
+                          FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                            Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+
+                            GoRouter.of(context).go("/organizer");
+
+                          });
+
+                        }
+                      }catch(e){
+
+                        FirebaseFirestore.instance.collection("company").doc(value.get("company")).get().then((value) {
+                          Provider.of<TempProvider>(context, listen: false).companyInfo = value;
+
+                          GoRouter.of(context).go("/organizer");
+
+                        });
+                      }
+                    }else{
+                      showDialog<void>(
+                          context: context,
+
+                          builder: (BuildContext context) {return AlertDialog(title: Text("Error"),content: Text("User data does not exits"),actions: [
+
+                            TextButton(onPressed: (){
+                              Navigator.pop(context);
+                            }, child: Text("Close")),
+
+                          ],);});
+
+
+                    }
+
+
+                  });
+
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'user-not-found') {
+                    print('No user found for that email.');
+                    setState(() {
+                      busy = false;
+                    });
+                  } else if (e.code == 'wrong-password') {
+                    setState(() {
+                      busy = false;
+                    });
+                    print('Wrong password provided for that user.');
+                  }else{
+                    setState(() {
+                      busy = false;
+                    });
+                    print('Wrong password provided for that user.');
+                  }
+                }
+
+
+
+
+              },
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8,right: 4,left: 4),
+                  child: Card(color: Colors.blue,child: Center(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Login",style: TextStyle(color: Colors.white),),
+                  ),),),
+                ),
+              ),
+
+            ],): false? AuthStateListener<EmailAuthController>(
               listener: (oldState, newState, controller) {
                 print("auth chanhed");
                 print(oldState);
@@ -128,16 +244,12 @@ class _LoginFireState extends State<LoginFire> {
                         busy = true;
                       });
 
-                      try {
 
-                        final credential = await  ctrl.auth.signInWithEmailAndPassword(
+                      try {
+                        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
                             email: c.text,
                             password: c2.text
                         );
-                        print("logged in");
-                        setState(() {
-                          busy = false;
-                        });
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'user-not-found') {
                           print('No user found for that email.');
@@ -145,12 +257,15 @@ class _LoginFireState extends State<LoginFire> {
                             busy = false;
                           });
                         } else if (e.code == 'wrong-password') {
-                          print('Wrong password provided for that user.');
                           setState(() {
                             busy = false;
                           });
+                          print('Wrong password provided for that user.');
                         }
                       }
+
+
+
 
                     },
                       child: Padding(

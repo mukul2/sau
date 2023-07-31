@@ -79,7 +79,7 @@ class _CompanyInfoState extends State<CompanyInfo> {
             );
           }
 
-        }): Container(color: Colors.white,
+        }): Container(margin: EdgeInsets.all(10),decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)), width: MediaQuery.of(context).size.width - 271,
           child: Padding(
             padding:  EdgeInsets.all(MediaQuery.of(context).size.width*0.05),
             child: StreamBuilder<QuerySnapshot>(

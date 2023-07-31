@@ -23,8 +23,8 @@ class AllCategory extends StatefulWidget {
   State<AllCategory> createState() => _AllCategoryState();
 }
 class MyData extends DataTableSource {
-  MyData(this._data,this.key);
-  GlobalKey<ScaffoldState> key;
+  MyData(this._data,this.context);
+  BuildContext context;
   final List<QueryDocumentSnapshot> _data;
 
 
@@ -46,7 +46,7 @@ class MyData extends DataTableSource {
       DataCell(_data[index].get("parent")==""?Text("--"): FutureBuilder<DocumentSnapshot>(
           future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").doc(_data[index].get("parent")).get(),
           builder: (BuildContext context,AsyncSnapshot<DocumentSnapshot> snapshot,) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data!.exists) {
               return Text(snapshot.data!.get("name"));
 
             }
@@ -57,7 +57,20 @@ class MyData extends DataTableSource {
         children: [
           TextButton(onPressed: (){
 
-            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
+            showDialog(
+                context:context,
+                builder: (context) => Dialog(backgroundColor: Colors.transparent,
+                  child: ClipRRect( borderRadius: BorderRadius.circular(15),
+                    child: Container(decoration: BoxDecoration( color: Colors.white,borderRadius: BorderRadius.circular(15)),
+
+                        height: 450,width: 500,child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: AddCategoryEdit(ref:_data[index].reference ,data: _data[index].data() as Map<String,dynamic>,),
+                        )),
+                  ),
+                ));
+
+       if(false)     Scaffold.of(context).showBottomSheet((context)=> Container(height: MediaQuery.of(context).size.height,child: Container(
                 color: Colors.white,
                 height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
                 child: Padding(
@@ -95,7 +108,7 @@ class MyData extends DataTableSource {
           TextButton(onPressed: (){
 
     showDialog<void>(
-    context: key.currentState!.context,
+    context:context,
 
     builder: (BuildContext context) {
       return AlertDialog(title: Text("Delete"),content: Text("Do  you want to delete?"),actions: [
@@ -266,26 +279,83 @@ class _AllCategoryState extends State<AllCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(margin: EdgeInsets.all(5),
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,border: Border.all(color: Colors.grey.withOpacity(0.5)),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(5),
-            topRight: Radius.circular(5),
-            bottomLeft: Radius.circular(5),
-            bottomRight: Radius.circular(5)
+    return Container(margin: EdgeInsets.all(10),width: MediaQuery.of(context).size.width - 271,
+
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset.zero, // changes position of shadow
-          ),
-        ],),
-      child: Padding(
+        // borderRadius: BorderRadius.only(
+        //     topLeft: Radius.circular(5),
+        //     topRight: Radius.circular(5),
+        //     bottomLeft: Radius.circular(5),
+        //     bottomRight: Radius.circular(5)
+        // ),
+        // boxShadow: [
+        //   BoxShadow(
+        //     color: Colors.grey.withOpacity(0.1),
+        //     spreadRadius: 1,
+        //     blurRadius: 1,
+        //     offset: Offset.zero, // changes position of shadow
+        //   ),
+       // ],),
+      child: true?StreamBuilder<QuerySnapshot>(
+          stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories")
+              .where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots() , // a previously-obtained Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+//&& snapshot.data!.docs.length>0
+            if (snapshot.hasData ) {
+
+              final DataTableSource _allUsers = MyData(snapshot.data!.docs,context);
+              int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
+              return   PaginatedDataTable(header: Text("Category"),
+
+                rowsPerPage:snapshot.data!.docs.length==0? 1:(_allUsers.rowCount>n?n:_allUsers.rowCount),
+              //  rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
+                columns: const [
+                  DataColumn(label: Text('Name')),
+                  DataColumn(label: Text('Parent category')),
+
+                  DataColumn(label: Text('Actions')),
+                  // DataColumn(label: Text('Id')),
+                  // DataColumn(label: Text('Phone'))
+                ],
+                source: _allUsers,
+              );
+              return Text(snapshot.data!.docs.length.toString());
+            }else{
+              return Center(child: CircularProgressIndicator(),);
+              return Scaffold(
+                body:  true?InkWell(onTap: (){
+                  setState(() {
+                    open = true;
+                  });
+                  drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+
+                },
+                  child: Center(child: Container(child:Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                    child: Text("Create your first category"),
+                  ) ,decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),)),
+                ):Center(
+                  child: TextButton(onPressed: (){
+                    setState(() {
+                      open = true;
+                    });
+                    drawerKey.currentState!.showBottomSheet((context) => AddCategory());
+
+
+                  }, child: Row(
+                    children: [
+                      Icon(Icons.add,color: Colors.blue,),
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                        child: Text("Create your first category"),
+                      ),
+                    ],
+                  )),
+                ),
+              );
+            }
+          }): Padding(
         padding: const EdgeInsets.all(4.0),
         child: Scaffold(
 //           appBar: PreferredSize(preferredSize: Size(0,72),
@@ -337,7 +407,7 @@ class _AllCategoryState extends State<AllCategory> {
 
               if (snapshot.hasData && snapshot.data!.docs.length>0) {
 
-                final DataTableSource _allUsers = MyData(snapshot.data!.docs,drawerKey);
+                final DataTableSource _allUsers = MyData(snapshot.data!.docs,context);
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
 
@@ -959,8 +1029,8 @@ class AllDi extends StatefulWidget {
   State<AllDi> createState() => _AllDiyState();
 }
 class MyDataArticles extends DataTableSource {
-  MyDataArticles(this._data,this.key);
-  GlobalKey<ScaffoldState> key;
+  MyDataArticles(this._data,this.context);
+  BuildContext context;
   final List<dynamic> _data;
 
 
@@ -1004,46 +1074,64 @@ class MyDataArticles extends DataTableSource {
       DataCell(Row(
         children: [
           TextButton(onPressed: (){
+            showDialog<void>(
+                context: context,
 
-            key.currentState!.showBottomSheet((context) => Container(height: MediaQuery.of(context).size.height,child: Container(
-                color: Colors.white,
-                height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-
-                      Padding(
+                builder: (BuildContext context) {
+                  return Dialog(child: Container(
+                      color: Colors.white,
+                      height: MediaQuery.of(context).size.height,child: SingleChildScrollView(
+                      child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Column(
                           children: [
-                            Row(
-                              children: [
-                                IconButton(onPressed: (){
-                                  Navigator.pop(context);
-                                }, icon: Icon(Icons.arrow_back_rounded)),
-                              ],
+
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      IconButton(onPressed: (){
+                                        Navigator.pop(context);
+                                      }, icon: Icon(Icons.arrow_back_rounded)),
+                                    ],
+                                  ),
+                                  EditContent(ref:_data[index].reference ,data:_data[index].data() as Map<String,dynamic>,),
+
+
+
+
+
+
+                                ],
+                              ),
                             ),
-                            EditContent(ref:_data[index].reference ,data:_data[index].data() as Map<String,dynamic>,),
-
-
-
-
-
 
                           ],
                         ),
-                      ),
+                      ))),);
+                  return AlertDialog(title: Text("Delete"),content: Text("Do  you want to delete?"),actions: [
 
-                    ],
-                  ),
-                ))),));
+                    TextButton(onPressed: (){
+                      _data[index].reference.delete();
+                      Navigator.pop(context);
+
+
+                    }, child: Text("Yes",style: TextStyle(color: Colors.redAccent),)),
+                    TextButton(onPressed: (){
+
+                      Navigator.pop(context);
+
+                    }, child: Text("No",style: TextStyle(color: Colors.blue),)),
+                  ],);
+                });
 
           },child: Text("Edit"),),
           TextButton(onPressed: (){
 
             showDialog<void>(
-                context: key.currentState!.context,
+                context: context,
 
                 builder: (BuildContext context) {
                   return AlertDialog(title: Text("Delete"),content: Text("Do  you want to delete?"),actions: [
@@ -1227,28 +1315,424 @@ class _AllDiyState extends State<AllDi> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(margin: EdgeInsets.all(5),
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,border: Border.all(color: Colors.grey.withOpacity(0.5)),
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(5),
-            topRight: Radius.circular(5),
-            bottomLeft: Radius.circular(5),
-            bottomRight: Radius.circular(5)
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: Offset.zero, // changes position of shadow
-          ),
-        ],),
+    return Container(margin: EdgeInsets.all(10),width: MediaQuery.of(context).size.width - 271,
+
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: Scaffold(
+        child: true?StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection(appDatabsePrefix+"article")
+                .where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots() , // a previously-obtained Future<String> or null
+            builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+             //&& snapshot.data!.docs.length>0
+              if (snapshot.hasData ) {
+                final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,context);
+                int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
+                return   PaginatedDataTable(
+
+                  header: true?Text("Members"):  Row(
+                    children: [
+                      ElevatedButton(onPressed: (){
+                        setState(() {
+                          open = true;
+                        });
+                        drawerKey.currentState!.showBottomSheet((context) => AddContent());
+
+
+                      }, child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                        child: Text("Add Article"),
+                      )),
+
+                      Consumer<ArticlesProvider>(
+                        builder: (_, bar, __) => bar.tests.length>0?Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ElevatedButton(onPressed: (){
+                            bool valOne = false;
+                            bool valtwo = false;
+                            bool valthree = false;
+                            TextEditingController c = TextEditingController();
+                            TextEditingController c2 = TextEditingController();
+
+                            showDialog<void>(
+                                context: context,
+
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context,setS) {
+                                        return AlertDialog(title: Text("Send Message"),content: Container(width: 600,child: Wrap(
+                                          children: [
+                                            Row(children: [
+                                              Expanded(child: CheckboxListTile(title: Text("SMS"),value:valOne ,onChanged: (bool? b){
+                                                setS(() {
+                                                  valOne = b!;
+                                                });
+                                              },)),
+                                              Expanded(child: CheckboxListTile(title: Text("Email"),value:valtwo ,onChanged: (bool? b){
+                                                setS(() {
+                                                  valtwo = b!;
+                                                });
+                                              },)),
+                                            ],),
+
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 8),
+                                              child: TextFormField(controller: c,decoration: InputDecoration(hintText: "Title...."),),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 8),
+                                              child: TextFormField(controller: c2,maxLines: 8,minLines: 5,decoration: InputDecoration(hintText: "Body...."),),
+                                            ),
+                                            ElevatedButton(onPressed: (){
+                                              Navigator.pop(context);
+
+                                              FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                                                String apiToken ="";
+                                                String senderId ="";
+                                                try{
+                                                  apiToken =value.get("apiToken").toString();
+                                                }catch(e){
+
+                                                }
+                                                try{
+                                                  senderId =value.get("senderId").toString();
+                                                }catch(e){
+
+                                                }
+                                                String msg = c.text+" "+c2.text;
+                                                var headers = {
+                                                  'Content-Type':'application/json',
+                                                };
+                                                for(int i = 0 ; i < bar.data.length ; i++){
+                                                  try{
+                                                    String p = bar.data[i]["phone"];
+                                                    String d = "https://portal.quickbd.net/smsapi?api_key=$apiToken&type=text&contacts=$p&senderid=$senderId&msg=$msg&method=api";
+                                                    print(d);
+                                                    Map<String,dynamic> m = {
+                                                      'link':d,
+                                                      // 'api_key' : apiToken,
+                                                      // 'type' : 'text',  // unicode or text
+                                                      // 'senderid' : senderId,
+                                                      // 'contacts' : p,
+                                                      // 'msg' :msg,
+                                                      // 'method' : 'api'
+                                                    };
+                                                    Map<String,dynamic> m2 = {
+                                                      'post':true,
+                                                      'link':'https://portal.quickbd.net/smsapi',
+                                                      'api_key' : apiToken,
+                                                      'type' : 'text',  // unicode or text
+                                                      'senderid' : senderId,
+                                                      'contacts' : p,
+                                                      'msg' :msg,
+                                                      'method' : 'api'};
+                                                    print(m);
+                                                    // showDialog<void>(
+                                                    //     context: context,
+                                                    //
+                                                    //     builder: (BuildContext context) {
+                                                    //
+                                                    //       return AlertDialog(content: Text(m.toString()),);
+                                                    //     });
+                                                    http.post(Uri.parse(true? "https://us-central1-staht-connect-322113.cloudfunctions.net/imageProxy" : "https://www.google.com"),headers: headers,body: jsonEncode(m)).then((value) {
+
+                                                      // print(value.body);
+                                                      //   showDialog<void>(
+                                                      //     context: context,
+                                                      //
+                                                      //     builder: (BuildContext context) {
+                                                      //
+                                                      //       return AlertDialog(content: Text(value.body),);
+                                                      //     });
+
+
+
+
+                                                    });
+                                                  }catch(e){
+
+                                                  }
+
+
+
+
+
+                                                }
+
+
+
+                                              });
+
+
+
+
+
+
+
+                                            }, child: Text("Send",style: TextStyle(color: Colors.white),)),
+
+                                          ],
+                                        ),),);
+                                      }
+                                  );
+
+                                });
+
+
+                          }, child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                            child: Text("Send Message",style: TextStyle(color: Colors.white),),
+                          )),
+                        ):Container(width: 0,height: 0,),
+                      ),
+                      Consumer<ArticlesProvider>(
+                        builder: (_, bar, __) => bar.tests.length>0?Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: ElevatedButton(onPressed: () async {
+                            List<pw.Widget>allWidget = [];
+                            List<pw.Widget>allWidgetBox = [];
+                            double fontSize = 9 ;
+                            double wi = 0.1;
+                            FirebaseFirestore.instance.collection("company").doc(Provider.of<TempProvider>(context, listen: false).companyInfo!.id).get().then((value) async {
+                              allWidget.add(pw.Center(child: pw.Text(value.get("companyName"),style: pw.TextStyle(fontSize: 18))));
+                              allWidget.add(pw.Center(child: pw.Text(value.get("companyAddress"),style: pw.TextStyle(fontSize: 14))));
+                              allWidget.add(pw.Center(child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center,children: [
+                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyEmail")),),
+                                pw.Padding(padding: pw.EdgeInsets.only(left: 5,right: 5),child: pw.Text(value.get("companyTelephone")),),
+
+                              ])));
+                              allWidget.add(pw.Container(height :5));
+                              double padding = 3;
+                              allWidget.add(pw.Row(
+                                  children: [
+
+
+                                    pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text("Name",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Email",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Phone",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                    pw.Expanded(flex: 2,child: pw.Container(child:pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text("Designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),  ),
+                                    pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text("Work designation",style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+
+
+
+
+
+
+
+
+
+
+                                  ]
+                              ));
+                              String v = "";
+
+
+
+
+                              for(int i = 0 ; i < bar.data.length ; i++){
+                                pw.Widget  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Container(height: 150,width: 50));
+
+                                try{
+                                  http.Response r = await  http.get(Uri.parse(bar.data[i]["photo1"]));
+                                  pw.MemoryImage mI = pw.MemoryImage(r.bodyBytes);
+                                  imgWi =pw.Padding(padding: pw.EdgeInsets.all(3),child:  pw.Image(mI,height: 70,width: 50));
+                                }catch(e){
+
+                                }
+
+                                allWidgetBox.add(pw.Container(margin: pw.EdgeInsets.all(3),decoration: pw.BoxDecoration(border: pw.Border.all()),width: 200,height: 80,child:pw.Row(crossAxisAlignment:pw.CrossAxisAlignment.center,
+                                    mainAxisAlignment:pw.MainAxisAlignment.start,
+                                    children:[
+
+                                      imgWi,
+                                      pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.start, mainAxisAlignment:pw.MainAxisAlignment.center,children: [
+                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                        pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),
+                                      ])
+
+                                    ]
+                                ) ),);
+
+                                allWidget.add(pw.Row(
+                                    children: [
+
+
+                                      pw.Expanded(flex: 3,child: pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 3,child:pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child:  pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 2,child:  pw.Container(child: pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["designation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))), ),
+                                      pw.Expanded(flex: 2,child: pw.Container(child:  pw.Padding(padding: pw.EdgeInsets.all(padding),child: pw.Text(v+bar.data[i]["workdesignation"]+v,style: pw.TextStyle(fontSize:fontSize ))),decoration: pw.BoxDecoration(border: pw.Border.all(width: wi,))),),
+
+
+
+
+
+
+
+
+
+
+
+
+                                    ]
+                                ));
+                              }
+
+
+                              final pdf = pw.Document();
+                              final pdf2 = pw.Document();
+                              pdf.addPage(
+                                pw.MultiPage(footer:(context) => pw.Row(
+                                    children: [
+                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                    ]
+                                ),margin: pw.EdgeInsets.all(30),
+                                  pageFormat: PdfPageFormat.a4,
+                                  build: (context) => allWidget,//here goes the widgets list
+                                ),
+                              );
+                              Uint8List uint8list2 =await pdf.save();
+                              String content = base64Encode(uint8list2);
+                              final anchor = uniHtml.AnchorElement(
+                                  href:
+                                  "data:application/octet-stream;charset=utf-16le;base64,$content")
+                                ..setAttribute(
+                                    "download",
+                                    "file.pdf")
+                                ..click();
+
+
+                              List<List<pw.Widget>> allRow = [];
+                              List<pw.Widget> allRowD = [];
+
+                              for(int v = 0 ; v < 100;v++){
+                                List<pw.Widget> ddd = [pw.Container(height: 0,width: 0)];
+                                allRow.add(ddd);
+                              }
+
+                              int currentLine = 0;
+
+
+                              for(int i = 0 ; i < allWidgetBox.length; i++){
+
+
+
+                                if(allRow[currentLine].length<3){
+                                  allRow[currentLine].add(allWidgetBox[i]);
+                                }else{
+                                  currentLine++;
+                                  allRow[currentLine].add(allWidgetBox[i]);
+                                }
+
+                              }
+                              for(int i = 0 ; i < allRow.length; i++){
+                                allRowD.add(pw.Row(children:allRow[i] ));
+
+
+                              }
+
+
+                              pdf2.addPage(
+                                pw.MultiPage(footer:(context) => pw.Row(
+                                    children: [
+                                      pw.Padding(padding: pw.EdgeInsets.only(right: 50),child:pw.Text("Directory App Powered by Xplorebd",style: pw.TextStyle(color: PdfColors.grey,)), ),
+                                    ]
+                                ),margin: pw.EdgeInsets.all(30),
+                                  pageFormat: PdfPageFormat.a4,
+                                  build: (context) => allRowD,//here goes the widgets list
+                                ),
+                              );
+                              Uint8List uint8list3 =await pdf2.save();
+                              String content3 = base64Encode(uint8list3);
+                              final anchor3 = uniHtml.AnchorElement(
+                                  href:
+                                  "data:application/octet-stream;charset=utf-16le;base64,$content3")
+                                ..setAttribute(
+                                    "download",
+                                    "file.pdf")
+                                ..click();
+
+
+
+
+                            });
+
+
+
+
+
+
+                          }, child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 12),
+                            child: Text("Export PDF",style: TextStyle(color: Colors.white),),
+                          )),
+                        ):Container(width: 0,height: 0,),
+                      ),
+
+
+
+                    ],
+                  ),
+                 // rowsPerPage: _allUsers.rowCount>n?n:_allUsers.rowCount,
+                  rowsPerPage:snapshot.data!.docs.length==0? 1:(_allUsers.rowCount>n?n:_allUsers.rowCount),
+                  columns:  [
+                    DataColumn(label: Checkbox(value: selectAll,onChanged: (bool? b){
+                      setState(() {
+                        selectAll = b!;
+                      });
+                      Provider.of<ArticlesProvider>(context, listen: false).tests = [];
+                      if(b == true){
+
+                        for(int  i = 0 ; i < snapshot.data!.docs.length ; i++){
+                          Map<String ,dynamic> d = snapshot.data!.docs[i].data() as Map<String ,dynamic>;
+
+                          Provider.of<ArticlesProvider>(context, listen: false).addItem(id:  snapshot.data!.docs[i].id,data: d);
+                        }
+
+                        //Provider.of<GlobalDataProvider>(context, listen: false
+                      }else{
+
+                      }
+
+                    },)),
+                    DataColumn(label: Text('Name')),
+                    DataColumn(label: Text('Parent category')),
+
+                    DataColumn(label: Text('Actions')),
+                    // DataColumn(label: Text('Id')),
+                    // DataColumn(label: Text('Phone'))
+                  ],
+                  source: _allUsers,
+                );
+                return Text(snapshot.data!.docs.length.toString());
+              }else{
+                return Center(child: CircularProgressIndicator(),);
+                return Scaffold(body: Center(child: Container(height: 50,width: 300,decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(4)),
+                  child: Center(
+                    child: TextButton(onPressed: (){
+                      setState(() {
+                        open = true;
+                      });
+                      drawerKey.currentState!.showBottomSheet((context) => AddContent());
+
+
+                    }, child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add,color: Colors.blue,),
+                        Padding(
+                          padding:  EdgeInsets.symmetric(horizontal: 8,vertical: 6),
+                          child: Text("Add your first Article"),
+                        ),
+                      ],
+                    )),
+                  ),
+                )));
+              }
+            }): Scaffold(
 //           appBar: PreferredSize(preferredSize: Size(0,72),
 //           child:
 //         Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1297,7 +1781,7 @@ class _AllDiyState extends State<AllDi> {
             builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
               if (snapshot.hasData && snapshot.data!.docs.length>0) {
-                final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,drawerKey);
+                final DataTableSource _allUsers = MyDataArticles(snapshot.data!.docs,context);
                 int n =( ( MediaQuery.of(context).size.height - 140 ) / 55 ).toInt() ;
                 return   PaginatedDataTable(
 
@@ -1516,7 +2000,7 @@ class _AllDiyState extends State<AllDi> {
                                   children:[
 
                                     imgWi,
-                                    pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.center,children: [
+                                    pw.Column(crossAxisAlignment:pw.CrossAxisAlignment.start, mainAxisAlignment:pw.MainAxisAlignment.center,children: [
                                       pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["name"]+v,style: pw.TextStyle(fontSize:fontSize ))),
                                       pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["email"]+v,style: pw.TextStyle(fontSize:fontSize ))),
                                       pw.Padding(padding: pw.EdgeInsets.all(padding), child: pw.Text(v+bar.data[i]["phone"]+v,style: pw.TextStyle(fontSize:fontSize ))),

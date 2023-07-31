@@ -323,19 +323,10 @@ class _HomeState extends State<Home> {
       }
 
 
-      },child:AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
-        statusBarBrightness: Brightness.dark,
-      ),child: Scaffold(appBar: false?AppBar(leading: IconButton(onPressed: (){},icon: Icon(Icons.menu),),actions: [
+      },child:Scaffold(backgroundColor: Colors.grey.shade200, appBar: false?AppBar(leading: IconButton(onPressed: (){},icon: Icon(Icons.menu),),actions: [
 
-    ],): PreferredSize(child: ClipRect(
-      child: BackdropFilter(filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: Container(color: Colors.white, height: AppBar().preferredSize.height*1+MediaQuery.of(context).viewPadding.top,
-          child: body,
-        ),
-      ),
+    ],): PreferredSize(child: Container(color: Colors.white, height: AppBar().preferredSize.height*1+MediaQuery.of(context).viewPadding.top,
+      child: body,
     ),preferredSize: Size(0,AppBar().preferredSize.height*1+MediaQuery.of(context).viewPadding.top),),drawerScrimColor:Colors.transparent,onDrawerChanged: (bool d){
       setState(() {
         isDrawerOpen = d;
@@ -397,10 +388,10 @@ class _HomeState extends State<Home> {
       //     ],
       //   ),
       // ),),
-      backgroundColor: Colors.white,body:true? SingleChildScrollView(
+     body:true? SingleChildScrollView(
         child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(color: Colors.grey.withOpacity(0.15),
+            Container(color: Colors.white,
               child: Row(
                 children: [
                   (allCatr.length>1)?   InkWell( onTap: (){
@@ -439,91 +430,39 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            if( (allCatr.length>1))  Container(height: 0.5,width: double.infinity,color: Colors.grey),
+            if( (allCatr.length>1))  Container(height: 0.5,width: double.infinity,color: Colors.grey.shade300),
 
-            FutureBuilder<QuerySnapshot>(
-                  future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
-                      .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .get(),
-                  builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-                    if (snapshot.hasData && snapshot.data!.docs.length>0) {
-                      double w = MediaQuery.of(context).size.width / 3;
+            Padding(
+              padding:  EdgeInsets.all( MediaQuery.of(context).size.width>500?( MediaQuery.of(context).size.width*0.01):10),
+              child: FutureBuilder<QuerySnapshot>(
+                    future:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+                        .currentShareCodeCustomer).where("parent",isEqualTo:allCatrID.last) .get(),
+                    builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                      if (snapshot.hasData && snapshot.data!.docs.length>0) {
+                        double w = MediaQuery.of(context).size.width / 3;
 
-                      if(MediaQuery.of(context).size.width>300 && MediaQuery.of(context).size.width<500 ){
-                        w = MediaQuery.of(context).size.width / 2;
-                      }
-                      if(MediaQuery.of(context).size.width>500 && MediaQuery.of(context).size.width<800 ){
-                        w = MediaQuery.of(context).size.width / 3;
-                      }
-                      if(MediaQuery.of(context).size.width>800 && MediaQuery.of(context).size.width<1100 ){
-                        w = MediaQuery.of(context).size.width / 4;
-                      }
-                      if(MediaQuery.of(context).size.width>1100 && MediaQuery.of(context).size.width<1400 ){
-                        w = MediaQuery.of(context).size.width / 5;
-                      }
-                      if(MediaQuery.of(context).size.width>1400 && MediaQuery.of(context).size.width<1700 ){
-                        w = MediaQuery.of(context).size.width / 6;
-                      }
-                      if(MediaQuery.of(context).size.width>1700 ){
-                        w = MediaQuery.of(context).size.width / 7;
-                      }
+                        if(MediaQuery.of(context).size.width>300 && MediaQuery.of(context).size.width<500 ){
+                          w = MediaQuery.of(context).size.width / 2;
+                        }
+                        if(MediaQuery.of(context).size.width>500 && MediaQuery.of(context).size.width<800 ){
+                          w = MediaQuery.of(context).size.width / 3;
+                        }
+                        if(MediaQuery.of(context).size.width>800 && MediaQuery.of(context).size.width<1100 ){
+                          w = MediaQuery.of(context).size.width / 4;
+                        }
+                        if(MediaQuery.of(context).size.width>1100 && MediaQuery.of(context).size.width<1400 ){
+                          w = MediaQuery.of(context).size.width / 5;
+                        }
+                        if(MediaQuery.of(context).size.width>1400 && MediaQuery.of(context).size.width<1700 ){
+                          w = MediaQuery.of(context).size.width / 6;
+                        }
+                        if(MediaQuery.of(context).size.width>1700 ){
+                          w = MediaQuery.of(context).size.width / 7;
+                        }
 
-                      return Wrap(children:snapshot.data!.docs.map((e) => Container(width:w,height: 140,
-                        child: Padding(
-                          padding: const EdgeInsets.all(3.0),
-                          child: InkWell( onTap: (){
-
-                            allCatrID.add(e.id);
-                            allCatr.add(e.get("name"));
-
-                            setState(() {
-
-                            });
-                            refreshAndLoad();
-
-
-
-                          },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
-                                //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                                child: false?Stack(
-                                  children: [
-                                    Image.network(e.get("img"),fit: BoxFit.cover,
-                                      // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
-                                    ),
-                                    Align(alignment: Alignment.bottomCenter,
-                                      child: Container(height: 20,color: Colors.white,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(e.get("name"),textAlign: TextAlign.center,),
-                                        ),
-                                      ),
-                                    )
-
-                                  ],
-                                ): Stack(
-                                  children: [
-                                    Align(alignment: Alignment.bottomCenter,child: true?true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),)
-                                      ,placeholder: (context, url) =>
-                                        Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,): CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
-                                      width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
-                                    Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
-                                  ],
-                                ),),
-                            ),
-                          ),
-                        ),
-                      )).toList(),);
-                      final currentCount = (MediaQuery.of(context).size.shortestSide ~/ 250).toInt();
-
-                      final minCount = 3;
-
-                     return GridView(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: max(currentCount, minCount),
-                              childAspectRatio:1, crossAxisSpacing: 10,mainAxisSpacing:10),
-                          children:  snapshot.data!.docs.map((e) => Padding(
-                            padding: const EdgeInsets.all(8.0),
+                        return Wrap(children:snapshot.data!.docs.map((e) => Container(margin: EdgeInsets.all(5),width:w,height: 140,decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
                             child: InkWell( onTap: (){
 
                               allCatrID.add(e.id);
@@ -537,83 +476,231 @@ class _HomeState extends State<Home> {
 
 
                             },
-                              child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
-                                //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                                child: false?Stack(
-                                  children: [
-                                    Image.network(e.get("img"),fit: BoxFit.cover,
-                                      // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
-                                    ),
-                                    Align(alignment: Alignment.bottomCenter,
-                                      child: Container(height: 20,color: Colors.white,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(e.get("name"),textAlign: TextAlign.center,),
-                                        ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                  //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                  child: false?Stack(
+                                    children: [
+                                      Image.network(e.get("img"),fit: BoxFit.cover,
+                                        // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
                                       ),
-                                    )
+                                      Align(alignment: Alignment.bottomCenter,
+                                        child: Container(height: 20,color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(e.get("name"),textAlign: TextAlign.center,),
+                                          ),
+                                        ),
+                                      )
 
-                                  ],
-                                ): Stack(
-                                  children: [
-                                    Align(alignment: Alignment.bottomCenter,child: true?true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),),placeholder: (context, url) =>
-                                        Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,): CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
-                                      width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
-                                    Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
-                                  ],
-                                ),),
-                            ),
-                          )).toList()
-                      );
-
-
-                      return true?  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
-                              Text("Categories"),
-                              Row(
-                                children: [
-                                  IconButton(onPressed: (){}, icon: Icon(Icons.chevron_left)),
-                                  IconButton(onPressed: (){}, icon: Icon(Icons.chevron_right)),
-                                ],
+                                    ],
+                                  ): Stack(
+                                    children: [
+                                      Align(alignment: Alignment.bottomCenter,child: true?true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),)
+                                        ,placeholder: (context, url) =>
+                                          Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,): CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                        width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                      Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                    ],
+                                  ),),
                               ),
-                            ],),
+                            ),
                           ),
-                          Container(height: 150,
-                            child: ListView(scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.zero,shrinkWrap: true,physics: AlwaysScrollableScrollPhysics(),
-                                //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
-                                children:  snapshot.data!.docs.map((e) => true?Container(height: true?150:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
-                                  width: true?200: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
+                        )).toList(),);
+                        final currentCount = (MediaQuery.of(context).size.shortestSide ~/ 250).toInt();
+
+                        final minCount = 3;
+
+                       return GridView(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: max(currentCount, minCount),
+                                childAspectRatio:1, crossAxisSpacing: 10,mainAxisSpacing:10),
+                            children:  snapshot.data!.docs.map((e) => Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: InkWell( onTap: (){
+
+                                allCatrID.add(e.id);
+                                allCatr.add(e.get("name"));
+
+                                setState(() {
+
+                                });
+                                refreshAndLoad();
 
 
-                                    allCatrID.add(e.id);
-                                    allCatr.add(e.get("name"));
 
-                                    setState(() {
+                              },
+                                child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                  //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                  child: false?Stack(
+                                    children: [
+                                      Image.network(e.get("img"),fit: BoxFit.cover,
+                                        // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
+                                      ),
+                                      Align(alignment: Alignment.bottomCenter,
+                                        child: Container(height: 20,color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(e.get("name"),textAlign: TextAlign.center,),
+                                          ),
+                                        ),
+                                      )
 
-                                    });
-                                    refreshAndLoad();
-                                  },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                    ],
+                                  ): Stack(
+                                    children: [
+                                      Align(alignment: Alignment.bottomCenter,child: true?true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),),placeholder: (context, url) =>
+                                          Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,): CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                        width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                      Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                    ],
+                                  ),),
+                              ),
+                            )).toList()
+                        );
+
+
+                        return true?  Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
+                                Text("Categories"),
+                                Row(
+                                  children: [
+                                    IconButton(onPressed: (){}, icon: Icon(Icons.chevron_left)),
+                                    IconButton(onPressed: (){}, icon: Icon(Icons.chevron_right)),
+                                  ],
+                                ),
+                              ],),
+                            ),
+                            Container(height: 150,
+                              child: ListView(scrollDirection: Axis.horizontal,
+                                  padding: EdgeInsets.zero,shrinkWrap: true,physics: AlwaysScrollableScrollPhysics(),
+                                  //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
+                                  children:  snapshot.data!.docs.map((e) => true?Container(height: true?150:(MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,
+                                    width: true?200: (MediaQuery.of(context).size.shortestSide/2)>200?200:MediaQuery.of(context).size.shortestSide/2,child: InkWell( onTap: (){
+
+
+                                      allCatrID.add(e.id);
+                                      allCatr.add(e.get("name"));
+
+                                      setState(() {
+
+                                      });
+                                      refreshAndLoad();
+                                    },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
+                                          //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
+                                          child:Stack(
+                                            children: [
+                                              Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.grey,),placeholder: (context, url) =>
+                                                  Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,
+                                                width:  MediaQuery.of(context).size.width * 0.5,
+                                                height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                                width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
+                                              Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:
+                                              BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                            ],
+                                          ),),
+                                      ),
+                                    ),): Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: InkWell( onTap: (){
+
+
+                                      allCatrID.add(e.id);
+                                      allCatr.add(e.get("name"));
+
+                                      setState(() {
+
+                                      });
+                                    },
                                       child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
                                         //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                                        child:Stack(
+                                        child: false?Stack(
                                           children: [
-                                            Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.grey,),placeholder: (context, url) =>
-                                                Center(child: CupertinoActivityIndicator(),),imageUrl:e.get("img"),fit: BoxFit.cover,
-                                              width:  MediaQuery.of(context).size.width * 0.5,
-                                              height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
+                                            Image.network(e.get("img"),fit: BoxFit.cover,
+                                              // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
+                                            ),
+                                            Align(alignment: Alignment.bottomCenter,
+                                              child: Container(height: 20,color: Colors.white,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Text(e.get("name"),textAlign: TextAlign.center,),
+                                                ),
+                                              ),
+                                            )
+
+                                          ],
+                                        ): Stack(
+                                          children: [
+                                            Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
                                               width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
-                                            Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:
-                                            BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
+                                            Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
                                           ],
                                         ),),
                                     ),
-                                  ),): Padding(
+                                  )).toList()
+                              ),
+                            ),
+                          ],
+                        ):  Column(
+                          children: [
+                            if( (allCatr.length>1))    Container(color: Colors.grey.withOpacity(0.1),
+                              child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  (allCatr.length>1)?   InkWell( onTap: (){
+                                    allCatrID.removeLast();
+                                    allCatr.removeLast();
+                                    setState(() {
+
+                                    });
+                                  },
+                                    child: Padding(
+                                      padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.1),
+                                      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.navigate_before,color: Colors.blue),
+                                          Text("Back",style: TextStyle(color: Colors.blue),)
+                                        ],
+                                      ),
+                                    ),
+                                  ):Container(height: 0,width: 0,),
+
+                                  if(false)   (allCatr.length>1)? IconButton(onPressed: (){
+                                    setState(() {
+
+
+                                    });
+                                    allCatrID.removeLast();
+                                    allCatr.removeLast();
+
+                                  }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
+                                  BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
+                                    setState(() {
+                                      for(int i = 0 ; i < allCatrID.length ; i++){
+                                        if(allCatrID[i]==d){
+                                          allCatr.removeAt(i);
+                                          allCatrID.removeAt(i);
+                                          break;
+                                        }else{
+                                          allCatr.removeAt(i);
+                                          allCatrID.removeAt(i);
+                                        }
+                                      }
+                                    });
+                                  },),
+                                ],),
+                            ),
+                            if( (allCatr.length>1))     Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
+
+                            ListView(scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                             //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
+                                children:  snapshot.data!.docs.map((e) => Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: InkWell( onTap: (){
 
@@ -652,157 +739,64 @@ class _HomeState extends State<Home> {
                                   ),
                                 )).toList()
                             ),
-                          ),
-                        ],
-                      ):  Column(
-                        children: [
-                          if( (allCatr.length>1))    Container(color: Colors.grey.withOpacity(0.1),
-                            child: Row(crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                (allCatr.length>1)?   InkWell( onTap: (){
-                                  allCatrID.removeLast();
-                                  allCatr.removeLast();
-                                  setState(() {
-
-                                  });
-                                },
-                                  child: Padding(
-                                    padding:  EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.1),
-                                    child: Row(crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.navigate_before,color: Colors.blue),
-                                        Text("Back",style: TextStyle(color: Colors.blue),)
-                                      ],
-                                    ),
-                                  ),
-                                ):Container(height: 0,width: 0,),
-
-                                if(false)   (allCatr.length>1)? IconButton(onPressed: (){
-                                  setState(() {
-
-
-                                  });
-                                  allCatrID.removeLast();
-                                  allCatr.removeLast();
-
-                                }, icon: Icon(Icons.navigate_before)):IconButton(onPressed: (){}, icon: Icon(Icons.home)),
-                                BreadCrumb(arraysid:allCatrID,arrays: allCatr,onClick: (String d){
-                                  setState(() {
-                                    for(int i = 0 ; i < allCatrID.length ; i++){
-                                      if(allCatrID[i]==d){
-                                        allCatr.removeAt(i);
-                                        allCatrID.removeAt(i);
-                                        break;
-                                      }else{
-                                        allCatr.removeAt(i);
-                                        allCatrID.removeAt(i);
-                                      }
-                                    }
-                                  });
-                                },),
-                              ],),
-                          ),
-                          if( (allCatr.length>1))     Container(height: 0.5,width: double.infinity,color: Colors.grey.withOpacity(0.5),),
-
-                          ListView(scrollDirection: Axis.horizontal,
-                              padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                           //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(childAspectRatio:1,crossAxisCount: 2, crossAxisSpacing: MediaQuery.of(context).size.width * 0.0005,mainAxisSpacing: MediaQuery.of(context).size.width * 0.001),
-                              children:  snapshot.data!.docs.map((e) => Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: InkWell( onTap: (){
-
-
-                                  allCatrID.add(e.id);
-                                  allCatr.add(e.get("name"));
-
-                                  setState(() {
-
-                                  });
-                                },
-                                  child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005),
-                                    //width: double.infinity,margin: EdgeInsets.all(4), decoration: BoxDecoration(border: Border.all(),borderRadius: BorderRadius.circular(5)) ,
-                                    child: false?Stack(
-                                      children: [
-                                        Image.network(e.get("img"),fit: BoxFit.cover,
-                                          // width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,
-                                        ),
-                                        Align(alignment: Alignment.bottomCenter,
-                                          child: Container(height: 20,color: Colors.white,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(e.get("name"),textAlign: TextAlign.center,),
-                                            ),
-                                          ),
-                                        )
-
-                                      ],
-                                    ): Stack(
-                                      children: [
-                                        Align(alignment: Alignment.bottomCenter,child: true?CachedNetworkImage(placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),imageUrl: e.get("img"),fit: BoxFit.cover, width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,): Image.network(e.get("img"),fit: BoxFit.cover,
-                                          width:  MediaQuery.of(context).size.width * 0.5,height: MediaQuery.of(context).size.width * 0.5,)),
-                                        Align(alignment: Alignment.bottomCenter, child: Container(color: Colors.white.withOpacity(0.5), height: 40,child: ClipRect(child:  BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child: Text(e.get("name"),textAlign: TextAlign.center,)))))),
-                                      ],
-                                    ),),
-                                ),
-                              )).toList()
-                          ),
 
 
 
 
-                        ],
-                      );
+                          ],
+                        );
 
-                    }
-                    else {
-                      return Container(height: 0,width: 0,);}
-                  }),
-            FutureBuilder<QuerySnapshot>(
-                future:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).
-                currentShareCodeCustomer)
-                    .where("parent", isEqualTo:allCatrID.last ).get(),
-                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-                  if (snapshot.hasData && snapshot.data!.docs.length>0) {
+                      }
+                      else {
+                        return Container(height: 0,width: 0,);}
+                    }),
+            ),
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width>500?( MediaQuery.of(context).size.width*0.01):10),
+              child: FutureBuilder<QuerySnapshot>(
+                  future:FirebaseFirestore.instance.collection(appDatabsePrefix+"article").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).
+                  currentShareCodeCustomer)
+                      .where("parent", isEqualTo:allCatrID.last ).get(),
+                  builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                    if (snapshot.hasData && snapshot.data!.docs.length>0) {
 
-                    final currentCount = (MediaQuery.of(context).size.width ~/ 500).toInt();
+                      final currentCount = (MediaQuery.of(context).size.width ~/ 500).toInt();
 
-                    final minCount = 1;
-                    double w = MediaQuery.of(context).size.width ;
+                      final minCount = 1;
+                      double w = MediaQuery.of(context).size.width ;
 
-                    if(MediaQuery.of(context).size.width>300 && MediaQuery.of(context).size.width<500 ){
-                      w = MediaQuery.of(context).size.width / 1;
-                    }
-                    if(MediaQuery.of(context).size.width>500 && MediaQuery.of(context).size.width<800 ){
-                      w = MediaQuery.of(context).size.width / 2;
-                    }
-                    if(MediaQuery.of(context).size.width>800 && MediaQuery.of(context).size.width<1100 ){
-                      w = MediaQuery.of(context).size.width / 3;
-                    }
-                    if(MediaQuery.of(context).size.width>1100 && MediaQuery.of(context).size.width<1400 ){
-                      w = MediaQuery.of(context).size.width /4;
-                    }
-                    if(MediaQuery.of(context).size.width>1400 && MediaQuery.of(context).size.width<1700 ){
-                      w = MediaQuery.of(context).size.width / 5;
-                    }
-                    if(MediaQuery.of(context).size.width>1700 ){
-                      w = MediaQuery.of(context).size.width / 6;
-                    }
+                      if(MediaQuery.of(context).size.width>300 && MediaQuery.of(context).size.width<500 ){
+                        w = MediaQuery.of(context).size.width / 1;
+                      }
+                      if(MediaQuery.of(context).size.width>500 && MediaQuery.of(context).size.width<1000 ){
+                        w = MediaQuery.of(context).size.width / 2;
+                      }
+                      if(MediaQuery.of(context).size.width>1000 && MediaQuery.of(context).size.width<1500 ){
+                        w = MediaQuery.of(context).size.width / 3;
+                      }
+                      if(MediaQuery.of(context).size.width>1500 && MediaQuery.of(context).size.width<2000 ){
+                        w = MediaQuery.of(context).size.width /4;
+                      }
+                      if(MediaQuery.of(context).size.width>2000 && MediaQuery.of(context).size.width<2500 ){
+                        w = MediaQuery.of(context).size.width / 5;
+                      }
+                      if(MediaQuery.of(context).size.width>2500 ){
+                        w = MediaQuery.of(context).size.width / 6;
+                      }
 
-                    return Wrap(
-                      children:  snapshot.data!.docs.map((e) {
-                        Map<String,dynamic> d = e.data() as Map<String,dynamic>;
-                        return Container(width: w,height: 142,
-                          //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
-                          // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
-                          child: InkWell( onTap: (){
-                            lastpath = GoRouter.of(context).location;
-                            context.push("/articles/"+ e.id);
-                            // if(false)  Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
-                          },
-                            child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
-                                borderRadius: BorderRadius.circular(2)) ,
+                      return Wrap(
+                        children:  snapshot.data!.docs.map((e) {
+                          Map<String,dynamic> d = e.data() as Map<String,dynamic>;
+                          return Container(margin: EdgeInsets.all(5),width: w,height: 142,decoration: BoxDecoration(color: Colors.white,borderRadius: BorderRadius.circular(8)),
+                            //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+                            // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
+                            child: InkWell( onTap: (){
+                              lastpath = GoRouter.of(context).location;
+                              context.push("/articles/"+ e.id);
+                              // if(false)  Navigator.push(
+                              //     context,
+                              //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                            },
                               child: Padding(
                                 padding:  EdgeInsets.all(MediaQuery.of(context).size.shortestSide * 0.01),
                                 child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -860,21 +854,100 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
-                    );
-                   return  GridView(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: max(currentCount, minCount),
-                            childAspectRatio:4, crossAxisSpacing: 10,mainAxisSpacing: 10),
-                        children:  snapshot.data!.docs.map((e) {
-                          Map<String,dynamic> d = e.data() as Map<String,dynamic>;
+                          );
+                        }).toList(),
+                      );
+                     return  GridView(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: max(currentCount, minCount),
+                              childAspectRatio:4, crossAxisSpacing: 10,mainAxisSpacing: 10),
+                          children:  snapshot.data!.docs.map((e) {
+                            Map<String,dynamic> d = e.data() as Map<String,dynamic>;
+                            return Container(
+                              //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
+                              // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
+                              child: InkWell( onTap: (){
+                                lastpath = GoRouter.of(context).location;
+                                GoRouter.of(context).go("/articles/"+ e.id);
+                                // if(false)  Navigator.push(
+                                //     context,
+                                //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
+                              },
+                                child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
+                                    borderRadius: BorderRadius.circular(2)) ,
+                                  child: Padding(
+                                    padding:  EdgeInsets.all(MediaQuery.of(context).size.shortestSide * 0.01),
+                                    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(height:  100,width:  100,
+                                          child: Padding(
+                                            padding:  EdgeInsets.only(right: 10),
+                                            child: ClipRRect(borderRadius: BorderRadius.circular(4), child: Stack(
+                                              children: [
+                                                CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),),
+                                                  imageUrl:  e.get("photo1"),
+                                                  height:100,
+                                                  width:100 ,fit: BoxFit.cover,
+                                                  placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
+
+                                                ),
+                                                Align(alignment: Alignment.bottomCenter,child:d["designation"]==null?Container(height: 0,width: 0,):
+                                                Container(height: 20,
+                                                    width: 100,child: ClipRect(child:
+                                                    BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child:  AutoSizeText(d["designation"]??"", minFontSize: 9, maxFontSize: 18, overflow: TextOverflow.ellipsis, ))))) ,),
+
+                                              ],
+                                            )),
+                                          ),
+                                        ),
+
+
+
+                                        Expanded(
+                                            child:  Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    AutoSizeText( e.get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                                    AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
+
+                                                  ],
+                                                ),
+                                                AutoSizeText(d["workdesignation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
+                                                AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
+                                                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
+                                                    if(d["phone"].toString().length>0)  InkWell(onTap: (){
+                                                      //  launchUrl(Uri("tel://"+d["phone"]??"")),
+                                                      launch("tel://"+d["phone"]??"");
+                                                    },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call")))
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList()
+                      );
+
+
+                    return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+
+                        itemBuilder: (context, index) {
+                          Map<String,dynamic> d = snapshot.data!.docs[index].data() as Map<String,dynamic>;
                           return Container(
                             //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
-                            // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
+                           // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
                             child: InkWell( onTap: (){
                               lastpath = GoRouter.of(context).location;
-                              GoRouter.of(context).go("/articles/"+ e.id);
+                              GoRouter.of(context).go("/articles/"+ snapshot.data!.docs[index].id);
                               // if(false)  Navigator.push(
                               //     context,
                               //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
@@ -882,16 +955,16 @@ class _HomeState extends State<Home> {
                               child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
                                   borderRadius: BorderRadius.circular(2)) ,
                                 child: Padding(
-                                  padding:  EdgeInsets.all(MediaQuery.of(context).size.shortestSide * 0.01),
+                                  padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                                   child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Container(height:  100,width:  100,
                                         child: Padding(
-                                          padding:  EdgeInsets.only(right: 10),
-                                          child: ClipRRect(borderRadius: BorderRadius.circular(4), child: Stack(
+                                          padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
+                                          child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Stack(
                                             children: [
-                                              CachedNetworkImage(errorWidget: (context, url, error) => Container(color: Colors.blue.withOpacity(0.2),),
-                                                imageUrl:  e.get("photo1"),
+                                              CachedNetworkImage(
+                                                imageUrl:  snapshot.data!.docs[index].get("photo1"),
                                                 height:100,
                                                 width:100 ,fit: BoxFit.cover,
                                                 placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
@@ -914,7 +987,7 @@ class _HomeState extends State<Home> {
                                             children: [
                                               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  AutoSizeText( e.get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
+                                                  AutoSizeText( snapshot.data!.docs[index].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
                                                   AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
 
                                                 ],
@@ -940,96 +1013,17 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                           );
-                        }).toList()
-                    );
-
-
-                  return  ListView.builder(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                      itemCount: snapshot.data!.docs.length,
-
-                      itemBuilder: (context, index) {
-                        Map<String,dynamic> d = snapshot.data!.docs[index].data() as Map<String,dynamic>;
-                        return Container(
-                          //  width: (width>700?(width/2>400?((width/3)-30):(width/2)-20):width-10),
-                         // width:width<500?width:(width<1000?(width/2):(width<1500?(width/3):(width/4))) ,
-                          child: InkWell( onTap: (){
-                            lastpath = GoRouter.of(context).location;
-                            GoRouter.of(context).go("/articles/"+ snapshot.data!.docs[index].id);
-                            // if(false)  Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(builder: (context) => Article(id:value.docs[i] ,)),);
-                          },
-                            child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(border: Border.all(color: Colors.grey.withOpacity(0.4),),
-                                borderRadius: BorderRadius.circular(2)) ,
-                              child: Padding(
-                                padding:  EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
-                                child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(height:  100,width:  100,
-                                      child: Padding(
-                                        padding:  EdgeInsets.only(right: MediaQuery.of(context).size.height * 0.01),
-                                        child: ClipRRect(borderRadius: BorderRadius.circular(MediaQuery.of(context).size.height * 0.005), child: Stack(
-                                          children: [
-                                            CachedNetworkImage(
-                                              imageUrl:  snapshot.data!.docs[index].get("photo1"),
-                                              height:100,
-                                              width:100 ,fit: BoxFit.cover,
-                                              placeholder: (context, url) => Center(child: CupertinoActivityIndicator(),),
-
-                                            ),
-                                            Align(alignment: Alignment.bottomCenter,child:d["designation"]==null?Container(height: 0,width: 0,):
-                                            Container(height: 20,
-                                                width: 100,child: ClipRect(child:
-                                                BackdropFilter( filter:  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),child: Center(child:  AutoSizeText(d["designation"]??"", minFontSize: 9, maxFontSize: 18, overflow: TextOverflow.ellipsis, ))))) ,),
-
-                                          ],
-                                        )),
-                                      ),
-                                    ),
-
-
-
-                                    Expanded(
-                                        child:  Column(crossAxisAlignment: CrossAxisAlignment.start,mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                AutoSizeText( snapshot.data!.docs[index].get("name"), minFontSize: 16, maxFontSize: 25, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.blue), ),
-                                                AutoSizeText(d["bloodgroup"]==null?"":d["bloodgroup"].toString(), minFontSize: 8, maxFontSize: 15, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.redAccent), ),
-
-                                              ],
-                                            ),
-                                            AutoSizeText(d["workdesignation"]??" ", minFontSize: 13, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.black),),
-                                            AutoSizeText(d["email"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey),),
-                                            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                AutoSizeText(d["phone"]??"", minFontSize: 12, maxFontSize: 20, overflow: TextOverflow.ellipsis,style: TextStyle(color: Colors.grey), ),
-                                                if(d["phone"].toString().length>0)  InkWell(onTap: (){
-                                                  //  launchUrl(Uri("tel://"+d["phone"]??"")),
-                                                  launch("tel://"+d["phone"]??"");
-                                                },child: Chip(avatar:Icon(Icons.call,size: 15,) ,label: Text("Call")))
-                                              ],
-                                            ),
-                                          ],
-                                        )
-
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                        },
+                      );
 
 
 
 
-                  }
-                  else {
-                    return Container(height: 0,width: 0,);}
-                }),
+                    }
+                    else {
+                      return Container(height: 0,width: 0,);}
+                  }),
+            ),
           ],
         ),
       ):  false?Column(
@@ -1263,7 +1257,7 @@ class _HomeState extends State<Home> {
         child:    allWidgets.length>0?Wrap(
           // shrinkWrap: true,
           children:allWidgets,):Center(child: Text("No items"),),
-      ),),) ,);
+      ),) ,);
    return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,

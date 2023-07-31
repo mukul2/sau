@@ -77,349 +77,346 @@ class _AddCategoryState extends State<AddContent> {
      Column(
       //shrinkWrap: true,
       children: allField,);
-    return Stack(
-      children: [
-        Padding(
-          padding:  EdgeInsets.all(20.0),
-          child: SingleChildScrollView(
-            child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
-              Row(
-                children: [
-                  IconButton(onPressed: (){
-                    Navigator.pop(context);
-                  }, icon: Icon(Icons.arrow_back_rounded)),
-                ],
-              ),
+    return Container(margin: EdgeInsets.all(10),width: MediaQuery.of(context).size.width - 271,
+
+    decoration: BoxDecoration(borderRadius: BorderRadius.circular(8),color: Colors.white),
+      child: Stack(
+        children: [
+          Padding(
+            padding:  EdgeInsets.all(20.0),
+            child: SingleChildScrollView(
+              child: Column(mainAxisAlignment: MainAxisAlignment.start,crossAxisAlignment: CrossAxisAlignment.start,children: [
 
 
 
 
-              Column(
-                //shrinkWrap: true,
-                children: allField,),
-             if(false) FutureBuilder<QuerySnapshot>(
-                  future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
+                Column(
+                  //shrinkWrap: true,
+                  children: allField,),
+               if(false) FutureBuilder<QuerySnapshot>(
+                    future: FirebaseFirestore.instance.collection("sau_datatype").get() , // a previously-obtained Future<String> or null
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshotC) {
 
-                    if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
-                      return  ListView.builder(shrinkWrap: true,
-                        itemCount: snapshotC.data!.docs.length,
-                        itemBuilder: (BuildContext context, int index) {
+                      if (snapshotC.hasData &&  snapshotC.data!.docs.length>0) {
+                        return  ListView.builder(shrinkWrap: true,
+                          itemCount: snapshotC.data!.docs.length,
+                          itemBuilder: (BuildContext context, int index) {
 
-                        try{
-                          TextEditingController c = TextEditingController();
-                          allControlller.add(c);
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(controller: c,onChanged: (String s){
-                              Provider.of<TempProvider>(context, listen: false).allData[ snapshotC.data!.docs[index].get("key")] = s;
-                            },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
-                          );
-                        }catch(e){
-                          return Text("--");
-                        }
+                          try{
+                            TextEditingController c = TextEditingController();
+                            allControlller.add(c);
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextFormField(controller: c,onChanged: (String s){
+                                Provider.of<TempProvider>(context, listen: false).allData[ snapshotC.data!.docs[index].get("key")] = s;
+                              },decoration: InputDecoration(label: Text( snapshotC.data!.docs[index].get("value"))),),
+                            );
+                          }catch(e){
+                            return Text("--");
+                          }
 
-                        },
-                      //  separatorBuilder: (BuildContext context, int index) => const Divider(),
-                      );
+                          },
+                        //  separatorBuilder: (BuildContext context, int index) => const Divider(),
+                        );
 
-                    //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
-                    }else{
-                      return Text("--");
+                      //  return TextFormField(decoration: InputDecoration(label: Text( snapshotC.data!.docs[])),);
+                      }else{
+                        return Text("--");
 
-                    }
-                  }),
+                      }
+                    }),
 
 
 
 
 /*
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(controller: category,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(controller: category2,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(controller: category3,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(controller: category4,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(controller: category5,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
-              ),
-              */
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.blue,width: 0.5),borderRadius: BorderRadius.circular(4)),child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Categoy"),
-                  ),
-                  TextButton(onPressed: (){
-                    showDialog<void>(
-                      context: context,
-                      barrierDismissible: false, // user must tap button!
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Select folder'),
-                          //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
-                          content: StreamBuilder<QuerySnapshot>(
-                              stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
-                              builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-                                if (snapshot.hasData) {
-                                  // return  Text(snapshot.data!.docs.length.toString());
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(controller: category,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(controller: category2,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(controller: category3,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(controller: category4,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(controller: category5,decoration: InputDecoration(contentPadding: EdgeInsets.symmetric(horizontal: 6)),),
+                ),
+                */
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(decoration: BoxDecoration(border: Border.all(color: Colors.blue,width: 0.5),borderRadius: BorderRadius.circular(4)),child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Categoy"),
+                    ),
+                    TextButton(onPressed: (){
+                      showDialog<void>(
+                        context: context,
+                        barrierDismissible: false, // user must tap button!
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Select folder'),
+                            //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+                            content: StreamBuilder<QuerySnapshot>(
+                                stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
+                                builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                                  if (snapshot.hasData) {
+                                    // return  Text(snapshot.data!.docs.length.toString());
 
-                                  return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
-                                    parentategoryId =e.id;
-                                    parentategoryname =e.get("name");
-                                   setState(() {
+                                    return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
+                                      parentategoryId =e.id;
+                                      parentategoryname =e.get("name");
+                                     setState(() {
 
-                                    });
-                                    Navigator.of(context).pop();
+                                      });
+                                      Navigator.of(context).pop();
 
-                                  },child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(borderRadius: BorderRadius.circular(2),border: Border.all()),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(e.get("name")),
-                                    ),
-                                  ))).toList(),);
+                                    },child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(borderRadius: BorderRadius.circular(2),border: Border.all()),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(e.get("name")),
+                                      ),
+                                    ))).toList(),);
 
 
-                                  return ListView.builder(shrinkWrap: true,
-                                    itemCount: snapshot.data!.docs.length,
+                                    return ListView.builder(shrinkWrap: true,
+                                      itemCount: snapshot.data!.docs.length,
 
-                                    itemBuilder: (context, index) {
-                                      return Text(snapshot.data!.docs[index].get("name"));
-                                      return ListTile(onTap: (){
-                                        parentategoryId = snapshot.data!.docs[index].id;
-                                        Navigator.of(context);
+                                      itemBuilder: (context, index) {
+                                        return Text(snapshot.data!.docs[index].get("name"));
+                                        return ListTile(onTap: (){
+                                          parentategoryId = snapshot.data!.docs[index].id;
+                                          Navigator.of(context);
+                                        },
+                                          title: Text(snapshot.data!.docs[index].get("name")),
+                                        );
                                       },
-                                        title: Text(snapshot.data!.docs[index].get("name")),
-                                      );
-                                    },
-                                  );
-                                }
-                                else {
-                                  return CircularProgressIndicator();}
-                              }),
-                          actions: <Widget>[
-                            TextButton(
-                              child: const Text('Close'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    );
-
-                  }, child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(parentategoryname.length==0?"Select":parentategoryname),
-                  )),
-                ],
-                ),),
-              ),
-
-              Row(
-                children: [
-                  Expanded(child: Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Primary Photo"),
-                              TextButton(onPressed: () async {
-
-                                try {
-                                  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-                                  pickedFile!.readAsBytes().then((value) {
-
-
-                                    setState(() {
-                                      photo1 = value;
-                                    });
-                                  });
-
-                                } catch (e) {
-                                  setState(() {
-                                    photo1 = null ;
-                                  });
-                                }
-
-                              }, child: Text("Choose")),
-
-                            ],
-                          ),
-                        ),
-                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo1==null?Center(child: Text("Select an image")):Image.memory(photo1!,fit: BoxFit.cover,),),
-                      ],
-                    ),
-                  )),
-
-                  Expanded(child: Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Seconday Photo"),
-                              TextButton(onPressed: () async {
-
-                                try {
-                                  final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-                                  pickedFile!.readAsBytes().then((value) {
-
-                                    setState(() {
-                                      photo2 = value;
-                                    });
-                                  });
-
-                                } catch (e) {
-                                  setState(() {
-                                    photo2 = null ;
-                                  });
-                                }
-
-                              }, child: Text("Choose")),
-
-                            ],
-                          ),
-                        ),
-                        Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo2==null?Center(child: Text("Select an image")):Image.memory(photo2!,fit: BoxFit.cover,),),
-                      ],
-                    ),
-                  )),
-                ],
-              ),
-            if(false)  InkWell(onTap: (){
-                showDialog<void>(
-                  context: context,
-                  barrierDismissible: false, // user must tap button!
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Select folder'),
-                      //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
-                      content: StreamBuilder<QuerySnapshot>(
-                          stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
-                          builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
-                            if (snapshot.hasData) {
-                              // return  Text(snapshot.data!.docs.length.toString());
-
-                              return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
-                                parentategoryId =e.id;
-                                parentategoryname =e.get("name");
-                                Navigator.of(context).pop();
-
-                              },child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(borderRadius: BorderRadius.circular(2),border: Border.all()),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(e.get("name")),
-                                ),
-                              ))).toList(),);
-
-
-                              return ListView.builder(shrinkWrap: true,
-                                itemCount: snapshot.data!.docs.length,
-
-                                itemBuilder: (context, index) {
-                                  return Text(snapshot.data!.docs[index].get("name"));
-                                  return ListTile(onTap: (){
-                                    parentategoryId = snapshot.data!.docs[index].id;
-                                    Navigator.of(context);
-                                  },
-                                    title: Text(snapshot.data!.docs[index].get("name")),
-                                  );
+                                    );
+                                  }
+                                  else {
+                                    return CircularProgressIndicator();}
+                                }),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Close'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
                                 },
-                              );
-                            }
-                            else {
-                              return CircularProgressIndicator();}
-                          }),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Close'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-                child: Card(color: Colors.blue,child: Center(child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Add Category",style: TextStyle(color: Colors.white),),
-                ),),),
-              ),
-              InkWell(onTap: () async {
-                setState(() {
-                  isLoading = true;
-                });
-                firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
-                String li1 = "";
-                String li2 = "";
-                if(photo1==null){
+                              ),
+                            ],
+                          );
+                        },
+                      );
 
-                }else{
-                  String fileName ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
-                  firebase_storage.Reference ref = storage.ref(fileName);
-                  await ref.putData(photo1!);
-                   li1 = await  ref.getDownloadURL();
-                }
-                if(photo2==null){
+                    }, child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(parentategoryname.length==0?"Select":parentategoryname),
+                    )),
+                  ],
+                  ),),
+                ),
 
-                }else{
-                  String fileName2 ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
-                  firebase_storage.Reference ref2 = storage.ref(fileName2);
-                  await ref2.putData(photo2!);
-                   li2 = await  ref2.getDownloadURL();
-                }
+                Row(
+                  children: [
+                    Expanded(child: Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Primary Photo"),
+                                TextButton(onPressed: () async {
+
+                                  try {
+                                    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                    pickedFile!.readAsBytes().then((value) {
 
 
+                                      setState(() {
+                                        photo1 = value;
+                                      });
+                                    });
 
-                Provider.of<TempProvider>(context, listen: false).allData["orgParent"] = Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
-                Provider.of<TempProvider>(context, listen: false).allData["photo1"] = li1;
-                Provider.of<TempProvider>(context, listen: false).allData["photo2"] = li2;
-                Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
-                Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
-                Provider.of<TempProvider>(context, listen: false). allData["parent"] = parentategoryId;
+                                  } catch (e) {
+                                    setState(() {
+                                      photo1 = null ;
+                                    });
+                                  }
 
-                FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add(Provider.of<TempProvider>(context, listen: false).allData);
-                parentategoryId = "";
-                category.text = "";
-                setState(() {
-                  isLoading = false;
-                  photo1  = null;
-                  photo2  = null;
-                });
-                Navigator.pop(context);
+                                }, child: Text("Choose")),
 
-              },
-                child: Card(color: Colors.blue,child: Center(child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Add",style: TextStyle(color: Colors.white),),
-                ),),),
-              ),
-            ],),
+                              ],
+                            ),
+                          ),
+                          Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo1==null?Center(child: Text("Select an image")):Image.memory(photo1!,fit: BoxFit.cover,),),
+                        ],
+                      ),
+                    )),
+
+                    Expanded(child: Container(margin: EdgeInsets.all(5),decoration: BoxDecoration(borderRadius: BorderRadius.circular(4),border: Border.all()),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Seconday Photo"),
+                                TextButton(onPressed: () async {
+
+                                  try {
+                                    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+                                    pickedFile!.readAsBytes().then((value) {
+
+                                      setState(() {
+                                        photo2 = value;
+                                      });
+                                    });
+
+                                  } catch (e) {
+                                    setState(() {
+                                      photo2 = null ;
+                                    });
+                                  }
+
+                                }, child: Text("Choose")),
+
+                              ],
+                            ),
+                          ),
+                          Container(height: 200,width: MediaQuery.of(context).size.width * 0.5,child: photo2==null?Center(child: Text("Select an image")):Image.memory(photo2!,fit: BoxFit.cover,),),
+                        ],
+                      ),
+                    )),
+                  ],
+                ),
+              if(false)  InkWell(onTap: (){
+                  showDialog<void>(
+                    context: context,
+                    barrierDismissible: false, // user must tap button!
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Select folder'),
+                        //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
+                        content: StreamBuilder<QuerySnapshot>(
+                            stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false).companyInfo!.id).snapshots(),
+                            builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot,) {
+                              if (snapshot.hasData) {
+                                // return  Text(snapshot.data!.docs.length.toString());
+
+                                return Wrap(children: snapshot.data!.docs.map((e) => InkWell(onTap: (){
+                                  parentategoryId =e.id;
+                                  parentategoryname =e.get("name");
+                                  Navigator.of(context).pop();
+
+                                },child: Container(margin: EdgeInsets.all(5), decoration: BoxDecoration(borderRadius: BorderRadius.circular(2),border: Border.all()),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(e.get("name")),
+                                  ),
+                                ))).toList(),);
+
+
+                                return ListView.builder(shrinkWrap: true,
+                                  itemCount: snapshot.data!.docs.length,
+
+                                  itemBuilder: (context, index) {
+                                    return Text(snapshot.data!.docs[index].get("name"));
+                                    return ListTile(onTap: (){
+                                      parentategoryId = snapshot.data!.docs[index].id;
+                                      Navigator.of(context);
+                                    },
+                                      title: Text(snapshot.data!.docs[index].get("name")),
+                                    );
+                                  },
+                                );
+                              }
+                              else {
+                                return CircularProgressIndicator();}
+                            }),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Close'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                  child: Card(color: Colors.blue,child: Center(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Add Category",style: TextStyle(color: Colors.white),),
+                  ),),),
+                ),
+                InkWell(onTap: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
+                  String li1 = "";
+                  String li2 = "";
+                  if(photo1==null){
+
+                  }else{
+                    String fileName ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
+                    firebase_storage.Reference ref = storage.ref(fileName);
+                    await ref.putData(photo1!);
+                     li1 = await  ref.getDownloadURL();
+                  }
+                  if(photo2==null){
+
+                  }else{
+                    String fileName2 ="category/"+DateTime.now().millisecondsSinceEpoch.toString()+".jpg";
+                    firebase_storage.Reference ref2 = storage.ref(fileName2);
+                    await ref2.putData(photo2!);
+                     li2 = await  ref2.getDownloadURL();
+                  }
+
+
+
+                  Provider.of<TempProvider>(context, listen: false).allData["orgParent"] = Provider.of<TempProvider>(context, listen: false).companyInfo!.id;
+                  Provider.of<TempProvider>(context, listen: false).allData["photo1"] = li1;
+                  Provider.of<TempProvider>(context, listen: false).allData["photo2"] = li2;
+                  Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                  Provider.of<TempProvider>(context, listen: false).allData["created_at"] = DateTime.now().microsecondsSinceEpoch;
+                  Provider.of<TempProvider>(context, listen: false). allData["parent"] = parentategoryId;
+
+                  FirebaseFirestore.instance.collection(appDatabsePrefix+"article").add(Provider.of<TempProvider>(context, listen: false).allData);
+                  parentategoryId = "";
+                  category.text = "";
+                  setState(() {
+                    isLoading = false;
+                    photo1  = null;
+                    photo2  = null;
+                  });
+                //  Navigator.pop(context);
+
+                },
+                  child: Card(color: Colors.blue,child: Center(child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Add",style: TextStyle(color: Colors.white),),
+                  ),),),
+                ),
+              ],),
+            ),
           ),
-        ),
-        if(isLoading) Container(color: Colors.black.withOpacity(0.8),child: Center(child: CircularProgressIndicator(),),)
+          if(isLoading) Container(color: Colors.black.withOpacity(0.8),child: Center(child: CircularProgressIndicator(),),)
 
-      ],
+        ],
+      ),
     );
   }
 }
@@ -578,7 +575,7 @@ class _AddContentSelfState extends State<AddContentSelf> {
                         barrierDismissible: false, // user must tap button!
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: const Text('Select folder'),
+                            title: const Text('Select a category'),
                             //"orgParent",isEqualTo: Provider.of<TempProvider>(context, listen: false)
                             content: StreamBuilder<QuerySnapshot>(
                                 stream:FirebaseFirestore.instance.collection(appDatabsePrefix+"categories").where("orgParent",isEqualTo:widget.companyId).snapshots(),

@@ -85,19 +85,13 @@ class _ArticleState extends State<Article> {
   }
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-        value:SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness:Brightness.light, // For Android (dark icons)
-      statusBarBrightness:Brightness.dark,
-    ),child:
-    WillPopScope(
+    return WillPopScope(
       onWillPop: () async {
         context.pop();
         return false;
       },
       child: Scaffold(
-       backgroundColor: Colors.grey.shade50,
+     //  backgroundColor: Colors.grey.shade50,
         appBar:  PreferredSize(preferredSize: AppBar().preferredSize,child: Container(decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomLeft,
@@ -377,6 +371,6 @@ class _ArticleState extends State<Article> {
                 return Text("--");
               }
             })),
-    ));
+    );
   }
 }

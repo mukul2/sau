@@ -44,7 +44,7 @@ class MyApp2 extends StatelessWidget {
         ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
       ],
       child: MaterialApp(
-        theme: ThemeData(
+        theme: ThemeData( scaffoldBackgroundColor: Colors.blue,dialogBackgroundColor: Colors.blue,dialogTheme: DialogTheme(backgroundColor: Colors.blue),
             fontFamily: 'Nexa',
             inputDecorationTheme: InputDecorationTheme( border:  OutlineInputBorder(
           // width: 0.0 produces a thin "hairline" border
@@ -52,17 +52,17 @@ class MyApp2 extends StatelessWidget {
         ),
             enabledBorder:  OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.black.withOpacity(1), width: 0.5),borderRadius: BorderRadius.circular(4),
+              borderSide:  BorderSide(color: Colors.black, width: 0.5),borderRadius: BorderRadius.circular(4),
             ),
             disabledBorder:   OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Theme.of(context).primaryColor, width: 0.5),borderRadius: BorderRadius.circular(4),
+              borderSide:  BorderSide(color: Colors.grey, width: 0.5),borderRadius: BorderRadius.circular(4),
             ),
             focusedBorder:    OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
-              borderSide:  BorderSide(color: Colors.blue, width: 0.5),borderRadius: BorderRadius.circular(4),
+              borderSide:  BorderSide(color: Colors.blue, width: 1),borderRadius: BorderRadius.circular(4),
             ),floatingLabelBehavior: FloatingLabelBehavior.always)),
-        title: 'Sau direcory',
+        title: 'Direcory',
         // Start the app with the "/" named route. In this case, the app starts
         // on the FirstScreen widget.
         initialRoute: '/sharecode',
