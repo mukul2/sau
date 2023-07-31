@@ -12,6 +12,7 @@ import 'All_category.dart';
 import 'Communicate.dart';
 import 'DrawerProvider.dart';
 import 'addCategory.dart';
+import 'app_providers.dart';
 import 'com_admin_drawer/data.dart';
 import 'company_info.dart';
 
@@ -362,40 +363,63 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
 
-  bool selected = false;
+  bool selected = true;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        InkWell( onTap: (){
-          if(widget.data["name"].toString()=="Logout"){
-            FirebaseAuth.instance.signOut().then((value) => context.go("/"));
-          }
+    Consumer<DrawerProvider>(
+    builder: (_, bar, __) {
+      return   InkWell( onTap: (){
+        if(widget.data["name"].toString()=="Logout"){
+          FirebaseAuth.instance.signOut().then((value) => context.go("/"));
+        }
 
 
 
-          widget.posSelected(widget.pos.toString()+"0");
-          setState(() {
-            selected = !selected;
-          });
-        },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Icon(widget.data["icon"]),
-              ),
-              Text(widget.data["name"]),
-            ],),
-          ),
+        widget.posSelected(widget.pos.toString()+"0");
+        bar.selcted = widget.pos.toString()+"0";
+        setState(() {
+        //  selected = !selected;
+        });
+      },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Icon(widget.data["icon"],color: bar.selcted.startsWith(widget.pos.toString())?Colors.blue:Colors.black),
+            ),
+            Text(widget.data["name"],style: TextStyle(color: bar.selcted.startsWith(widget.pos.toString())?Colors.blue:Colors.black),),
+          ],),
         ),
+      );
+    }),
+
+     //DrawerProvider
+
      if(selected)   Padding(
        padding: const EdgeInsets.only(left: 50),
        child: ListView.separated(
             itemCount: widget.data["sub"].length,shrinkWrap: true,
 
             itemBuilder: (context, index) {
+              return  Consumer<DrawerProvider>(
+                builder: (_, bar, __) {
+                  return InkWell( onTap: (){
+                    widget.posSelected(widget.pos.toString()+index.toString());
+                    bar.selcted = widget.pos.toString()+index.toString();
+                  },
+                    child: Row(children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text("-",style: TextStyle(color: bar.selcted == widget.pos.toString()+index.toString()?Colors.blue:Colors.black),),
+                      ),
+                      Text(widget.data["sub"][index],style: TextStyle(color: bar.selcted == widget.pos.toString()+index.toString()?Colors.blue:Colors.black),),
+                    ],),
+                  );
+                },
+              );
               return InkWell( onTap: (){
                 widget.posSelected(widget.pos.toString()+index.toString());
               },

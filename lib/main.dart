@@ -42,6 +42,7 @@ class MyApp2 extends StatelessWidget {
         ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
         ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
         ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
+        ChangeNotifierProvider<DrawerProvider>(create: (context) => DrawerProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData( scaffoldBackgroundColor: Colors.blue,dialogBackgroundColor: Colors.blue,dialogTheme: DialogTheme(backgroundColor: Colors.blue),

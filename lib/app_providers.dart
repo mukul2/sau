@@ -29,3 +29,15 @@ class ArticlesProvider extends ChangeNotifier {
   }
 
 }
+class DrawerProvider extends ChangeNotifier {
+  String _selcted = "00";
+
+  String get selcted => _selcted;
+
+  set selcted(String value) {
+    _selcted = value;
+    notifyListeners();
+  }
+
+
+}

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sau/DrawerProvider.dart';
 
+import 'app_providers.dart';
+
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -66,7 +68,7 @@ class _DrawerState extends State<AppDrawer> {
                     bar.selectedMenu = index;
                     if(index+1 ==  Provider.of<DrawerProviderProvider>(context, listen: false).drawerItems.length){
                       FirebaseAuth.instance.signOut();
-                      Provider.of<DrawerProviderProvider>(context, listen: false).selectedMenu = 0;
+                      Provider.of<DrawerProvider>(context, listen: false).selcted = "00";
                     }
                   },
                     child: Padding(

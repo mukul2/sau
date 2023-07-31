@@ -235,28 +235,33 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<DrawerProviderProvider>(create: (context) => DrawerProviderProvider()),
           ChangeNotifierProvider<TempProvider>(create: (context) => TempProvider()),
           ChangeNotifierProvider<ArticlesProvider>(create: (context) => ArticlesProvider()),
+          ChangeNotifierProvider<DrawerProvider>(create: (context) => DrawerProvider()),
         ],
         child:MaterialApp.router(theme: ThemeData(cardTheme: CardTheme(margin: EdgeInsets.zero), scaffoldBackgroundColor: Colors.grey.shade300,dialogBackgroundColor: Colors.grey.shade300,dialogTheme: DialogTheme(backgroundColor: Colors.grey.shade300),
             fontFamily: 'Nexa',
             inputDecorationTheme: InputDecorationTheme( fillColor: Colors.grey.shade50,contentPadding: EdgeInsets.symmetric(horizontal: 15),filled: true,border:  OutlineInputBorder(
               // width: 0.0 produces a thin "hairline" border
               borderSide:  BorderSide(color:Colors.black, //width: 0.3
-              ),borderRadius: BorderRadius.circular(4),
+              ),
+              //borderRadius: BorderRadius.circular(4),
             ),
                 enabledBorder:  OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide:  BorderSide(color: Colors.black, //width: 0.3
-                  ),borderRadius: BorderRadius.circular(4),
+                  ),
+                  //borderRadius: BorderRadius.circular(4),
                 ),
                 disabledBorder:   OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide:  BorderSide(color: Colors.grey, //width: 0.3
-                  ),borderRadius: BorderRadius.circular(4),
+                  ),
+                  //borderRadius: BorderRadius.circular(4),
                 ),
                 focusedBorder:    OutlineInputBorder(
                   // width: 0.0 produces a thin "hairline" border
                   borderSide:  BorderSide(color: Colors.blue,// width:1
-                  ),borderRadius: BorderRadius.circular(4),
+                  ),
+                  //borderRadius: BorderRadius.circular(4),
                 ),floatingLabelBehavior: FloatingLabelBehavior.always)),
           routerConfig: _router,
         ));
